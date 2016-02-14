@@ -38,7 +38,7 @@ my(%params) =
 		'Types::Standard' => 1.000004,
 		'warnings' => 0,
 	},
-	VERSION_FROM => 'lib/Regexp/Parserton.pm',
+	VERSION_FROM => 'lib/Regexp/Parsertron.pm',
 );
 
 if ( ($ExtUtils::MakeMaker::VERSION =~ /^\d\.\d\d$/) && ($ExtUtils::MakeMaker::VERSION > 6.30) )
