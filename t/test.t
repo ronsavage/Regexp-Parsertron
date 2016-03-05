@@ -3,6 +3,8 @@ use warnings;
 
 use Regexp::Parsertron;
 
+# Warning: Can't use Test::Stream because of the '#' in the regexps.
+
 use Test::More;
 
 # ------------------------------------------------
@@ -11,6 +13,11 @@ my(@test) =
 (
 {
 	count	=> 1,
+	regexp	=> qr/(?#Comment)A|B/i,
+	string	=> '(?^i:(?#Comment)A|B)',
+},
+{
+	count	=> 2,
 	regexp	=> qr/(?#Comment)A|B/i,
 	string	=> '(?^i:(?#Comment)A|B)',
 },
