@@ -4,6 +4,8 @@ use strict;
 use warnings;
 use warnings qw(FATAL utf8); # Fatalize encoding glitches.
 
+use Data::Section::Simple 'get_data_section';
+
 use Marpa::R2;
 
 use Moo;
@@ -49,17 +51,7 @@ sub BUILD
 	# Note:   Tokens of the form '_xxx_' are replaced just below, with values returned
 	#			by the call to validate_open_close().
 
-	my($bnf) = <<'END_OF_GRAMMAR';
-
-:default				::= action => [values]
-
-lexeme default			= latm => 1
-
-:start					::= input_text
-
-input_text				~ 'X'
-
-END_OF_GRAMMAR
+	my($bnf) = get_data_section('V.5.020.002');
 
 	$self -> bnf($bnf);
 	$self -> grammar
@@ -176,13 +168,14 @@ See L</Constructor and Initialization> for details on the parameters accepted by
 
 =item o To help me learn more about regexps
 
-=item o To, hopefully, form the basis of a replacement for the horrendously complex L<Regexp::Assemble>
+=item o To, I hope, form the basis of a replacement for the horrendously complex L<Regexp::Assemble>
 
 =back
 
 =head2 Does this module interpret regexps in any way?
 
-No. You have to run your own Perl code to do that. This module just parses them into a data structure.
+No. You have to run your own Perl code to do that. This module just parses them into a data
+structure.
 
 =head2 Does this module handle both Perl5 and Perl6?
 
@@ -190,7 +183,8 @@ Initially, it will only handle Perl5 syntax.
 
 =head2 Does this module handle various versions of regexps (i.e., of Perl5)?
 
-Yes, that is the intention.
+Yes, version-dependent regexp syntax will be supported for recent versions of Perl. This is done by
+having tokens within the BNF which are replaced at start-up time with version-dependent details.
 
 =head1 References
 
@@ -268,3 +262,13 @@ Australian copyright (c) 2016, Ron Savage.
 	http://opensource.org/licenses/alphabetical.
 
 =cut
+
+__DATA__
+@@ V.5.020.002
+:default				::= action => [values]
+
+lexeme default			= latm => 1
+
+:start					::= input_text
+
+input_text				~ 'X'
