@@ -4,11 +4,29 @@ use strict;
 use warnings;
 use warnings qw(FATAL utf8); # Fatalize encoding glitches.
 
+use Marpa::R2;
+
 use Moo;
 
 use Tree;
 
-use Types::Standard qw/Object/;
+use Types::Standard qw/Any Object/;
+
+has bnf =>
+(
+	default  => sub{return ''},
+	is       => 'rw',
+	isa      => Any,
+	required => 0,
+);
+
+has grammar =>
+(
+	default  => sub {return ''},
+	is       => 'rw',
+	isa      => Any,
+	required => 0,
+);
 
 has tree =>
 (
@@ -25,6 +43,33 @@ our $VERSION = '0.01';
 sub BUILD
 {
 	my($self) = @_;
+
+	# Policy: Event names are always the same as the name of the corresponding lexeme.
+	#
+	# Note:   Tokens of the form '_xxx_' are replaced just below, with values returned
+	#			by the call to validate_open_close().
+
+	my($bnf) = <<'END_OF_GRAMMAR';
+
+:default				::= action => [values]
+
+lexeme default			= latm => 1
+
+:start					::= input_text
+
+input_text				~ 'X'
+
+END_OF_GRAMMAR
+
+	$self -> bnf($bnf);
+	$self -> grammar
+	(
+		Marpa::R2::Scanless::G -> new
+		({
+			source => \$self -> bnf
+		})
+	);
+
 
 } # End of BUILD.
 
@@ -158,6 +203,8 @@ L<http://perldoc.perl.org/perlop.html#Regexp-Quote-Like-Operators>
 L<http://perldoc.perl.org/perlrequick.html>
 
 L<http://perldoc.perl.org/perlrebackslash.html>
+
+L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>
 
 =head1 See Also
 
