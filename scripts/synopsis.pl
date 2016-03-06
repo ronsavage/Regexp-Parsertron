@@ -7,21 +7,67 @@ use Regexp::Parsertron;
 
 # -----------
 
-my($limit)	= shift || 0;
 my($parser)	= Regexp::Parsertron -> new;
 my(@test)	=
 (
 {
 	count	=> 1,
-	re		=> qr//i,
-	target	=> '',
+	re		=> '(?#Comment)',
+	target	=> 'z',
 },
 {
 	count	=> 2,
-	re		=> qr/A|B/i,
-	target	=> 'A',
+	re		=> '(?)',
+	target	=> 'z',
+},
+{
+	count	=> 3,
+	re		=> '(?a)',
+	target	=> 'z',
+},
+{
+	count	=> 4,
+	re		=> '(?a-i)',
+	target	=> 'z',
+},
+{
+	count	=> 5,
+	re		=> '(?^a)',
+	target	=> 'z',
+},
+{
+	count	=> 6,
+	re		=> '(?a:)',
+	target	=> 'z',
+},
+{
+	count	=> 7,
+	re		=> '(?a:b)',
+	target	=> 'z',
+},
+{
+	count	=> 8,
+	re		=> '(?:)',
+	target	=> 'z',
+},
+{
+	count	=> 9,
+	re		=> '(?:a)z',
+	target	=> 'z',
+},
+{
+	count	=> 10,
+	re		=> '(?:a-i)z',
+	target	=> 'z',
+},
+{
+	count	=> 11,
+	re		=> '(?^:a)z',
+	target	=> 'z',
 },
 );
+
+my($limit);
 
 my($result);
 
@@ -29,8 +75,13 @@ for my $test (@test)
 {
 	# Use this trick to run the tests one-at-a-time. See scripts/test.sh.
 
+	$limit = shift(@ARGV);
+
+	print "limit: $limit. \n";
+
 	next if ( ($limit > 0) && ($$test{count} != $limit) );
 
-	$result = $parser -> parse(re => $$test{re}, target => $$test{target});
+	$result = $parser -> parse(count => $$test{count}, re => $$test{re}, target => $$test{target});
 }
 
+$parser -> report;

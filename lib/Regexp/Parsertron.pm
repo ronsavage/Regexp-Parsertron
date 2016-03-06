@@ -16,13 +16,21 @@ use Tree;
 
 use Try::Tiny;
 
-use Types::Standard qw/Any Bool Object RegexpRef Str/;
+use Types::Standard qw/Any Bool Int Object Str/;
 
 has bnf =>
 (
 	default  => sub{return ''},
 	is       => 'rw',
 	isa      => Any,
+	required => 0,
+);
+
+has count =>
+(
+	default  => sub{return 0},
+	is       => 'rw',
+	isa      => Int,
 	required => 0,
 );
 
@@ -34,11 +42,27 @@ has grammar =>
 	required => 0,
 );
 
+has match_count =>
+(
+	default  => sub{return 0},
+	is       => 'rw',
+	isa      => Int,
+	required => 0,
+);
+
+has miss_count =>
+(
+	default  => sub{return 0},
+	is       => 'rw',
+	isa      => Int,
+	required => 0,
+);
+
 has re =>
 (
-	default  => sub {return qr//},
+	default  => sub {return ''},
 	is       => 'rw',
-	isa      => RegexpRef,
+	isa      => Str,
 	required => 0,
 );
 
@@ -136,6 +160,7 @@ sub parse
 
 	# Emulate parts of new(), which makes things a bit earier for the caller.
 
+	$self -> count($opts{count})	if (defined $opts{count});
 	$self -> re($opts{re})			if (defined $opts{re});
 	$self -> target($opts{target})	if (defined $opts{target});
 
@@ -175,17 +200,35 @@ sub parse
 sub _process
 {
 	my($self)		= @_;
-	my($re)			= $self -> re; # $self -> as_string($self -> re);
-	my($stringref)	= \"$re"; # Use " in comment for UltraEdit.
-	my($first_pos)	= 0;
-	$$stringref		= $1 if ($$stringref =~ /^\((.+)\)$/);
-	my($length)		= length($$stringref);
-	my($child)		= Tree -> new();
+	my($raw_re)		= $self -> re;
+	my($string_re)	= $self -> as_string($raw_re);
+	$string_re		= $1 if ($string_re =~ /^\((.+)\)$/);
+	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
+	my($length)		= length($string_re);
+	my($re_count)	= $self -> count;
+	my($target)		= $self -> target;
+
+	print "$re_count: Parsing $raw_re => $string_re. Target: '$target'. ";
+
+	if ($target =~ qr/$raw_re/)
+	{
+		$self -> match_count($self -> match_count + 1);
+
+		print "Target matches. \n";
+	}
+	else
+	{
+		$self -> miss_count($self -> miss_count + 1);
+
+		print "Target does not match. \n";
+	}
+
+	my($child) = Tree -> new();
 
 	$child -> meta
 	({
 		name	=> 'open_parenthesis',
-		value	=> '(',
+		text	=> '(',
 	});
 
 	$self -> tree -> add_child($child);
@@ -201,13 +244,13 @@ sub _process
 
 	for
 	(
-		$pos = $self -> recce -> read($stringref);
+		$pos = $self -> recce -> read($ref_re);
 		($pos < $length);
 		$pos = $self -> recce -> resume($pos)
 	)
 	{
 		($start, $span)            = $self -> recce -> pause_span;
-		($event_name, $span, $pos) = $self -> _validate_event($stringref, $start, $span, $pos,);
+		($event_name, $span, $pos) = $self -> _validate_event($ref_re, $start, $span, $pos,);
 
 		# If the input is exhausted, we exit immediately so we don't try to use
 		# the values of $start, $span or $pos. They are ignored upon exit.
@@ -225,7 +268,7 @@ sub _process
 		$child -> meta
 		({
 			name	=> $event_name,
-			value	=> $lexeme,
+			text	=> $lexeme,
 		});
  		$self -> tree -> add_child($child);
    }
@@ -250,11 +293,10 @@ sub _process
 	$child -> meta
 	({
 		name	=> 'close_parenthesis',
-		value	=> ')',
+		text	=> ')',
 	});
 
 	$self -> tree -> add_child($child);
-	$self -> report;
 
 	# Return a defined value for success and undef for failure.
 
@@ -269,7 +311,8 @@ sub report
 	my($self)	= @_;
 	my($format)	= "%-20s  %s\n";
 
-	print sprintf($format, 'Name', 'Value');
+	print sprintf($format, 'Name', 'Text');
+	print sprintf($format, '----', '----');
 
 	my($meta);
 
@@ -279,8 +322,11 @@ sub report
 
 		$meta = $node -> meta;
 
-		print sprintf($format, $$meta{name}, $$meta{value});
+		print sprintf($format, $$meta{name}, $$meta{text});
 	}
+
+	print 'Match count: ', $self -> match_count, '. Miss count: ', $self -> miss_count, ". \n";
+	print "\n";
 
 } # End of report.
 
@@ -333,13 +379,21 @@ regexp					::= pattern_set+
 
 pattern_set				::= extended_modifiers
 
+# Note: The outer '(' ... ')' will be stripped off before Marpa sees the regexp.
+
+extended_modifiers		::= question_mark comment
+extended_modifiers		::= question_mark colon pattern
+extended_modifiers		::= question_mark extended_set
 extended_modifiers		::= question_mark extended_set colon pattern
+
+comment					::= hash pattern
 
 extended_set			::= caret_token positive_letters negative_letter_set
 
 caret_token				::=
 caret_token				::= caret
 
+positive_letters		::=
 positive_letters		::= a2z
 
 negative_letter_set		::=
@@ -364,6 +418,9 @@ caret					~ '^'
 
 :lexeme					~ colon					pause => before		event => colon
 colon					~ ':'
+
+:lexeme					~ hash					pause => before		event => hash
+hash					~ ':'
 
 :lexeme					~ minus					pause => before		event => minus
 minus					~ '-'
