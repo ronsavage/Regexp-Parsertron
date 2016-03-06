@@ -10,7 +10,7 @@ use Marpa::R2;
 
 use Moo;
 
-use Scalar::Does '-constants';
+use Scalar::Does '-constants'; # For does().
 
 use Tree;
 
@@ -148,6 +148,12 @@ sub parse
 {
 	my($self, %opts) = @_;
 
+	# Emulate parts of new(), which makes things a bit earier for the caller.
+
+	$self -> count($opts{count})	if (defined $opts{count});
+	$self -> re($opts{re})			if (defined $opts{re});
+	$self -> target($opts{target})	if (defined $opts{target});
+
 	$self -> recce
 	(
 		Marpa::R2::Scanless::R -> new
@@ -157,12 +163,6 @@ sub parse
 			ranking_method => 'high_rule_only',
 		})
 	);
-
-	# Emulate parts of new(), which makes things a bit earier for the caller.
-
-	$self -> count($opts{count})	if (defined $opts{count});
-	$self -> re($opts{re})			if (defined $opts{re});
-	$self -> target($opts{target})	if (defined $opts{target});
 
 	# Return 0 for success and 1 for failure.
 
@@ -372,9 +372,38 @@ C<Regexp::Parsertron> - Parse a Perl regexp into a Tree
 
 =head1 Synopsis
 
+This is part of scripts/synopsis.pl:
+
+	#!/usr/bin/env perl
+
+	use strict;
+	use warnings;
+
+	use Regexp::Parsertron;
+
+	# ---------------------
+
+	my($parser) = Regexp::Parsertron -> new;
+	my($result) = $parser -> parse(re => '[yY][eE][sS]');
+
+	$parser -> report;
+
+Output will be something like:
+
+	Name                  Text
+	----                  ----
+	open_parenthesis      (
+	question_mark         ?
+	caret                 ^
+	colon                 :
+	text                  [yY][eE][sS]
+	close_parenthesis     )
 
 =head1 Description
 
+Parses a regexp into a tree object managed by the L<Tree> module.
+
+This module uses L<Moo>.
 
 =head1 Distributions
 
@@ -416,11 +445,14 @@ C<new()> is called as C<< my($parser) = Regexp::Parsertron -> new(k1 => v1, k2 =
 It returns a new object of type C<Regexp::Parsertron>.
 
 Key-value pairs accepted in the parameter list (see corresponding methods for details
-[e.g. L</text([$stringref])>]):
+[e.g. L</re([$regexp])>]):
 
 =over 4
 
-=item o close => $arrayref
+=item o re => $regexp
+
+The C<does()> method of L<Scalar::Does> is called to see what C<re> is. If it's already of the
+form C<qr/$re/>, then it's processed as is, but if it's not, then it's transformed using C<qr/$re/>.
 
 =back
 
@@ -430,8 +462,57 @@ Key-value pairs accepted in the parameter list (see corresponding methods for de
 
 See L</Constructor and Initialization> for details on the parameters accepted by L</new()>.
 
+=head2 parse([%opts])
+
+Here, '[]' indicate an optional parameter.
+
+Parses the regexp supplied in the call to L</new()> or in the call to L</re($regexp)>, or in the
+call to C<parse()> itself. The latter takes precedence.
+
+The hash C<%opts> takes these (key => value) pairs, just as L</new()> does:
+
+=over 4
+
+=item o re => $regexp
+
+See L</Constructor and Initialization> for how $regexp might be pre-processed (i.e. modified before
+being parsed).
+
+=back
+
+=head2 re([$regexp])
+
+Here, '[]' indicate an optional parameter.
+
+Gets or sets the regexp to be processed.
+
+=head2 tree()
+
+Returns an object of type L<Tree>. Ignore the root node.
+
+Each node's C<meta> method returns a hashref of information about the node. See the L</FAQ> for
+details.
 
 =head1 FAQ
+
+=head2 What is the format of the nodes in the tree build by this module?
+
+Each node's C<meta> method returns a hashref with these (key => value) pairs:
+
+=over 4
+
+=item o name => $string
+
+This is the name of the Marpa-style event which was triggered by detection of some C<text> within
+the regexp.
+
+=item o text => $string
+
+This is the text within the regexp which triggered the event just mentioned.
+
+=back
+
+See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
 
 =head2 What is the purpose of this module?
 
@@ -441,7 +522,7 @@ See L</Constructor and Initialization> for details on the parameters accepted by
 
 =item o To help me learn more about regexps
 
-=item o To, I hope, form the basis of a replacement for the horrendously complex L<Regexp::Assemble>
+=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
 
 =back
 
@@ -458,8 +539,8 @@ while testing new code, you can't rely on that appearing in production versions 
 Not yet, but that's the plan. So, ultimately, this module might be able to replace some of
 L<Regexp::Assemble>'s functionality.
 
-This includes support for assembling complex regexps out of repeated calls to methods within this
-module.
+This would include support for assembling complex regexps out of repeated calls to methods within
+this module.
 
 =head2 Does this module handle both Perl5 and Perl6?
 
