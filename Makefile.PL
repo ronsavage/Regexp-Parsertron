@@ -32,6 +32,7 @@ my(%params) =
 		'Data::Section::Simple'	=> 0.07,
 		'Marpa::R2'				=> 3.000000,
 		'Moo'					=> 2.001001,
+		'Scalar::Does'			=> 0.202,
 		'strict'				=> 0,
 		'Test::More'			=> 1.001014,
 		'Test::Pod'				=> 1.48,
