@@ -3,6 +3,9 @@ Revision history for Perl extension Regexp::Parserton.
 0.50  2016-03-07T10:13:00
 	- Add BNF for extended patterns.
 	- Expand scripts/synopsis.pl to effectivly run tests.
+	- Create a simplistic t/test.t.
+	- Rename as_string() to _string2re().
+	- Add new as_string().
 
 0.01  2016-02-14T12:40:00
 	- Original version

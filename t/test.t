@@ -13,15 +13,15 @@ my(@test) =
 (
 {
 	count	=> 1,
-	regexp	=> qr//i,
-	string	=> '(?^i:)',
-	target	=> '',
+	re		=> '',
+	string	=> '(?^:)',
+	target	=> 'z',
 },
 {
 	count	=> 2,
-	regexp	=> qr/A|B/i,
-	string	=> '(?^i:A|B)',
-	target	=> 'A',
+	re		=> 'A|B',
+	string	=> '(?^:A|B)',
+	target	=> 'z',
 },
 );
 my($limit)	= shift || 0;
@@ -37,17 +37,20 @@ for my $test (@test)
 
 	next if ( ($limit > 0) && ($$test{count} != $limit) );
 
-	$result = $parser -> parse($$test{target}, $$test{regexp}, $$test{string});
+	$result = $parser -> parse
+				(
+					count	=> $$test{count},
+					re		=> $$test{re},
+					string	=> $$test{string},
+					target	=> $$test{target},
+				);
 
 	if ($result == 0)
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{string};
 
-# Circumvent using as_string for the time being...
-
-#		is_deeply($got, $expected, "$$test{count}: $$test{regexp}");
-		is_deeply($expected, $expected, "$$test{count}: $$test{regexp}");
+		is_deeply("$got", $expected, "$$test{count}: $$test{re}");
 	}
 	else
 	{

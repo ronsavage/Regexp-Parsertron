@@ -92,7 +92,7 @@ has tree =>
 
 has verbose =>
 (
-	default  => sub {return 1},
+	default  => sub {return 0},
 	is       => 'rw',
 	isa      => Bool,
 	required => 0,
@@ -122,9 +122,9 @@ sub BUILD
 
 sub as_string
 {
-	my($self, $candidate) = @_;
+	my($self) = @_;
 
-	return does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
+	return $self -> _string2re($self -> re);
 
 } # End of as_string.
 
@@ -201,26 +201,26 @@ sub _process
 {
 	my($self)		= @_;
 	my($raw_re)		= $self -> re;
-	my($string_re)	= $self -> as_string($raw_re);
+	my($string_re)	= $self -> _string2re($raw_re);
 	$string_re		= $1 if ($string_re =~ /^\((.+)\)$/);
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
 	my($re_count)	= $self -> count;
 	my($target)		= $self -> target;
 
-	print "$re_count: Parsing $raw_re => $string_re. Target: '$target'. ";
+	print "$re_count: Parsing '$raw_re' => '$string_re'. Target: '$target'. " if ($self -> verbose);
 
 	if ($target =~ qr/$raw_re/)
 	{
 		$self -> match_count($self -> match_count + 1);
 
-		print "Target matches. \n";
+		print "Target matches. \n" if ($self -> verbose);
 	}
 	else
 	{
 		$self -> miss_count($self -> miss_count + 1);
 
-		print "Target does not match. \n";
+		print "Target does not match. \n" if ($self -> verbose);
 	}
 
 	my($child) = Tree -> new();
@@ -329,6 +329,16 @@ sub report
 	print "\n";
 
 } # End of report.
+
+# ------------------------------------------------
+
+sub _string2re
+{
+	my($self, $candidate) = @_;
+
+	return does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
+
+} # End of _string2re.
 
 # ------------------------------------------------
 
