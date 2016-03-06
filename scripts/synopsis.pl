@@ -13,14 +13,12 @@ my(@test)	=
 (
 {
 	count	=> 1,
-	regexp	=> qr//i,
-	string	=> '',
+	re		=> qr//i,
 	target	=> '',
 },
 {
 	count	=> 2,
-	regexp	=> qr/A|B/i,
-	string	=> 'A|B',
+	re		=> qr/A|B/i,
 	target	=> 'A',
 },
 );
@@ -33,6 +31,6 @@ for my $test (@test)
 
 	next if ( ($limit > 0) && ($$test{count} != $limit) );
 
-	$result = $parser -> parse($$test{target}, $$test{regexp}, $$test{string});
+	$result = $parser -> parse(re => $$test{re}, target => $$test{target});
 }
 
