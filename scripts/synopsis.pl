@@ -65,6 +65,11 @@ my(@test)	=
 	re		=> '(?^:a)z',
 	target	=> 'z',
 },
+{
+	count	=> 12,
+	re		=> '[yY][eE][sS]',
+	target	=> 'z',
+},
 );
 
 my($limit);
