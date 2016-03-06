@@ -82,9 +82,9 @@ for my $test (@test)
 
 	$limit = shift(@ARGV);
 
-	print "limit: $limit. \n";
-
 	next if ( ($limit > 0) && ($$test{count} != $limit) );
+
+	print "limit: $limit. Stringify: @{[qr/$$test{re}/]}. \n";
 
 	$result = $parser -> parse(count => $$test{count}, re => $$test{re}, target => $$test{target});
 }

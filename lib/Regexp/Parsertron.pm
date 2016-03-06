@@ -384,11 +384,12 @@ This is part of scripts/synopsis.pl:
 	# ---------------------
 
 	my($parser) = Regexp::Parsertron -> new;
-	my($result) = $parser -> parse(re => '[yY][eE][sS]');
+	my($re)     ='[yY][eE][sS]';
+	my($result) = $parser -> parse(re => $re);
 
 	$parser -> report;
 
-Output will be something like:
+Since that regexp stringifies via C<qr/$re/> to C<(?^:[yY][eE][sS])>, the report says:
 
 	Name                  Text
 	----                  ----
