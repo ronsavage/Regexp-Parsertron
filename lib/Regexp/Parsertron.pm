@@ -12,7 +12,7 @@ use Moo;
 
 use Tree;
 
-use Types::Standard qw/Any Object/;
+use Types::Standard qw/Any Object Str/;
 
 has bnf =>
 (
@@ -30,6 +30,14 @@ has grammar =>
 	required => 0,
 );
 
+has rig_test =>
+(
+	default  => sub{return ''},
+	is       => 'rw',
+	isa      => Str,
+	required => 0,
+);
+
 has tree =>
 (
 	default  => sub{return Tree -> new('root')},
@@ -44,14 +52,8 @@ our $VERSION = '0.01';
 
 sub BUILD
 {
-	my($self) = @_;
-
-	# Policy: Event names are always the same as the name of the corresponding lexeme.
-	#
-	# Note:   Tokens of the form '_xxx_' are replaced just below, with values returned
-	#			by the call to validate_open_close().
-
-	my($bnf) = get_data_section('V.5.020.002');
+	my($self)	= @_;
+	my($bnf)	= get_data_section('V 5.20');
 
 	$self -> bnf($bnf);
 	$self -> grammar
@@ -71,7 +73,7 @@ sub as_string
 {
 	my($self) = @_;
 
-	return '(?^i:(?#Comment)A|B)';
+	return $self -> rig_test;
 
 } # End of as_string.
 
@@ -79,7 +81,20 @@ sub as_string
 
 sub parse
 {
-	my($self) = @_;
+	my($self, $target, $re, $string) = @_;
+
+	print "target: $target. re: $re. string: $string. \n";
+
+	$self -> rig_test($string);
+
+	if ($target =~ $re)
+	{
+		print "$target matches regexp $re. \n";
+	}
+	else
+	{
+		print "$target does not match regexp $re. \n";
+	}
 
 	# Return 0 for success and 1 for failure.
 
@@ -263,12 +278,20 @@ Australian copyright (c) 2016, Ron Savage.
 
 =cut
 
+# Policy: Event names are always the same as the name of the corresponding lexeme.
+#
+# Note:   Tokens of the form '_xxx_' are replaced with version-dependent values.
+
 __DATA__
-@@ V.5.020.002
+@@ V 5.20
 :default				::= action => [values]
 
 lexeme default			= latm => 1
 
-:start					::= input_text
+:start					::= regexp
+
+regexp					::= pattern_set
+
+pattern_set				::= input_text
 
 input_text				~ 'X'

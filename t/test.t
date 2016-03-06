@@ -13,17 +13,19 @@ my(@test) =
 (
 {
 	count	=> 1,
-	regexp	=> qr/(?#Comment)A|B/i,
-	string	=> '(?^i:(?#Comment)A|B)',
+	regexp	=> qr//i,
+	string	=> '(?^i:)',
+	target	=> '',
 },
 {
 	count	=> 2,
-	regexp	=> qr/(?#Comment)A|B/i,
-	string	=> '(?^i:(?#Comment)A|B)',
+	regexp	=> qr/A|B/i,
+	string	=> '(?^i:A|B)',
+	target	=> 'A',
 },
 );
-my($limit)		= shift || 0;
-my($parser)		= Regexp::Parsertron -> new;
+my($limit)	= shift || 0;
+my($parser)	= Regexp::Parsertron -> new;
 
 my($expected);
 my($got);
@@ -35,7 +37,7 @@ for my $test (@test)
 
 	next if ( ($limit > 0) && ($$test{count} != $limit) );
 
-	$result = $parser -> parse;
+	$result = $parser -> parse($$test{target}, $$test{regexp}, $$test{string});
 
 	if ($result == 0)
 	{
