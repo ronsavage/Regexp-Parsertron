@@ -179,14 +179,14 @@ sub parse
 		{
 			$result = 1;
 
-			print "Error: Parse failed\n" if ($self -> verbose);
+			print "Error: Parse failed\n";
 		}
 	}
 	catch
 	{
 		$result = 1;
 
-		print "Error: Parse failed. ${_}" if ($self -> verbose);
+		print "Error: Parse failed. ${_}";
 	};
 
 	# Return 0 for success and 1 for failure.
@@ -202,41 +202,29 @@ sub _process
 	my($self)		= @_;
 	my($raw_re)		= $self -> re;
 	my($string_re)	= $self -> _string2re($raw_re);
-	$string_re		= $1 if ($string_re =~ /^\((.+)\)$/);
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
 	my($re_count)	= $self -> count;
 	my($target)		= $self -> target;
 
-	print "$re_count: Parsing '$raw_re' => '$string_re'. Target: '$target'. " if ($self -> verbose);
+	print "$re_count: Parsing '$raw_re' => '$string_re'. Target: '$target'. ";
 
 	if ($target =~ qr/$raw_re/)
 	{
 		$self -> match_count($self -> match_count + 1);
 
-		print "Target matches. \n" if ($self -> verbose);
+		print "Target matches. \n";
 	}
 	else
 	{
 		$self -> miss_count($self -> miss_count + 1);
 
-		print "Target does not match. \n" if ($self -> verbose);
+		print "Target does not match. \n";
 	}
 
-	my($child) = Tree -> new();
-
-	$child -> meta
-	({
-		name	=> 'open_parenthesis',
-		text	=> '(',
-	});
-
-	$self -> tree -> add_child($child);
-
+	my($child);
 	my($event_name);
 	my($lexeme);
-	my($message);
-	my($original_lexeme);
 	my($pos);
 	my($span, $start);
 
@@ -249,19 +237,20 @@ sub _process
 		$pos = $self -> recce -> resume($pos)
 	)
 	{
-		($start, $span)            = $self -> recce -> pause_span;
-		($event_name, $span, $pos) = $self -> _validate_event($ref_re, $start, $span, $pos,);
+		($start, $span)				= $self -> recce -> pause_span;
+		($event_name, $span, $pos)	= $self -> _validate_event($ref_re, $start, $span, $pos,);
 
 		# If the input is exhausted, we exit immediately so we don't try to use
 		# the values of $start, $span or $pos. They are ignored upon exit.
 
 		last if ($event_name eq "'exhausted"); # Yes, it has a leading quote.
 
-		$lexeme          = $self -> recce -> literal($start, $span);
-		$original_lexeme = $lexeme;
-		$pos             = $self -> recce -> lexeme_read($event_name);
+		$lexeme	= $self -> recce -> literal($start, $span);
+		$pos	= $self -> recce -> lexeme_read($event_name);
 
 		die "lexeme_read($event_name) rejected lexeme |$lexeme|\n" if (! defined $pos);
+
+		print "event_name: $event_name. lexeme: $lexeme. \n";
 
 		$child = Tree -> new();
 
@@ -273,30 +262,22 @@ sub _process
  		$self -> tree -> add_child($child);
    }
 
+	my($message);
+
 	if ($self -> recce -> exhausted)
 	{
 		$message = 'Parse exhausted';
 
-		print "Warning: $message\n" if ($self -> verbose);
+		print "Warning: $message\n";
 	}
 	elsif (my $status = $self -> recce -> ambiguous)
 	{
-		my($terminals) = $self -> recce -> terminals_expected;
-		$terminals     = ['(None)'] if ($#$terminals < 0);
-		$message       = "Ambiguous parse. Status: $status. Terminals expected: " . join(', ', @$terminals);
+		my($terminals)	= $self -> recce -> terminals_expected;
+		$terminals		= ['(None)'] if ($#$terminals < 0);
+		$message		= "Ambiguous parse. Status: $status. Terminals expected: " . join(', ', @$terminals);
 
 		print "Warning: $message\n";
 	}
-
-	$child = Tree -> new();
-
-	$child -> meta
-	({
-		name	=> 'close_parenthesis',
-		text	=> ')',
-	});
-
-	$self -> tree -> add_child($child);
 
 	# Return a defined value for success and undef for failure.
 
@@ -364,7 +345,7 @@ sub _validate_event
 	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
 	$message           = "$message. Events: $event_count. Names: ";
 
-	print $message, join(', ', @event_name), "\n" if ($self -> verbose);
+	print $message, join(', ', @event_name), "\n";
 
 	return ($event_name, $span, $pos);
 
@@ -653,23 +634,22 @@ lexeme default			= latm => 1
 
 # G1 stuff.
 
-regexp					::= pattern_set+
+regexp					::= open_parenthesis patterns close_parenthesis
 
-pattern_set				::= extended_modifiers
+patterns				::= pattern_set
+							| question_mark comment
+							| question_mark colon pattern
+							| question_mark extended_set
+							| question_mark extended_set colon pattern
 
-# Note: The outer '(' ... ')' will be stripped off before Marpa sees the regexp.
-
-extended_modifiers		::= question_mark comment
-extended_modifiers		::= question_mark colon pattern
-extended_modifiers		::= question_mark extended_set
-extended_modifiers		::= question_mark extended_set colon pattern
+pattern_set				::= open_parenthesis pattern close_parenthesis
 
 comment					::= hash pattern
 
-extended_set			::= caret_token positive_letters negative_letter_set
+extended_set			::= optional_caret positive_letters negative_letter_set
 
-caret_token				::=
-caret_token				::= caret
+optional_caret			::=
+optional_caret			::= caret
 
 positive_letters		::=
 positive_letters		::= a2z
@@ -681,7 +661,11 @@ minus_negative_letters	::= minus negative_letters
 
 negative_letters		::= a2z
 
-pattern					::= text*
+pattern					::=
+pattern					::= regexp
+							| text
+
+text					::= char*
 
 # L0 stuff, in alphabetical order.
 
@@ -691,11 +675,17 @@ a2z						~ [a-z]
 :lexeme					~ caret					pause => before		event => caret
 caret					~ '^'
 
-#:lexeme					~ close_parenthesis		pause => before		event => close_parenthesis
-#close_parenthesis		~ ')'
+:lexeme					~ char					pause => before		event => char
+char					~ escaped_parenthesis
+							| non_parenthesis_char
+
+:lexeme					~ close_parenthesis		pause => before		event => close_parenthesis
+close_parenthesis		~ ')'
 
 :lexeme					~ colon					pause => before		event => colon
 colon					~ ':'
+
+escaped_parenthesis		~ '\\)'
 
 :lexeme					~ hash					pause => before		event => hash
 hash					~ ':'
@@ -703,11 +693,10 @@ hash					~ ':'
 :lexeme					~ minus					pause => before		event => minus
 minus					~ '-'
 
-#:lexeme					~ open_parenthesis		pause => before		event => open_parenthesis
-#open_parenthesis		~ '('
+non_parenthesis_char	~ [^)]	# Use " in comment for UltraEdit.
+
+:lexeme					~ open_parenthesis		pause => before		event => open_parenthesis
+open_parenthesis		~ '('
 
 :lexeme					~ question_mark			pause => before		event => question_mark
 question_mark			~ '?'
-
-:lexeme					~ text					pause => before		event => text
-text					~ [[:print:]]+

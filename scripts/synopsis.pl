@@ -70,9 +70,14 @@ my(@test)	=
 	re		=> '[yY][eE][sS]',
 	target	=> 'z',
 },
+{
+	count	=> 13,
+	re		=> '(A|B)',
+	target	=> 'z',
+},
 );
 
-my($limit);
+my($number) = shift(@ARGV) || 0;
 
 my($result);
 
@@ -80,11 +85,9 @@ for my $test (@test)
 {
 	# Use this trick to run the tests one-at-a-time. See scripts/test.sh.
 
-	$limit = shift(@ARGV);
+	next if ( ($number > 0) && ($$test{count} != $number) );
 
-	next if ( ($limit > 0) && ($$test{count} != $limit) );
-
-	print "limit: $limit. Stringify: @{[qr/$$test{re}/]}. \n";
+	print "number: $number. Stringify: @{[qr/$$test{re}/]}. \n";
 
 	$result = $parser -> parse(count => $$test{count}, re => $$test{re}, target => $$test{target});
 }
