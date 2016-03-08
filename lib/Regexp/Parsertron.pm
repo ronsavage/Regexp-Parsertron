@@ -16,7 +16,7 @@ use Tree;
 
 use Try::Tiny;
 
-use Types::Standard qw/Any Bool Int Object Str/;
+use Types::Standard qw/Any ArrayRef Bool Int Str/;
 
 has bnf =>
 (
@@ -58,6 +58,14 @@ has miss_count =>
 	required => 0,
 );
 
+has node_stack =>
+(
+	default  => sub{return []},
+	is       => 'rw',
+	isa      => ArrayRef,
+	required => 0,
+);
+
 has re =>
 (
 	default  => sub {return ''},
@@ -86,7 +94,7 @@ has tree =>
 (
 	default  => sub{return Tree -> new('root')},
 	is       => 'rw',
-	isa      => Object,
+	isa      => Any,
 	required => 0,
 );
 
@@ -115,8 +123,36 @@ sub BUILD
 			source => \$self -> bnf
 		})
 	);
+	$self -> node_stack([$self -> tree -> root]);
 
 } # End of BUILD.
+
+# ------------------------------------------------
+
+sub _add_daughter
+{
+	my($self, $event_name, $attributes) = @_;
+	my($stack)  = $self -> node_stack;
+	my($node)   = Tree -> new($event_name);
+
+	$node -> meta($attributes);
+
+	print "1: Size of stack: @{[$#$stack + 1]}. \n";
+
+	$$stack[$#$stack] -> add_child($node);
+
+	if ($event_name eq 'open_parenthesis')
+	{
+		$self -> _push_node_stack;
+	}
+	elsif ($event_name eq 'close_parenthesis')
+	{
+		$self -> _pop_node_stack;
+	}
+
+	print "2: Size of stack: @{[$#$stack + 1]}. \n";
+
+} # End of _add_daughter.
 
 # ------------------------------------------------
 
@@ -197,6 +233,19 @@ sub parse
 
 # ------------------------------------------------
 
+sub _pop_node_stack
+{
+	my($self)	= @_;
+	my($stack)	= $self -> node_stack;
+
+	pop @$stack;
+
+	$self -> node_stack($stack);
+
+} # End of _pop_node_stack.
+
+# ------------------------------------------------
+
 sub _process
 {
 	my($self)		= @_;
@@ -252,14 +301,7 @@ sub _process
 
 		print "event_name: $event_name. lexeme: $lexeme. \n";
 
-		$child = Tree -> new();
-
-		$child -> meta
-		({
-			name	=> $event_name,
-			text	=> $lexeme,
-		});
- 		$self -> tree -> add_child($child);
+		$self -> _add_daughter($event_name, {text => $lexeme});
    }
 
 	my($message);
@@ -287,6 +329,24 @@ sub _process
 
 # ------------------------------------------------
 
+sub _push_node_stack
+{
+	my($self)	= @_;
+	my($stack)	= $self -> node_stack;
+
+	if ($#$stack >= 0)
+	{
+		my(@daughters) = $$stack[$#$stack] -> children;
+
+		push @$stack, $daughters[$#daughters];
+
+		$self -> node_stack($stack);
+	}
+
+} # End of _push_node_stack.
+
+# ------------------------------------------------
+
 sub report
 {
 	my($self)	= @_;
@@ -303,11 +363,10 @@ sub report
 
 		$meta = $node -> meta;
 
-		print sprintf($format, $$meta{name}, $$meta{text});
+		print sprintf($format, $node -> value, $$meta{text});
 	}
 
 	print 'Match count: ', $self -> match_count, '. Miss count: ', $self -> miss_count, ". \n";
-	print "\n";
 
 } # End of report.
 
@@ -345,7 +404,7 @@ sub _validate_event
 	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
 	$message           = "$message. Events: $event_count. Names: ";
 
-	print $message, join(', ', @event_name), "\n";
+	print $message, join(', ', @event_name), "\n" if ($self -> verbose);
 
 	return ($event_name, $span, $pos);
 
@@ -643,6 +702,16 @@ patterns				::= pattern_set
 							| question_mark extended_set colon pattern
 
 pattern_set				::= open_parenthesis pattern close_parenthesis
+							| open_bracket character_in_set close_bracket
+							| printable_char_set
+
+pattern					::=
+pattern					::= regexp
+							| text
+
+text					::= char*
+
+printable_char_set		::= printable_char+
 
 comment					::= hash pattern
 
@@ -661,12 +730,6 @@ minus_negative_letters	::= minus negative_letters
 
 negative_letters		::= a2z
 
-pattern					::=
-pattern					::= regexp
-							| text
-
-text					::= char*
-
 # L0 stuff, in alphabetical order.
 
 :lexeme					~ a2z					pause => before		event => a2z
@@ -676,8 +739,15 @@ a2z						~ [a-z]
 caret					~ '^'
 
 :lexeme					~ char					pause => before		event => char
-char					~ escaped_parenthesis
-							| non_parenthesis_char
+char					~ escaped_close_parenthesis
+							| non_close_parenthesis_char
+
+:lexeme					~ character_in_set		pause => before		event => character_in_set
+character_in_set		~ escaped_close_bracket
+							| non_close_bracket_char
+
+:lexeme					~ close_bracket			pause => before		event => close_bracket
+close_bracket			~ '])'
 
 :lexeme					~ close_parenthesis		pause => before		event => close_parenthesis
 close_parenthesis		~ ')'
@@ -685,7 +755,9 @@ close_parenthesis		~ ')'
 :lexeme					~ colon					pause => before		event => colon
 colon					~ ':'
 
-escaped_parenthesis		~ '\\)'
+escaped_close_bracket	~ '\\' ']'
+
+escaped_close_parenthesis	~ '\\)'
 
 :lexeme					~ hash					pause => before		event => hash
 hash					~ ':'
@@ -693,7 +765,14 @@ hash					~ ':'
 :lexeme					~ minus					pause => before		event => minus
 minus					~ '-'
 
-non_parenthesis_char	~ [^)]	# Use " in comment for UltraEdit.
+non_close_bracket_char	~ [^\]]
+
+non_close_parenthesis_char	~ [^)]
+
+printable_char			~ [[:print:]]
+
+:lexeme					~ open_bracket			pause => before		event => open_bracket
+open_bracket			~ '['
 
 :lexeme					~ open_parenthesis		pause => before		event => open_parenthesis
 open_parenthesis		~ '('
