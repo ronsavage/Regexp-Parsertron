@@ -7,7 +7,6 @@ use Regexp::Parsertron;
 
 # ---------------------
 
-my($parser)	= Regexp::Parsertron -> new;
 my(@test)	=
 (
 {
@@ -73,11 +72,12 @@ my(@test)	=
 {
 	count	=> 13,
 	re		=> '(A|B)',
-	target	=> 'z',
 },
 );
 
-my($number) = shift(@ARGV) || 0;
+my($verbose)	= shift(@ARGV) || 0;
+my($number)		= shift(@ARGV) || 0;
+my($parser)		= Regexp::Parsertron -> new(verbose => $verbose);
 
 my($result);
 
@@ -87,9 +87,9 @@ for my $test (@test)
 
 	next if ( ($number > 0) && ($$test{count} != $number) );
 
-	print "number: $number. Stringify: @{[qr/$$test{re}/]}. \n";
+	print "#: $number. Stringify: @{[qr/$$test{re}/]}. \n";
 
-	$result = $parser -> parse(count => $$test{count}, re => $$test{re}, target => $$test{target});
+	$result = $parser -> parse(count => $$test{count}, re => $$test{re});
 }
 
 $parser -> report;

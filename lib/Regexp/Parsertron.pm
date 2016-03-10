@@ -16,7 +16,7 @@ use Tree;
 
 use Try::Tiny;
 
-use Types::Standard qw/Any ArrayRef Bool Int Str/;
+use Types::Standard qw/Any Bool Int Str/;
 
 has bnf =>
 (
@@ -31,6 +31,14 @@ has count =>
 	default  => sub{return 0},
 	is       => 'rw',
 	isa      => Int,
+	required => 0,
+);
+
+has current_node =>
+(
+	default  => sub{return ''},
+	is       => 'rw',
+	isa      => Any,
 	required => 0,
 );
 
@@ -58,14 +66,6 @@ has miss_count =>
 	required => 0,
 );
 
-has node_stack =>
-(
-	default  => sub{return []},
-	is       => 'rw',
-	isa      => ArrayRef,
-	required => 0,
-);
-
 has re =>
 (
 	default  => sub {return ''},
@@ -82,17 +82,9 @@ has recce =>
 	required => 0,
 );
 
-has target =>
-(
-	default  => sub {return ''},
-	is       => 'rw',
-	isa      => Str,
-	required => 0,
-);
-
 has tree =>
 (
-	default  => sub{return Tree -> new('root')},
+	default  => sub{return ''},
 	is       => 'rw',
 	isa      => Any,
 	required => 0,
@@ -123,7 +115,6 @@ sub BUILD
 			source => \$self -> bnf
 		})
 	);
-	$self -> node_stack([$self -> tree -> root]);
 
 } # End of BUILD.
 
@@ -131,26 +122,37 @@ sub BUILD
 
 sub _add_daughter
 {
-	my($self, $event_name, $attributes) = @_;
-	my($stack)  = $self -> node_stack;
-	my($node)   = Tree -> new($event_name);
+	my($self, $event_name, $attributes)	= @_;
+	my($node)							= Tree -> new($event_name);
 
 	$node -> meta($attributes);
 
-	print "1: Size of stack: @{[$#$stack + 1]}. \n";
+	print "Adding $event_name to tree. \n";
 
-	$$stack[$#$stack] -> add_child($node);
-
-	if ($event_name eq 'open_parenthesis')
+	if ($self -> tree eq '')
 	{
-		$self -> _push_node_stack;
+		$self -> tree($node);
+		$self -> current_node($node);
+
+		print "Root: \n";
+
+		$self -> report;
 	}
-	elsif ($event_name eq 'close_parenthesis')
+	else
 	{
-		$self -> _pop_node_stack;
+		if ($event_name eq 'open_parenthesis')
+		{
+		}
+
+		$self -> current_node -> add_child($node);
+
+		if ($event_name eq 'close_parenthesis')
+		{
+			$self -> current_node($self -> current_node -> getParent) if (! $self -> current_node -> is_root);
+		}
 	}
 
-	print "2: Size of stack: @{[$#$stack + 1]}. \n";
+	$self -> report;
 
 } # End of _add_daughter.
 
@@ -188,7 +190,6 @@ sub parse
 
 	$self -> count($opts{count})	if (defined $opts{count});
 	$self -> re($opts{re})			if (defined $opts{re});
-	$self -> target($opts{target})	if (defined $opts{target});
 
 	$self -> recce
 	(
@@ -233,19 +234,6 @@ sub parse
 
 # ------------------------------------------------
 
-sub _pop_node_stack
-{
-	my($self)	= @_;
-	my($stack)	= $self -> node_stack;
-
-	pop @$stack;
-
-	$self -> node_stack($stack);
-
-} # End of _pop_node_stack.
-
-# ------------------------------------------------
-
 sub _process
 {
 	my($self)		= @_;
@@ -254,22 +242,8 @@ sub _process
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
 	my($re_count)	= $self -> count;
-	my($target)		= $self -> target;
 
-	print "$re_count: Parsing '$raw_re' => '$string_re'. Target: '$target'. ";
-
-	if ($target =~ qr/$raw_re/)
-	{
-		$self -> match_count($self -> match_count + 1);
-
-		print "Target matches. \n";
-	}
-	else
-	{
-		$self -> miss_count($self -> miss_count + 1);
-
-		print "Target does not match. \n";
-	}
+	print "$re_count: Parsing '$raw_re' => '$string_re'. ";
 
 	my($child);
 	my($event_name);
@@ -329,24 +303,6 @@ sub _process
 
 # ------------------------------------------------
 
-sub _push_node_stack
-{
-	my($self)	= @_;
-	my($stack)	= $self -> node_stack;
-
-	if ($#$stack >= 0)
-	{
-		my(@daughters) = $$stack[$#$stack] -> children;
-
-		push @$stack, $daughters[$#daughters];
-
-		$self -> node_stack($stack);
-	}
-
-} # End of _push_node_stack.
-
-# ------------------------------------------------
-
 sub report
 {
 	my($self)	= @_;
@@ -359,8 +315,6 @@ sub report
 
 	for my $node ($self -> tree -> traverse)
 	{
-		next if ($node -> is_root);
-
 		$meta = $node -> meta;
 
 		print sprintf($format, $node -> value, $$meta{text});
@@ -404,7 +358,7 @@ sub _validate_event
 	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
 	$message           = "$message. Events: $event_count. Names: ";
 
-	print $message, join(', ', @event_name), "\n" if ($self -> verbose);
+	print $message, join(', ', @event_name), "\n";# if ($self -> verbose);
 
 	return ($event_name, $span, $pos);
 
@@ -703,15 +657,11 @@ patterns				::= pattern_set
 
 pattern_set				::= open_parenthesis pattern close_parenthesis
 							| open_bracket character_in_set close_bracket
-							| printable_char_set
+							| character_sequence
 
-pattern					::=
 pattern					::= regexp
-							| text
 
-text					::= char*
-
-printable_char_set		::= printable_char+
+character_sequence		::= character*
 
 comment					::= hash pattern
 
@@ -738,9 +688,10 @@ a2z						~ [a-z]
 :lexeme					~ caret					pause => before		event => caret
 caret					~ '^'
 
-:lexeme					~ char					pause => before		event => char
-char					~ escaped_close_parenthesis
-							| non_close_parenthesis_char
+:lexeme					~ character				pause => before		event => character
+character				~ escaped_close_parenthesis
+							| escaped_open_parenthesis
+							| non_parenthesis_char
 
 :lexeme					~ character_in_set		pause => before		event => character_in_set
 character_in_set		~ escaped_close_bracket
@@ -759,6 +710,8 @@ escaped_close_bracket	~ '\\' ']'
 
 escaped_close_parenthesis	~ '\\)'
 
+escaped_open_parenthesis	~ '\\)'
+
 :lexeme					~ hash					pause => before		event => hash
 hash					~ ':'
 
@@ -767,9 +720,7 @@ minus					~ '-'
 
 non_close_bracket_char	~ [^\]]
 
-non_close_parenthesis_char	~ [^)]
-
-printable_char			~ [[:print:]]
+non_parenthesis_char	~ [^()]
 
 :lexeme					~ open_bracket			pause => before		event => open_bracket
 open_bracket			~ '['
