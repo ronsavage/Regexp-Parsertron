@@ -639,21 +639,32 @@ Australian copyright (c) 2016, Ron Savage.
 
 __DATA__
 @@ V 5.20
-:default				::= action => [values]
+:default					::= action => [values]
 
-lexeme default			= latm => 1
+lexeme default				= latm => 1
 
-:start					::= regexp
+:start						::= regexp
 
 # G1 stuff.
 
-regexp					::= open_parenthesis patterns close_parenthesis
+regexp						::= open_parenthesis global_extended_sequence pattern_sequence close_parenthesis
 
-patterns				::= pattern_set
-							| question_mark comment
-							| question_mark colon pattern
+global_extended_sequence	::= question_mark caret positive_letters negative_letter_set
+
+positive_letters			::=
+positive_letters			::= a2z
+
+negative_letter_set			::=
+negative_letter_set			::= minus_negative_letters
+
+minus_negative_letters		::= minus negative_letters
+
+negative_letters			::= a2z
+
+pattern_sequence		::= question_mark comment
 							| question_mark extended_set
-							| question_mark extended_set colon pattern
+							| question_mark extended_set colon character_sequence
+							| question_mark colon character_sequence
 
 pattern_set				::= open_parenthesis pattern close_parenthesis
 							| open_bracket character_in_set close_bracket
@@ -664,21 +675,6 @@ pattern					::= regexp
 character_sequence		::= character*
 
 comment					::= hash pattern
-
-extended_set			::= optional_caret positive_letters negative_letter_set
-
-optional_caret			::=
-optional_caret			::= caret
-
-positive_letters		::=
-positive_letters		::= a2z
-
-negative_letter_set		::=
-negative_letter_set		::= minus_negative_letters
-
-minus_negative_letters	::= minus negative_letters
-
-negative_letters		::= a2z
 
 # L0 stuff, in alphabetical order.
 

@@ -93,3 +93,11 @@ for my $test (@test)
 }
 
 $parser -> report;
+
+my($re) = qr/A|B/xi;
+
+print "$re\n";
+
+$re = qr/(?s-i:more.*than).*million/i;
+
+print "$re\n";
