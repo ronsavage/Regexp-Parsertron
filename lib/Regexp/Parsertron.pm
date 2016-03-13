@@ -133,10 +133,6 @@ sub _add_daughter
 	{
 		$self -> tree($node);
 		$self -> current_node($node);
-
-		print "Root: \n";
-
-		$self -> report;
 	}
 	else
 	{
@@ -144,7 +140,7 @@ sub _add_daughter
 		{
 		}
 
-		$self -> current_node -> add_child($node);
+		$self -> tree -> add_child($node);
 
 		if ($event_name eq 'close_parenthesis')
 		{
@@ -243,7 +239,7 @@ sub _process
 	my($length)		= length($string_re);
 	my($re_count)	= $self -> count;
 
-	print "$re_count: Parsing '$raw_re' => '$string_re'. ";
+	print "$re_count: Parsing '$raw_re' => '$string_re'. \n";
 
 	my($child);
 	my($event_name);
@@ -649,21 +645,22 @@ lexeme default				= latm => 1
 
 regexp						::= open_parenthesis pattern_sequence close_parenthesis
 
-pattern_sequence			::= question_mark comment
-								| question_mark flag_sequence optional_pattern_set
-								| question_mark optional_caret positive_flags optional_pattern_set
-								| question_mark vertical_bar pattern_set
-								| question_mark equals pattern_set
-								| question_mark exclamation_mark pattern_set
-								| question_mark less_equals pattern_set
-								| escaped_K
-								| question_mark less_exclamation_mark pattern_set
-								| question_mark named_capture_group pattern_set
-								| named_backreference
-								| question_mark open_brace code close_brace
-								| question_mark question_mark open_brace code close_brace
-								| question_mark positive_integer
-								| pattern_set
+# TODO: I may be able to chop the ranks later.
+
+pattern_sequence			::= question_mark comment												rank => 1
+								| question_mark flag_sequence optional_pattern_set					rank => 2
+								| question_mark optional_caret positive_flags optional_pattern_set	rank => 3
+								| question_mark vertical_bar pattern_set							rank => 4
+								| question_mark equals pattern_set									rank => 5
+								| question_mark exclamation_mark pattern_set						rank => 6
+								| question_mark less_equals pattern_set								rank => 7
+								| escaped_K															rank => 7
+								| question_mark less_exclamation_mark pattern_set					rank => 8
+								| question_mark named_capture_group pattern_set						rank => 9
+								| named_backreference												rank => 10
+								| question_mark open_brace code close_brace							rank => 11
+								| question_mark question_mark open_brace code close_brace			rank => 12
+								| question_mark parameter_number									rank => 13
 
 comment						::= hash non_close_parenthesis_set
 
@@ -680,6 +677,9 @@ negative_flag_set			::= minus negative_flags
 negative_flags				::= a2z
 
 optional_pattern_set		::= colon pattern_set
+
+optional_caret				::=
+optional_caret				::= caret
 
 named_capture_group			::= single_quote capture_name single_quote
 								| less_than capture_name greater_than
@@ -700,7 +700,7 @@ pattern_set					::= open_parenthesis pattern close_parenthesis
 								| open_bracket character_in_set close_bracket
 								| character_sequence
 
-pattern						::= regexp
+pattern						::= character_set
 
 character_in_set			::= escaped_close_bracket
 								| non_close_bracket
@@ -709,10 +709,19 @@ character_sequence			::= escaped_close_parenthesis
 								| escaped_open_parenthesis
 								| character_set
 
+parameter_number			::= positive_integer
+								| plus positive_integer
+								| minus positive_integer
+								| R
+								| zero
+
 # L0 stuff, in alphabetical order.
 
 :lexeme						~ a2z					pause => before		event => a2z
 a2z							~ [a-z]
+
+:lexeme						~ caret					pause => before		event => caret
+caret						~ '^'
 
 :lexeme						~ character_set			pause => before		event => character_set
 character_set				~ [^()]*
@@ -789,12 +798,14 @@ open_bracket				~ '['
 :lexeme						~ open_parenthesis		pause => before		event => open_parenthesis
 open_parenthesis			~ '('
 
-:lexeme						~ optional_caret		pause => before		event => optional_caret
-optional_caret				~
-optional_caret				~ '^'
+:lexeme						~ plus					pause => before		event => plus
+plus						~ '-'
 
 :lexeme						~ question_mark			pause => before		event => question_mark
 question_mark				~ '?'
+
+:lexeme						~ R						pause => before		event => R
+R							~ '-'
 
 :lexeme						~ single_quote			pause => before		event => single_quote
 single_quote				~ [\'] # The '\' is for UltraEdit's syntiax hiliter.
@@ -804,3 +815,6 @@ vertical_bar				~ '|'
 
 :lexeme						~ word					pause => before		event => word
 word						~ [\w]+
+
+:lexeme						~ zero					pause => before		event => zero
+zero						~ '-'

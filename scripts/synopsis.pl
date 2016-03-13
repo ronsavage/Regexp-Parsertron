@@ -51,26 +51,11 @@ my(@test)	=
 },
 {
 	count	=> 9,
-	re		=> '(?:a)z',
-	target	=> 'z',
-},
-{
-	count	=> 10,
-	re		=> '(?:a-i)z',
-	target	=> 'z',
-},
-{
-	count	=> 11,
-	re		=> '(?^:a)z',
-	target	=> 'z',
-},
-{
-	count	=> 12,
 	re		=> '[yY][eE][sS]',
 	target	=> 'z',
 },
 {
-	count	=> 13,
+	count	=> 10,
 	re		=> '(A|B)',
 },
 );
@@ -86,21 +71,5 @@ for my $test (@test)
 
 	next if ( ($number > 0) && ($$test{count} != $number) );
 
-	print "#: $number. Stringify: @{[qr/$$test{re}/]}. \n";
-
-#	$result = $parser -> parse(count => $$test{count}, re => $$test{re});
+	$result = $parser -> parse(count => $$test{count}, re => $$test{re});
 }
-
-$parser -> report;
-
-my($re) = qr/A|B/xi;
-
-print "$re\n";
-
-$re = qr/(?s-i:more.*than).*million/;
-
-print "$re\n";
-
-$re = qr//;
-
-print "$re\n";
