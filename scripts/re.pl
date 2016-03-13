@@ -24,3 +24,9 @@ if ($s =~ $re) {print ''}else{print ''};
 
 print "$re\n";
 
+$re = qr/my.STRING/is;
+
+if ($s =~ $re) {print ''}else{print ''};
+
+print "$re\n";
+

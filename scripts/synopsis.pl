@@ -3,64 +3,49 @@
 use strict;
 use warnings;
 
+use File::Slurper 'read_lines';
+
 use Regexp::Parsertron;
 
 # ---------------------
 
-my(@test)	=
-(
-{
-	count	=> 1,
-	re		=> '(?#Comment)',
-},
-{
-	count	=> 2,
-	re		=> '(?)',
-},
-{
-	count	=> 3,
-	re		=> '(?a)',
-},
-{
-	count	=> 4,
-	re		=> '(?a-i)',
-},
-{
-	count	=> 5,
-	re		=> '(?^a)',
-},
-{
-	count	=> 6,
-	re		=> '(?a:)',
-},
-{
-	count	=> 7,
-	re		=> '(?a:b)',
-},
-{
-	count	=> 8,
-	re		=> '(?:)',
-},
-{
-	count	=> 9,
-	re		=> '[yY][eE][sS]',
-},
-{
-	count	=> 10,
-	re		=> '(A|B)',
-},
-);
+my($input_file_name)	= 'perl-5.21.11/re_tests';
+my(@lines)				= grep{! /#/ && ! /^\s*$/ && ! /^__END__/} read_lines($input_file_name);
 
-my($number)		= shift(@ARGV) || 0;
-my($parser)		= Regexp::Parsertron -> new(verbose => 1);
+my(@fields);
+my(@re);
+my(%seen);
+
+for my $line (@lines)
+{
+	@fields		= split(/\t/, $line);
+	$fields[0]	=~ s/^\s+//;
+
+	next if ($fields[2] =~ /y/);
+	next if ($seen{$fields[0]});
+
+	$seen{$fields[0]} = 1;
+
+	push @re, $fields[0];
+}
+
+my($count)	= 0;
+my($number)	= shift(@ARGV) || 0;
+my($parser)	= Regexp::Parsertron -> new(verbose => 1);
 
 my($result);
 
-for my $test (@test)
+for my $re (@re)
 {
+	$count++;
+
 	# Use this trick to run the tests one-at-a-time. See scripts/test.sh.
 
-	next if ( ($number > 0) && ($$test{count} != $number) );
+	next if ( ($number > 0) && ($count != $number) );
 
-	$result = $parser -> parse(re => $$test{re});
+	$result = $parser -> parse(re => $re);
+
+	# Reset tree for next test.
+
+	$parser -> tree('');
 }

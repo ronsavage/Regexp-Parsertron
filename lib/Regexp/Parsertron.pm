@@ -1,8 +1,9 @@
 package Regexp::Parsertron;
 
+use re 'eval';
 use strict;
 use warnings;
-use warnings qw(FATAL utf8); # Fatalize encoding glitches.
+#use warnings qw(FATAL utf8); # Fatalize encoding glitches.
 
 use Data::Section::Simple 'get_data_section';
 
@@ -103,7 +104,7 @@ sub _add_daughter
 
 	$node -> meta($attributes);
 
-	print "Adding $event_name to tree. \n";
+	print "Adding $event_name to tree. \n" if ($self -> verbose > 1);
 
 	if ($self -> tree eq '')
 	{
@@ -123,8 +124,6 @@ sub _add_daughter
 			$self -> current_node($self -> current_node -> getParent) if (! $self -> current_node -> is_root);
 		}
 	}
-
-	$self -> report;
 
 } # End of _add_daughter.
 
@@ -182,6 +181,7 @@ sub parse
 	{
 		if (defined (my $value = $self -> _process) )
 		{
+			$self -> report if ($self -> verbose > 1);
 		}
 		else
 		{
@@ -210,10 +210,13 @@ sub _process
 	my($self)		= @_;
 	my($raw_re)		= $self -> re;
 	my($string_re)	= $self -> _string2re($raw_re);
-	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
-	my($length)		= length($string_re);
 
-	print "Parsing '$raw_re' => '$string_re'. \n";
+	return undef if ($string_re eq '');
+
+	my($ref_re)	= \"$string_re"; # Use " in comment for UltraEdit.
+	my($length)	= length($string_re);
+
+	print "Parsing '$raw_re' => '$string_re'. \n" if ($self -> verbose > 0);
 
 	my($child);
 	my($event_name);
@@ -243,7 +246,7 @@ sub _process
 
 		die "lexeme_read($event_name) rejected lexeme |$lexeme|\n" if (! defined $pos);
 
-		print "event_name: $event_name. lexeme: $lexeme. \n";
+		print "event_name: $event_name. lexeme: $lexeme. \n" if ($self -> verbose > 1);
 
 		$self -> _add_daughter($event_name, {text => $lexeme});
    }
@@ -298,7 +301,18 @@ sub _string2re
 {
 	my($self, $candidate) = @_;
 
-	return does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
+	my($result);
+
+	try
+	{
+		$result = does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
+	}
+	catch
+	{
+		$result = '';
+	};
+
+	return $result;
 
 } # End of _string2re.
 
@@ -326,7 +340,7 @@ sub _validate_event
 	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
 	$message           = "$message. Events: $event_count. Names: ";
 
-	print $message, join(', ', @event_name), "\n";# if ($self -> verbose);
+	print $message, join(', ', @event_name), "\n" if ($self -> verbose > 1);
 
 	return ($event_name, $span, $pos);
 
