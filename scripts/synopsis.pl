@@ -75,9 +75,8 @@ my(@test)	=
 },
 );
 
-my($verbose)	= shift(@ARGV) || 0;
 my($number)		= shift(@ARGV) || 0;
-my($parser)		= Regexp::Parsertron -> new(verbose => $verbose);
+my($parser)		= Regexp::Parsertron -> new(verbose => 1);
 
 my($result);
 
@@ -89,7 +88,7 @@ for my $test (@test)
 
 	print "#: $number. Stringify: @{[qr/$$test{re}/]}. \n";
 
-	$result = $parser -> parse(count => $$test{count}, re => $$test{re});
+#	$result = $parser -> parse(count => $$test{count}, re => $$test{re});
 }
 
 $parser -> report;
@@ -98,6 +97,10 @@ my($re) = qr/A|B/xi;
 
 print "$re\n";
 
-$re = qr/(?s-i:more.*than).*million/i;
+$re = qr/(?s-i:more.*than).*million/;
+
+print "$re\n";
+
+$re = qr//;
 
 print "$re\n";
