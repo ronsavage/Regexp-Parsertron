@@ -12,47 +12,38 @@ my(@test)	=
 {
 	count	=> 1,
 	re		=> '(?#Comment)',
-	target	=> 'z',
 },
 {
 	count	=> 2,
 	re		=> '(?)',
-	target	=> 'z',
 },
 {
 	count	=> 3,
 	re		=> '(?a)',
-	target	=> 'z',
 },
 {
 	count	=> 4,
 	re		=> '(?a-i)',
-	target	=> 'z',
 },
 {
 	count	=> 5,
 	re		=> '(?^a)',
-	target	=> 'z',
 },
 {
 	count	=> 6,
 	re		=> '(?a:)',
-	target	=> 'z',
 },
 {
 	count	=> 7,
 	re		=> '(?a:b)',
-	target	=> 'z',
 },
 {
 	count	=> 8,
 	re		=> '(?:)',
-	target	=> 'z',
 },
 {
 	count	=> 9,
 	re		=> '[yY][eE][sS]',
-	target	=> 'z',
 },
 {
 	count	=> 10,
@@ -71,5 +62,5 @@ for my $test (@test)
 
 	next if ( ($number > 0) && ($$test{count} != $number) );
 
-	$result = $parser -> parse(count => $$test{count}, re => $$test{re});
+	$result = $parser -> parse(re => $$test{re});
 }

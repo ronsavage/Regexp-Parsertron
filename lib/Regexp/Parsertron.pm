@@ -26,14 +26,6 @@ has bnf =>
 	required => 0,
 );
 
-has count =>
-(
-	default  => sub{return 0},
-	is       => 'rw',
-	isa      => Int,
-	required => 0,
-);
-
 has current_node =>
 (
 	default  => sub{return ''},
@@ -47,22 +39,6 @@ has grammar =>
 	default  => sub {return ''},
 	is       => 'rw',
 	isa      => Any,
-	required => 0,
-);
-
-has match_count =>
-(
-	default  => sub{return 0},
-	is       => 'rw',
-	isa      => Int,
-	required => 0,
-);
-
-has miss_count =>
-(
-	default  => sub{return 0},
-	is       => 'rw',
-	isa      => Int,
 	required => 0,
 );
 
@@ -184,8 +160,7 @@ sub parse
 
 	# Emulate parts of new(), which makes things a bit earier for the caller.
 
-	$self -> count($opts{count})	if (defined $opts{count});
-	$self -> re($opts{re})			if (defined $opts{re});
+	$self -> re($opts{re}) if (defined $opts{re});
 
 	$self -> recce
 	(
@@ -237,9 +212,8 @@ sub _process
 	my($string_re)	= $self -> _string2re($raw_re);
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
-	my($re_count)	= $self -> count;
 
-	print "$re_count: Parsing '$raw_re' => '$string_re'. \n";
+	print "Parsing '$raw_re' => '$string_re'. \n";
 
 	my($child);
 	my($event_name);
@@ -315,8 +289,6 @@ sub report
 
 		print sprintf($format, $node -> value, $$meta{text});
 	}
-
-	print 'Match count: ', $self -> match_count, '. Miss count: ', $self -> miss_count, ". \n";
 
 } # End of report.
 
