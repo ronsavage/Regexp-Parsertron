@@ -1,0 +1,500 @@
+Test count: 1. Parsing 'abc' => (qr/.../) => '(?^u:abc)'. 
+Test count: 2. Parsing 'ab+bc' => (qr/.../) => '(?^u:ab+bc)'. 
+Test count: 3. Parsing 'ab{1,}bc' => (qr/.../) => '(?^u:ab{1,}bc)'. 
+Test count: 4. Parsing 'ab{4,5}bc' => (qr/.../) => '(?^u:ab{4,5}bc)'. 
+Test count: 5. Parsing 'ab?bc' => (qr/.../) => '(?^u:ab?bc)'. 
+Test count: 6. Parsing '^abc$' => (qr/.../) => '(?^u:^abc$)'. 
+Test count: 7. Parsing 'abc$' => (qr/.../) => '(?^u:abc$)'. 
+Test count: 8. Parsing 'a.*c' => (qr/.../) => '(?^u:a.*c)'. 
+Test count: 9. Parsing 'a\N*c' => (qr/.../) => '(?^u:a\N*c)'. 
+Test count: 10. Parsing '/a\N *c/x' => (qr/.../) => '(?^u:/a\N *c/x)'. 
+Test count: 11. Parsing 'a[bc]d' => (qr/.../) => '(?^u:a[bc]d)'. 
+Test count: 12. Parsing '.[b].' => (qr/.../) => '(?^u:.[b].)'. 
+Test count: 13. Parsing 'a[b-d]e' => (qr/.../) => '(?^u:a[b-d]e)'. 
+	Expected error: Test count: 14. Parsing 'a[b-a]' => (qr/.../) => 
+1 Error str: 14: Perl cannot convert a[b-a] into qr/.../ form
+	Expected error: Test count: 15. Parsing 'a[]b' => (qr/.../) => 
+1 Error str: 15: Perl cannot convert a[]b into qr/.../ form
+	Expected error: Test count: 16. Parsing 'a[' => (qr/.../) => 
+1 Error str: 16: Perl cannot convert a[ into qr/.../ form
+Test count: 17. Parsing 'a[^bc]d' => (qr/.../) => '(?^u:a[^bc]d)'. 
+Test count: 18. Parsing 'a[^-b]c' => (qr/.../) => '(?^u:a[^-b]c)'. 
+Test count: 19. Parsing 'a[^]b]c' => (qr/.../) => '(?^u:a[^]b]c)'. 
+Test count: 20. Parsing '\by\b' => (qr/.../) => '(?^u:\by\b)'. 
+Test count: 21. Parsing '\Ba\B' => (qr/.../) => '(?^u:\Ba\B)'. 
+Test count: 22. Parsing '\w' => (qr/.../) => '(?^u:\w)'. 
+Test count: 23. Parsing '\W' => (qr/.../) => '(?^u:\W)'. 
+Test count: 24. Parsing 'a\sb' => (qr/.../) => '(?^u:a\sb)'. 
+Test count: 25. Parsing 'a\Sb' => (qr/.../) => '(?^u:a\Sb)'. 
+Test count: 26. Parsing '\d' => (qr/.../) => '(?^u:\d)'. 
+Test count: 27. Parsing '\D' => (qr/.../) => '(?^u:\D)'. 
+Test count: 28. Parsing '[\w]' => (qr/.../) => '(?^u:[\w])'. 
+Test count: 29. Parsing '[\W]' => (qr/.../) => '(?^u:[\W])'. 
+Test count: 30. Parsing 'a[\s]b' => (qr/.../) => '(?^u:a[\s]b)'. 
+Test count: 31. Parsing 'a[\S]b' => (qr/.../) => '(?^u:a[\S]b)'. 
+Test count: 32. Parsing '[\d]' => (qr/.../) => '(?^u:[\d])'. 
+Test count: 33. Parsing '[\D]' => (qr/.../) => '(?^u:[\D])'. 
+	Expected error: Test count: 34. Parsing '*a' => (qr/.../) => 
+1 Error str: 34: Perl cannot convert *a into qr/.../ form
+	Expected error: Test count: 35. Parsing '(|*)b' => (qr/.../) => 
+1 Error str: 35: Perl cannot convert (|*)b into qr/.../ form
+	Expected error: Test count: 36. Parsing '(*)b' => (qr/.../) => 
+1 Error str: 36: Perl cannot convert (*)b into qr/.../ form
+Test count: 37. Parsing '$b' => (qr/.../) => '(?^u:$b)'. 
+	Expected error: Test count: 38. Parsing 'a\' => (qr/.../) => 
+1 Error str: 38: Perl cannot convert a\ into qr/.../ form
+	Expected error: Test count: 39. Parsing 'abc)' => (qr/.../) => 
+1 Error str: 39: Perl cannot convert abc) into qr/.../ form
+	Expected error: Test count: 40. Parsing '(abc' => (qr/.../) => 
+1 Error str: 40: Perl cannot convert (abc into qr/.../ form
+Test count: 41. Parsing '((a))' => (qr/.../) => '(?^u:((a)))'. 
+	Expected error: Test count: 42. Parsing 'a**' => (qr/.../) => 
+1 Error str: 42: Perl cannot convert a** into qr/.../ form
+	Expected error: Test count: 43. Parsing ')(' => (qr/.../) => 
+1 Error str: 43: Perl cannot convert )( into qr/.../ form
+Test count: 44. Parsing '^(ab|cd)e' => (qr/.../) => '(?^u:^(ab|cd)e)'. 
+Test count: 45. Parsing 'a[bcd]+dcdcde' => (qr/.../) => '(?^u:a[bcd]+dcdcde)'. 
+Test count: 46. Parsing '(bc+d$|ef*g.|h?i(j|k))' => (qr/.../) => '(?^u:(bc+d$|ef*g.|h?i(j|k)))'. 
+Test count: 47. Parsing '((((((((((a))))))))))${bang}' => (qr/.../) => '(?^u:((((((((((a))))))))))${bang})'. 
+Test count: 48. Parsing 'multiple words of text' => (qr/.../) => '(?^u:multiple words of text)'. 
+Test count: 49. Parsing '[k]' => (qr/.../) => '(?^u:[k])'. 
+	Expected error: Test count: 50. Parsing '\1' => (qr/.../) => 
+1 Error str: 50: Perl cannot convert \1 into qr/.../ form
+	Expected error: Test count: 51. Parsing '\2' => (qr/.../) => 
+1 Error str: 51: Perl cannot convert \2 into qr/.../ form
+	Expected error: Test count: 52. Parsing '\g1' => (qr/.../) => 
+1 Error str: 52: Perl cannot convert \g1 into qr/.../ form
+	Expected error: Test count: 53. Parsing '\g-1' => (qr/.../) => 
+1 Error str: 53: Perl cannot convert \g-1 into qr/.../ form
+	Expected error: Test count: 54. Parsing '\g{1}' => (qr/.../) => 
+1 Error str: 54: Perl cannot convert \g{1} into qr/.../ form
+	Expected error: Test count: 55. Parsing '\g{-1}' => (qr/.../) => 
+1 Error str: 55: Perl cannot convert \g{-1} into qr/.../ form
+	Expected error: Test count: 56. Parsing '\g0' => (qr/.../) => 
+1 Error str: 56: Perl cannot convert \g0 into qr/.../ form
+	Expected error: Test count: 57. Parsing '\g-0' => (qr/.../) => 
+1 Error str: 57: Perl cannot convert \g-0 into qr/.../ form
+	Expected error: Test count: 58. Parsing '\g{0}' => (qr/.../) => 
+1 Error str: 58: Perl cannot convert \g{0} into qr/.../ form
+	Expected error: Test count: 59. Parsing '\g{-0}' => (qr/.../) => 
+1 Error str: 59: Perl cannot convert \g{-0} into qr/.../ form
+Test count: 60. Parsing '(a)|\1' => (qr/.../) => '(?^u:(a)|\1)'. 
+Test count: 61. Parsing '(?:(b)?a)\1' => (qr/.../) => '(?^u:(?:(b)?a)\1)'. 
+	Expected error: Test count: 62. Parsing '(a)|\2' => (qr/.../) => 
+1 Error str: 62: Perl cannot convert (a)|\2 into qr/.../ form
+Test count: 63. Parsing '((\3|b)\2(a)x)+' => (qr/.../) => '(?^u:((\3|b)\2(a)x)+)'. 
+Test count: 64. Parsing '^((.)?a\2)+$' => (qr/.../) => '(?^u:^((.)?a\2)+$)'. 
+Test count: 65. Parsing ''abc'i' => (qr/.../) => '(?^u:'abc'i)'. 
+Test count: 66. Parsing ''ab+bc'i' => (qr/.../) => '(?^u:'ab+bc'i)'. 
+Test count: 67. Parsing ''ab{1,}bc'i' => (qr/.../) => '(?^u:'ab{1,}bc'i)'. 
+Test count: 68. Parsing ''ab{4,5}?bc'i' => (qr/.../) => '(?^u:'ab{4,5}?bc'i)'. 
+Test count: 69. Parsing ''ab??bc'i' => (qr/.../) => '(?^u:'ab??bc'i)'. 
+Test count: 70. Parsing ''^abc$'i' => (qr/.../) => '(?^u:'^abc$'i)'. 
+Test count: 71. Parsing ''a.*c'i' => (qr/.../) => '(?^u:'a.*c'i)'. 
+Test count: 72. Parsing ''a[bc]d'i' => (qr/.../) => '(?^u:'a[bc]d'i)'. 
+Test count: 73. Parsing ''a[b-d]e'i' => (qr/.../) => '(?^u:'a[b-d]e'i)'. 
+	Expected error: Test count: 74. Parsing ''a[b-a]'i' => (qr/.../) => 
+1 Error str: 74: Perl cannot convert 'a[b-a]'i into qr/.../ form
+	Expected error: Test count: 75. Parsing ''a[]b'i' => (qr/.../) => 
+1 Error str: 75: Perl cannot convert 'a[]b'i into qr/.../ form
+	Expected error: Test count: 76. Parsing ''a['i' => (qr/.../) => 
+1 Error str: 76: Perl cannot convert 'a['i into qr/.../ form
+Test count: 77. Parsing ''a[^bc]d'i' => (qr/.../) => '(?^u:'a[^bc]d'i)'. 
+Test count: 78. Parsing ''a[^-b]c'i' => (qr/.../) => '(?^u:'a[^-b]c'i)'. 
+Test count: 79. Parsing ''a[^]b]c'i' => (qr/.../) => '(?^u:'a[^]b]c'i)'. 
+Test count: 80. Parsing ''*a'i' => (qr/.../) => '(?^u:'*a'i)'. 
+	Expected error: Test count: 81. Parsing ''(|*)b'i' => (qr/.../) => 
+1 Error str: 81: Perl cannot convert '(|*)b'i into qr/.../ form
+	Expected error: Test count: 82. Parsing ''(*)b'i' => (qr/.../) => 
+1 Error str: 82: Perl cannot convert '(*)b'i into qr/.../ form
+Test count: 83. Parsing ''$b'i' => (qr/.../) => '(?^u:'$b'i)'. 
+Test count: 84. Parsing ''a\'i' => (qr/.../) => '(?^u:'a\'i)'. 
+	Expected error: Test count: 85. Parsing ''abc)'i' => (qr/.../) => 
+1 Error str: 85: Perl cannot convert 'abc)'i into qr/.../ form
+	Expected error: Test count: 86. Parsing ''(abc'i' => (qr/.../) => 
+1 Error str: 86: Perl cannot convert '(abc'i into qr/.../ form
+	Expected error: Test count: 87. Parsing ''a**'i' => (qr/.../) => 
+1 Error str: 87: Perl cannot convert 'a**'i into qr/.../ form
+	Expected error: Test count: 88. Parsing '')('i' => (qr/.../) => 
+1 Error str: 88: Perl cannot convert ')('i into qr/.../ form
+Test count: 89. Parsing ''^(ab|cd)e'i' => (qr/.../) => '(?^u:'^(ab|cd)e'i)'. 
+Test count: 90. Parsing ''a[bcd]+dcdcde'i' => (qr/.../) => '(?^u:'a[bcd]+dcdcde'i)'. 
+Test count: 91. Parsing ''(bc+d$|ef*g.|h?i(j|k))'i' => (qr/.../) => '(?^u:'(bc+d$|ef*g.|h?i(j|k))'i)'. 
+Test count: 92. Parsing ''((((((((((a))))))))))${bang}'i' => (qr/.../) => '(?^u:'((((((((((a))))))))))${bang}'i)'. 
+Test count: 93. Parsing ''multiple words of text'i' => (qr/.../) => '(?^u:'multiple words of text'i)'. 
+Test count: 94. Parsing ''[k]'i' => (qr/.../) => '(?^u:'[k]'i)'. 
+	Expected error: Test count: 95. Parsing ':(?:' => (qr/.../) => 
+1 Error str: 95: Perl cannot convert :(?: into qr/.../ form
+Test count: 96. Parsing '^(a\1?){4}$' => (qr/.../) => '(?^u:^(a\1?){4}$)'. 
+Test count: 97. Parsing '^(a(?(1)\1)){4}$' => (qr/.../) => '(?^u:^(a(?(1)\1)){4}$)'. 
+Test count: 98. Parsing '(?<=a)b' => (qr/.../) => '(?^u:(?<=a)b)'. 
+Test count: 99. Parsing '(?<!c)b' => (qr/.../) => '(?^u:(?<!c)b)'. 
+	Expected error: Test count: 100. Parsing '(?<%)b' => (qr/.../) => 
+1 Error str: 100: Perl cannot convert (?<%)b into qr/.../ form
+Test count: 101. Parsing '(?:(?i)a)b' => (qr/.../) => '(?^u:(?:(?i)a)b)'. 
+Test count: 102. Parsing '((?i)a)b' => (qr/.../) => '(?^u:((?i)a)b)'. 
+Test count: 103. Parsing '(?i:a)b' => (qr/.../) => '(?^u:(?i:a)b)'. 
+Test count: 104. Parsing '((?i:a))b' => (qr/.../) => '(?^u:((?i:a))b)'. 
+Test count: 105. Parsing ''(?:(?-i)a)b'i' => (qr/.../) => '(?^u:'(?:(?-i)a)b'i)'. 
+Test count: 106. Parsing ''((?-i)a)b'i' => (qr/.../) => '(?^u:'((?-i)a)b'i)'. 
+Test count: 107. Parsing ''(?-i:a)b'i' => (qr/.../) => '(?^u:'(?-i:a)b'i)'. 
+Test count: 108. Parsing ''((?-i:a))b'i' => (qr/.../) => '(?^u:'((?-i:a))b'i)'. 
+Test count: 109. Parsing ''((?-i:a.))b'i' => (qr/.../) => '(?^u:'((?-i:a.))b'i)'. 
+Test count: 110. Parsing ''((?-i:a\N))b'i' => (qr/.../) => '(?^u:'((?-i:a\N))b'i)'. 
+Test count: 111. Parsing ''((?s-i:a\N))b'i' => (qr/.../) => '(?^u:'((?s-i:a\N))b'i)'. 
+Test count: 112. Parsing ''((?s-i:a.))b'i' => (qr/.../) => '(?^u:'((?s-i:a.))b'i)'. 
+	Expected error: Test count: 113. Parsing 'a(?{f()+' => (qr/.../) => 
+1 Error str: 113: Perl cannot convert a(?{f()+ into qr/.../ form
+	Expected error: Test count: 114. Parsing 'a(?{{1}+' => (qr/.../) => 
+1 Error str: 114: Perl cannot convert a(?{{1}+ into qr/.../ form
+	Expected error: Test count: 115. Parsing '(?{(^{})' => (qr/.../) => 
+1 Error str: 115: Perl cannot convert (?{(^{}) into qr/.../ form
+	Expected error: Test count: 116. Parsing 'a(?{}})b' => (qr/.../) => 
+1 Error str: 116: Perl cannot convert a(?{}})b into qr/.../ form
+	Expected error: Test count: 117. Parsing 'a(?{"{"}})b' => (qr/.../) => 
+1 Error str: 117: Perl cannot convert a(?{"{"}})b into qr/.../ form
+Test count: 118. Parsing '(?<![cd])b' => (qr/.../) => '(?^u:(?<![cd])b)'. 
+Test count: 119. Parsing '(?<!(c|d))b' => (qr/.../) => '(?^u:(?<!(c|d))b)'. 
+Test count: 120. Parsing '^(?:a?b?)*$' => (qr/.../) => '(?^u:^(?:a?b?)*$)'. 
+Test count: 121. Parsing '^b' => (qr/.../) => '(?^u:^b)'. 
+Test count: 122. Parsing '()^b' => (qr/.../) => '(?^u:()^b)'. 
+Test count: 123. Parsing '(?(1)a|b)' => (qr/.../) => '(?^u:(?(1)a|b))'. 
+Test count: 124. Parsing '(x)?(?(1)a|b)' => (qr/.../) => '(?^u:(x)?(?(1)a|b))'. 
+Test count: 125. Parsing '()(?(1)b|a)' => (qr/.../) => '(?^u:()(?(1)b|a))'. 
+Test count: 126. Parsing '^(\()?blah(?(1)(\)))$' => (qr/.../) => '(?^u:^(\()?blah(?(1)(\)))$)'. 
+Test count: 127. Parsing '^(\(+)?blah(?(1)(\)))$' => (qr/.../) => '(?^u:^(\(+)?blah(?(1)(\)))$)'. 
+	Expected error: Test count: 128. Parsing '(?(1?)a|b)' => (qr/.../) => 
+1 Error str: 128: Perl cannot convert (?(1?)a|b) into qr/.../ form
+	Expected error: Test count: 129. Parsing '(?(1)a|b|c)' => (qr/.../) => 
+1 Error str: 129: Perl cannot convert (?(1)a|b|c) into qr/.../ form
+Test count: 130. Parsing '(?(?{0})a|b)' => (qr/.../) => '(?^u:(?(?{0})a|b))'. 
+Test count: 131. Parsing '(?(?{1})b|a)' => (qr/.../) => '(?^u:(?(?{1})b|a))'. 
+Test count: 132. Parsing '(?(?!a)a|b)' => (qr/.../) => '(?^u:(?(?!a)a|b))'. 
+Test count: 133. Parsing '(?(?=a)b|a)' => (qr/.../) => '(?^u:(?(?=a)b|a))'. 
+Test count: 134. Parsing '(?(?!\x{100})\x{100}|b)' => (qr/.../) => '(?^u:(?(?!\x{100})\x{100}|b))'. 
+Test count: 135. Parsing '(?(?=\x{100})b|\x{100})' => (qr/.../) => '(?^u:(?(?=\x{100})b|\x{100}))'. 
+Test count: 136. Parsing '^(?=(a+?))\1ab' => (qr/.../) => '(?^u:^(?=(a+?))\1ab)'. 
+Test count: 137. Parsing '([\w:]+::)?(\w+)$' => (qr/.../) => '(?^u:([\w:]+::)?(\w+)$)'. 
+Test count: 138. Parsing '(>a+)ab' => (qr/.../) => '(?^u:(>a+)ab)'. 
+	Expected error: Test count: 139. Parsing '[a[:xyz:' => (qr/.../) => 
+1 Error str: 139: Perl cannot convert [a[:xyz: into qr/.../ form
+	Expected error: Test count: 140. Parsing '[a[:xyz:]' => (qr/.../) => 
+1 Error str: 140: Perl cannot convert [a[:xyz:] into qr/.../ form
+	Expected error: Test count: 141. Parsing '([a[:xyz:]b]+)' => (qr/.../) => 
+1 Error str: 141: Perl cannot convert ([a[:xyz:]b]+) into qr/.../ form
+	Expected error: Test count: 142. Parsing '[[:foo:]]' => (qr/.../) => 
+1 Error str: 142: Perl cannot convert [[:foo:]] into qr/.../ form
+	Expected error: Test count: 143. Parsing '[[:^foo:]]' => (qr/.../) => 
+1 Error str: 143: Perl cannot convert [[:^foo:]] into qr/.../ form
+	Expected error: Test count: 144. Parsing '(?<=x+)y' => (qr/.../) => 
+1 Error str: 144: Perl cannot convert (?<=x+)y into qr/.../ form
+Test count: 145. Parsing 'a\Z' => (qr/.../) => '(?^u:a\Z)'. 
+Test count: 146. Parsing 'a\z' => (qr/.../) => '(?^u:a\z)'. 
+Test count: 147. Parsing 'a$' => (qr/.../) => '(?^u:a$)'. 
+Test count: 148. Parsing ''a\Z'm' => (qr/.../) => '(?^u:'a\Z'm)'. 
+Test count: 149. Parsing ''a\z'm' => (qr/.../) => '(?^u:'a\z'm)'. 
+Test count: 150. Parsing 'aa\Z' => (qr/.../) => '(?^u:aa\Z)'. 
+Test count: 151. Parsing 'aa\z' => (qr/.../) => '(?^u:aa\z)'. 
+Test count: 152. Parsing 'aa$' => (qr/.../) => '(?^u:aa$)'. 
+Test count: 153. Parsing ''aa\Z'm' => (qr/.../) => '(?^u:'aa\Z'm)'. 
+Test count: 154. Parsing ''aa\z'm' => (qr/.../) => '(?^u:'aa\z'm)'. 
+Test count: 155. Parsing ''aa$'m' => (qr/.../) => '(?^u:'aa$'m)'. 
+Test count: 156. Parsing 'ab\Z' => (qr/.../) => '(?^u:ab\Z)'. 
+Test count: 157. Parsing 'ab\z' => (qr/.../) => '(?^u:ab\z)'. 
+Test count: 158. Parsing 'ab$' => (qr/.../) => '(?^u:ab$)'. 
+Test count: 159. Parsing ''ab\Z'm' => (qr/.../) => '(?^u:'ab\Z'm)'. 
+Test count: 160. Parsing ''ab\z'm' => (qr/.../) => '(?^u:'ab\z'm)'. 
+Test count: 161. Parsing ''ab$'m' => (qr/.../) => '(?^u:'ab$'m)'. 
+Test count: 162. Parsing 'abb\Z' => (qr/.../) => '(?^u:abb\Z)'. 
+Test count: 163. Parsing 'abb\z' => (qr/.../) => '(?^u:abb\z)'. 
+Test count: 164. Parsing 'abb$' => (qr/.../) => '(?^u:abb$)'. 
+Test count: 165. Parsing ''abb\Z'm' => (qr/.../) => '(?^u:'abb\Z'm)'. 
+Test count: 166. Parsing ''abb\z'm' => (qr/.../) => '(?^u:'abb\z'm)'. 
+Test count: 167. Parsing ''abb$'m' => (qr/.../) => '(?^u:'abb$'m)'. 
+Test count: 168. Parsing 'a*abc?xyz+pqr{3}ab{2,}xy{4,5}pq{0,6}AB{0,}zz' => (qr/.../) => '(?^u:a*abc?xyz+pqr{3}ab{2,}xy{4,5}pq{0,6}AB{0,}zz)'. 
+Test count: 169. Parsing '.X(.+)+X' => (qr/.../) => '(?^u:.X(.+)+X)'. 
+Test count: 170. Parsing '.X(.+)+XX' => (qr/.../) => '(?^u:.X(.+)+XX)'. 
+Test count: 171. Parsing '.XX(.+)+X' => (qr/.../) => '(?^u:.XX(.+)+X)'. 
+Test count: 172. Parsing '.X(.+)+[X]' => (qr/.../) => '(?^u:.X(.+)+[X])'. 
+Test count: 173. Parsing '.X(.+)+[X][X]' => (qr/.../) => '(?^u:.X(.+)+[X][X])'. 
+Test count: 174. Parsing '.XX(.+)+[X]' => (qr/.../) => '(?^u:.XX(.+)+[X])'. 
+Test count: 175. Parsing '.[X](.+)+[X]' => (qr/.../) => '(?^u:.[X](.+)+[X])'. 
+Test count: 176. Parsing '.[X](.+)+[X][X]' => (qr/.../) => '(?^u:.[X](.+)+[X][X])'. 
+Test count: 177. Parsing '.[X][X](.+)+[X]' => (qr/.../) => '(?^u:.[X][X](.+)+[X])'. 
+Test count: 178. Parsing '([a-\d]+)' => (qr/.../) => '(?^u:([a-\d]+))'. 
+Test count: 179. Parsing '([\d-z]+)' => (qr/.../) => '(?^u:([\d-z]+))'. 
+Test count: 180. Parsing '([\d-\s]+)' => (qr/.../) => '(?^u:([\d-\s]+))'. 
+Test count: 181. Parsing '([a-[:digit:]]+)' => (qr/.../) => '(?^u:([a-[:digit:]]+))'. 
+Test count: 182. Parsing '([[:digit:]-z]+)' => (qr/.../) => '(?^u:([[:digit:]-z]+))'. 
+Test count: 183. Parsing '([[:digit:]-[:alpha:]]+)' => (qr/.../) => '(?^u:([[:digit:]-[:alpha:]]+))'. 
+Test count: 184. Parsing '\GX.*X' => (qr/.../) => '(?^u:\GX.*X)'. 
+Test count: 185. Parsing ''\.c(pp|xx|c)?$'i' => (qr/.../) => '(?^u:'\.c(pp|xx|c)?$'i)'. 
+Test count: 186. Parsing '^([a-z]:)' => (qr/.../) => '(?^u:^([a-z]:))'. 
+Test count: 187. Parsing '(\w)?(abc)\1b' => (qr/.../) => '(?^u:(\w)?(abc)\1b)'. 
+Test count: 188. Parsing '^(a)?(?(1)a|b)+$' => (qr/.../) => '(?^u:^(a)?(?(1)a|b)+$)'. 
+Test count: 189. Parsing ''b\s^'m' => (qr/.../) => '(?^u:'b\s^'m)'. 
+Test count: 190. Parsing ''^(o)(?!.*\1)'i' => (qr/.../) => '(?^u:'^(o)(?!.*\1)'i)'. 
+Test count: 191. Parsing '(foo|fool|x.|money|parted)$' => (qr/.../) => '(?^u:(foo|fool|x.|money|parted)$)'. 
+Test count: 192. Parsing '(x.|foo|fool|x.|money|parted|y.)$' => (qr/.../) => '(?^u:(x.|foo|fool|x.|money|parted|y.)$)'. 
+Test count: 193. Parsing '(foo|fool|money|parted)$' => (qr/.../) => '(?^u:(foo|fool|money|parted)$)'. 
+Test count: 194. Parsing '(a|aa|aaa|aaaa|aaaaa|aaaaaa)(??{$1&&"foo"})(b|c)' => (qr/.../) => '(?^u:(a|aa|aaa|aaaa|aaaaa|aaaaaa)(??{$1&&"foo"})(b|c))'. 
+	Expected error: Test count: 195. Parsing '(?P<=n>foo|bar|baz)' => (qr/.../) => 
+1 Error str: 195: Perl cannot convert (?P<=n>foo|bar|baz) into qr/.../ form
+	Expected error: Test count: 196. Parsing '(?P<!n>foo|bar|baz)' => (qr/.../) => 
+1 Error str: 196: Perl cannot convert (?P<!n>foo|bar|baz) into qr/.../ form
+	Expected error: Test count: 197. Parsing '(?PX<n>foo|bar|baz)' => (qr/.../) => 
+1 Error str: 197: Perl cannot convert (?PX<n>foo|bar|baz) into qr/.../ form
+Test count: 198. Parsing '/^(?<PAL>(?<CHAR>.)((?&PAL)|.?)\k<CHAR>)$/' => (qr/.../) => '(?^u:/^(?<PAL>(?<CHAR>.)((?&PAL)|.?)\k<CHAR>)$/)'. 
+Test count: 199. Parsing 'a++a' => (qr/.../) => '(?^u:a++a)'. 
+Test count: 200. Parsing 'a*+a' => (qr/.../) => '(?^u:a*+a)'. 
+Test count: 201. Parsing 'a{1,5}+a' => (qr/.../) => '(?^u:a{1,5}+a)'. 
+Test count: 202. Parsing 'a?+a' => (qr/.../) => '(?^u:a?+a)'. 
+Test count: 203. Parsing 'fooa++a' => (qr/.../) => '(?^u:fooa++a)'. 
+Test count: 204. Parsing 'fooa*+a' => (qr/.../) => '(?^u:fooa*+a)'. 
+Test count: 205. Parsing 'fooa{1,5}+a' => (qr/.../) => '(?^u:fooa{1,5}+a)'. 
+Test count: 206. Parsing 'fooa?+a' => (qr/.../) => '(?^u:fooa?+a)'. 
+Test count: 207. Parsing '(?:aA)++(?:aA)' => (qr/.../) => '(?^u:(?:aA)++(?:aA))'. 
+Test count: 208. Parsing '(aA)++(aA)' => (qr/.../) => '(?^u:(aA)++(aA))'. 
+Test count: 209. Parsing '(aA|bB)++(aA|bB)' => (qr/.../) => '(?^u:(aA|bB)++(aA|bB))'. 
+Test count: 210. Parsing '(?:aA|bB)++(?:aA|bB)' => (qr/.../) => '(?^u:(?:aA|bB)++(?:aA|bB))'. 
+Test count: 211. Parsing '(?:aA)*+(?:aA)' => (qr/.../) => '(?^u:(?:aA)*+(?:aA))'. 
+Test count: 212. Parsing '(aA)*+(aA)' => (qr/.../) => '(?^u:(aA)*+(aA))'. 
+Test count: 213. Parsing '(aA|bB)*+(aA|bB)' => (qr/.../) => '(?^u:(aA|bB)*+(aA|bB))'. 
+Test count: 214. Parsing '(?:aA|bB)*+(?:aA|bB)' => (qr/.../) => '(?^u:(?:aA|bB)*+(?:aA|bB))'. 
+Test count: 215. Parsing '(?:aA){1,5}+(?:aA)' => (qr/.../) => '(?^u:(?:aA){1,5}+(?:aA))'. 
+Test count: 216. Parsing '(aA){1,5}+(aA)' => (qr/.../) => '(?^u:(aA){1,5}+(aA))'. 
+Test count: 217. Parsing '(aA|bB){1,5}+(aA|bB)' => (qr/.../) => '(?^u:(aA|bB){1,5}+(aA|bB))'. 
+Test count: 218. Parsing '(?:aA|bB){1,5}+(?:aA|bB)' => (qr/.../) => '(?^u:(?:aA|bB){1,5}+(?:aA|bB))'. 
+Test count: 219. Parsing '(?:aA)?+(?:aA)' => (qr/.../) => '(?^u:(?:aA)?+(?:aA))'. 
+Test count: 220. Parsing '(aA)?+(aA)' => (qr/.../) => '(?^u:(aA)?+(aA))'. 
+Test count: 221. Parsing '(aA|bB)?+(aA|bB)' => (qr/.../) => '(?^u:(aA|bB)?+(aA|bB))'. 
+Test count: 222. Parsing '(?:aA|bB)?+(?:aA|bB)' => (qr/.../) => '(?^u:(?:aA|bB)?+(?:aA|bB))'. 
+Test count: 223. Parsing 'foo(?:aA)++(?:aA)' => (qr/.../) => '(?^u:foo(?:aA)++(?:aA))'. 
+Test count: 224. Parsing 'foo(aA)++(aA)' => (qr/.../) => '(?^u:foo(aA)++(aA))'. 
+Test count: 225. Parsing 'foo(aA|bB)++(aA|bB)' => (qr/.../) => '(?^u:foo(aA|bB)++(aA|bB))'. 
+Test count: 226. Parsing 'foo(?:aA|bB)++(?:aA|bB)' => (qr/.../) => '(?^u:foo(?:aA|bB)++(?:aA|bB))'. 
+Test count: 227. Parsing 'foo(?:aA)*+(?:aA)' => (qr/.../) => '(?^u:foo(?:aA)*+(?:aA))'. 
+Test count: 228. Parsing 'foo(aA)*+(aA)' => (qr/.../) => '(?^u:foo(aA)*+(aA))'. 
+Test count: 229. Parsing 'foo(aA|bB)*+(aA|bB)' => (qr/.../) => '(?^u:foo(aA|bB)*+(aA|bB))'. 
+Test count: 230. Parsing 'foo(?:aA|bB)*+(?:aA|bB)' => (qr/.../) => '(?^u:foo(?:aA|bB)*+(?:aA|bB))'. 
+Test count: 231. Parsing 'foo(?:aA){1,5}+(?:aA)' => (qr/.../) => '(?^u:foo(?:aA){1,5}+(?:aA))'. 
+Test count: 232. Parsing 'foo(aA){1,5}+(aA)' => (qr/.../) => '(?^u:foo(aA){1,5}+(aA))'. 
+Test count: 233. Parsing 'foo(aA|bB){1,5}+(aA|bB)' => (qr/.../) => '(?^u:foo(aA|bB){1,5}+(aA|bB))'. 
+Test count: 234. Parsing 'foo(?:aA|bB){1,5}+(?:aA|bB)' => (qr/.../) => '(?^u:foo(?:aA|bB){1,5}+(?:aA|bB))'. 
+Test count: 235. Parsing 'foo(?:aA)?+(?:aA)' => (qr/.../) => '(?^u:foo(?:aA)?+(?:aA))'. 
+Test count: 236. Parsing 'foo(aA)?+(aA)' => (qr/.../) => '(?^u:foo(aA)?+(aA))'. 
+Test count: 237. Parsing 'foo(aA|bB)?+(aA|bB)' => (qr/.../) => '(?^u:foo(aA|bB)?+(aA|bB))'. 
+Test count: 238. Parsing 'foo(?:aA|bB)?+(?:aA|bB)' => (qr/.../) => '(?^u:foo(?:aA|bB)?+(?:aA|bB))'. 
+Test count: 239. Parsing '(foo|fool|[zx].|money|parted)$' => (qr/.../) => '(?^u:(foo|fool|[zx].|money|parted)$)'. 
+Test count: 240. Parsing '([zx].|foo|fool|[qx].|money|parted|[py].)$' => (qr/.../) => '(?^u:([zx].|foo|fool|[qx].|money|parted|[py].)$)'. 
+Test count: 241. Parsing '(foo|fool|[zx].|money|parted)+$' => (qr/.../) => '(?^u:(foo|fool|[zx].|money|parted)+$)'. 
+Test count: 242. Parsing '([zx].|foo|fool|[qx].|money|parted|[py].)+$' => (qr/.../) => '(?^u:([zx].|foo|fool|[qx].|money|parted|[py].)+$)'. 
+Test count: 243. Parsing 'a*(?!)' => (qr/.../) => '(?^u:a*(?!))'. 
+Test count: 244. Parsing 'a*(*FAIL)' => (qr/.../) => '(?^u:a*(*FAIL))'. 
+Test count: 245. Parsing 'a*(*F)' => (qr/.../) => '(?^u:a*(*F))'. 
+Test count: 246. Parsing '(a)(?:(?-1)|(?+1))(b)' => (qr/.../) => '(?^u:(a)(?:(?-1)|(?+1))(b))'. 
+	Expected error: Test count: 247. Parsing '/(?'0'foo) bar/' => (qr/.../) => 
+1 Error str: 247: Perl cannot convert /(?'0'foo) bar/ into qr/.../ form
+	Expected error: Test count: 248. Parsing '/(?<0>foo) bar/' => (qr/.../) => 
+1 Error str: 248: Perl cannot convert /(?<0>foo) bar/ into qr/.../ form
+	Expected error: Test count: 249. Parsing '/(?'12'foo) bar/' => (qr/.../) => 
+1 Error str: 249: Perl cannot convert /(?'12'foo) bar/ into qr/.../ form
+	Expected error: Test count: 250. Parsing '/(?<12>foo) bar/' => (qr/.../) => 
+1 Error str: 250: Perl cannot convert /(?<12>foo) bar/ into qr/.../ form
+	Expected error: Test count: 251. Parsing '/(?'1a'foo) bar/' => (qr/.../) => 
+1 Error str: 251: Perl cannot convert /(?'1a'foo) bar/ into qr/.../ form
+	Expected error: Test count: 252. Parsing '/(?<1a>foo) bar/' => (qr/.../) => 
+1 Error str: 252: Perl cannot convert /(?<1a>foo) bar/ into qr/.../ form
+	Expected error: Test count: 253. Parsing '/(?''foo) bar/' => (qr/.../) => 
+1 Error str: 253: Perl cannot convert /(?''foo) bar/ into qr/.../ form
+	Expected error: Test count: 254. Parsing '/(?<>foo) bar/' => (qr/.../) => 
+1 Error str: 254: Perl cannot convert /(?<>foo) bar/ into qr/.../ form
+	Expected error: Test count: 255. Parsing '/foo \k'n'/' => (qr/.../) => 
+1 Error str: 255: Perl cannot convert /foo \k'n'/ into qr/.../ form
+	Expected error: Test count: 256. Parsing '/foo \k<n>/' => (qr/.../) => 
+1 Error str: 256: Perl cannot convert /foo \k<n>/ into qr/.../ form
+	Expected error: Test count: 257. Parsing '/foo \k'a1'/' => (qr/.../) => 
+1 Error str: 257: Perl cannot convert /foo \k'a1'/ into qr/.../ form
+	Expected error: Test count: 258. Parsing '/foo \k<a1>/' => (qr/.../) => 
+1 Error str: 258: Perl cannot convert /foo \k<a1>/ into qr/.../ form
+	Expected error: Test count: 259. Parsing '/foo \k'_'/' => (qr/.../) => 
+1 Error str: 259: Perl cannot convert /foo \k'_'/ into qr/.../ form
+	Expected error: Test count: 260. Parsing '/foo \k<_>/' => (qr/.../) => 
+1 Error str: 260: Perl cannot convert /foo \k<_>/ into qr/.../ form
+	Expected error: Test count: 261. Parsing '/foo \k'_0_'/' => (qr/.../) => 
+1 Error str: 261: Perl cannot convert /foo \k'_0_'/ into qr/.../ form
+	Expected error: Test count: 262. Parsing '/foo \k<_0_>/' => (qr/.../) => 
+1 Error str: 262: Perl cannot convert /foo \k<_0_>/ into qr/.../ form
+	Expected error: Test count: 263. Parsing '/foo \k'0'/' => (qr/.../) => 
+1 Error str: 263: Perl cannot convert /foo \k'0'/ into qr/.../ form
+	Expected error: Test count: 264. Parsing '/foo \k<0>/' => (qr/.../) => 
+1 Error str: 264: Perl cannot convert /foo \k<0>/ into qr/.../ form
+	Expected error: Test count: 265. Parsing '/foo \k'12'/' => (qr/.../) => 
+1 Error str: 265: Perl cannot convert /foo \k'12'/ into qr/.../ form
+	Expected error: Test count: 266. Parsing '/foo \k<12>/' => (qr/.../) => 
+1 Error str: 266: Perl cannot convert /foo \k<12>/ into qr/.../ form
+	Expected error: Test count: 267. Parsing '/foo \k'1a'/' => (qr/.../) => 
+1 Error str: 267: Perl cannot convert /foo \k'1a'/ into qr/.../ form
+	Expected error: Test count: 268. Parsing '/foo \k<1a>/' => (qr/.../) => 
+1 Error str: 268: Perl cannot convert /foo \k<1a>/ into qr/.../ form
+	Expected error: Test count: 269. Parsing '/foo \k''/' => (qr/.../) => 
+1 Error str: 269: Perl cannot convert /foo \k''/ into qr/.../ form
+	Expected error: Test count: 270. Parsing '/foo \k<>/' => (qr/.../) => 
+1 Error str: 270: Perl cannot convert /foo \k<>/ into qr/.../ form
+Test count: 271. Parsing '/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?)(?P=CHAR))$/' => (qr/.../) => '(?^u:/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?)(?P=CHAR))$/)'. 
+Test count: 272. Parsing '(?<!bar>)foo' => (qr/.../) => '(?^u:(?<!bar>)foo)'. 
+Test count: 273. Parsing '(?<!bar>ABC)foo' => (qr/.../) => '(?^u:(?<!bar>ABC)foo)'. 
+Test count: 274. Parsing '/\A(?(?=db2)db2|\D+)(?<!processed)\.csv\z/xms' => (qr/.../) => '(?^u:/\A(?(?=db2)db2|\D+)(?<!processed)\.csv\z/xms)'. 
+Test count: 275. Parsing 'abc\N\{U+BEEF}' => (qr/.../) => '(?^u:abc\N\{U+BEEF})'. 
+	Expected error: Test count: 276. Parsing '[abc\N\{U+BEEF}]' => (qr/.../) => 
+1 Error str: 276: Perl cannot convert [abc\N\{U+BEEF}] into qr/.../ form
+Test count: 277. Parsing 'abc\N' => (qr/.../) => '(?^u:abc\N)'. 
+	Expected error: Test count: 278. Parsing '/\N{U+}/' => (qr/.../) => 
+1 Error str: 278: Perl cannot convert /\N{U+}/ into qr/.../ form
+	Expected error: Test count: 279. Parsing '/[\N{U+}]/' => (qr/.../) => 
+1 Error str: 279: Perl cannot convert /[\N{U+}]/ into qr/.../ form
+	Expected error: Test count: 280. Parsing '/abc\N{def/' => (qr/.../) => 
+1 Error str: 280: Perl cannot convert /abc\N{def/ into qr/.../ form
+	Expected error: Test count: 281. Parsing '/\N{U+4AG3}/' => (qr/.../) => 
+1 Error str: 281: Perl cannot convert /\N{U+4AG3}/ into qr/.../ form
+	Expected error: Test count: 282. Parsing '/[\N{U+4AG3}]/' => (qr/.../) => 
+1 Error str: 282: Perl cannot convert /[\N{U+4AG3}]/ into qr/.../ form
+	Expected error: Test count: 283. Parsing '\N{U+}' => (qr/.../) => 
+1 Error str: 283: Perl cannot convert \N{U+} into qr/.../ form
+	Expected error: Test count: 284. Parsing '[\N{U+}]' => (qr/.../) => 
+1 Error str: 284: Perl cannot convert [\N{U+}] into qr/.../ form
+	Expected error: Test count: 285. Parsing '\N{U+4AG3}' => (qr/.../) => 
+1 Error str: 285: Perl cannot convert \N{U+4AG3} into qr/.../ form
+	Expected error: Test count: 286. Parsing '[\N{U+4AG3}]' => (qr/.../) => 
+1 Error str: 286: Perl cannot convert [\N{U+4AG3}] into qr/.../ form
+	Expected error: Test count: 287. Parsing 'abc\N{def' => (qr/.../) => 
+1 Error str: 287: Perl cannot convert abc\N{def into qr/.../ form
+Test count: 288. Parsing '/abc\N {U+41}/x' => (qr/.../) => '(?^u:/abc\N {U+41}/x)'. 
+Test count: 289. Parsing '/abc\N {SPACE}/x' => (qr/.../) => '(?^u:/abc\N {SPACE}/x)'. 
+	Expected error: Test count: 290. Parsing '/\N{U+0xBEEF}/' => (qr/.../) => 
+1 Error str: 290: Perl cannot convert /\N{U+0xBEEF}/ into qr/.../ form
+Test count: 291. Parsing '/\N{U+BEEF.BEAD}/' => (qr/.../) => '(?^u:/\N{U+BEEF.BEAD}/)'. 
+	Expected error: Test count: 292. Parsing '\N{U+0xBEEF}' => (qr/.../) => 
+1 Error str: 292: Perl cannot convert \N{U+0xBEEF} into qr/.../ form
+Test count: 293. Parsing '\c`' => (qr/.../) => '(?^u:\c`)'. 
+Test count: 294. Parsing '\c1' => (qr/.../) => '(?^u:\c1)'. 
+	Expected error: Test count: 295. Parsing '\87' => (qr/.../) => 
+1 Error str: 295: Perl cannot convert \87 into qr/.../ form
+	Expected error: Test count: 296. Parsing 'a\87' => (qr/.../) => 
+1 Error str: 296: Perl cannot convert a\87 into qr/.../ form
+	Expected error: Test count: 297. Parsing 'a\97' => (qr/.../) => 
+1 Error str: 297: Perl cannot convert a\97 into qr/.../ form
+	Expected error: Test count: 298. Parsing '(.)\g2147483648}' => (qr/.../) => 
+1 Error str: 298: Perl cannot convert (.)\g2147483648} into qr/.../ form
+	Expected error: Test count: 299. Parsing '(.)\g2147483649}' => (qr/.../) => 
+1 Error str: 299: Perl cannot convert (.)\g2147483649} into qr/.../ form
+	Expected error: Test count: 300. Parsing '(.)\g2147483650}' => (qr/.../) => 
+1 Error str: 300: Perl cannot convert (.)\g2147483650} into qr/.../ form
+	Expected error: Test count: 301. Parsing '(.)\g4294967296}' => (qr/.../) => 
+1 Error str: 301: Perl cannot convert (.)\g4294967296} into qr/.../ form
+	Expected error: Test count: 302. Parsing '(.)\g4294967297}' => (qr/.../) => 
+1 Error str: 302: Perl cannot convert (.)\g4294967297} into qr/.../ form
+	Expected error: Test count: 303. Parsing '(.)\g4294967298}' => (qr/.../) => 
+1 Error str: 303: Perl cannot convert (.)\g4294967298} into qr/.../ form
+	Expected error: Test count: 304. Parsing 'a(.)\g2147483648}' => (qr/.../) => 
+1 Error str: 304: Perl cannot convert a(.)\g2147483648} into qr/.../ form
+	Expected error: Test count: 305. Parsing 'a(.)\g2147483649}' => (qr/.../) => 
+1 Error str: 305: Perl cannot convert a(.)\g2147483649} into qr/.../ form
+	Expected error: Test count: 306. Parsing 'a(.)\g2147483650}' => (qr/.../) => 
+1 Error str: 306: Perl cannot convert a(.)\g2147483650} into qr/.../ form
+	Expected error: Test count: 307. Parsing 'a(.)\g4294967296}' => (qr/.../) => 
+1 Error str: 307: Perl cannot convert a(.)\g4294967296} into qr/.../ form
+	Expected error: Test count: 308. Parsing 'a(.)\g4294967297}' => (qr/.../) => 
+1 Error str: 308: Perl cannot convert a(.)\g4294967297} into qr/.../ form
+	Expected error: Test count: 309. Parsing 'a(.)\g4294967298}' => (qr/.../) => 
+1 Error str: 309: Perl cannot convert a(.)\g4294967298} into qr/.../ form
+	Expected error: Test count: 310. Parsing '(.)\g{2147483648}' => (qr/.../) => 
+1 Error str: 310: Perl cannot convert (.)\g{2147483648} into qr/.../ form
+	Expected error: Test count: 311. Parsing '(.)\g{2147483649}' => (qr/.../) => 
+1 Error str: 311: Perl cannot convert (.)\g{2147483649} into qr/.../ form
+	Expected error: Test count: 312. Parsing '(.)\g{2147483650}' => (qr/.../) => 
+1 Error str: 312: Perl cannot convert (.)\g{2147483650} into qr/.../ form
+	Expected error: Test count: 313. Parsing '(.)\g{4294967296}' => (qr/.../) => 
+1 Error str: 313: Perl cannot convert (.)\g{4294967296} into qr/.../ form
+	Expected error: Test count: 314. Parsing '(.)\g{4294967297}' => (qr/.../) => 
+1 Error str: 314: Perl cannot convert (.)\g{4294967297} into qr/.../ form
+	Expected error: Test count: 315. Parsing '(.)\g{4294967298}' => (qr/.../) => 
+1 Error str: 315: Perl cannot convert (.)\g{4294967298} into qr/.../ form
+	Expected error: Test count: 316. Parsing 'a(.)\g{2147483648}' => (qr/.../) => 
+1 Error str: 316: Perl cannot convert a(.)\g{2147483648} into qr/.../ form
+	Expected error: Test count: 317. Parsing 'a(.)\g{2147483649}' => (qr/.../) => 
+1 Error str: 317: Perl cannot convert a(.)\g{2147483649} into qr/.../ form
+	Expected error: Test count: 318. Parsing 'a(.)\g{2147483650}' => (qr/.../) => 
+1 Error str: 318: Perl cannot convert a(.)\g{2147483650} into qr/.../ form
+	Expected error: Test count: 319. Parsing 'a(.)\g{4294967296}' => (qr/.../) => 
+1 Error str: 319: Perl cannot convert a(.)\g{4294967296} into qr/.../ form
+	Expected error: Test count: 320. Parsing 'a(.)\g{4294967297}' => (qr/.../) => 
+1 Error str: 320: Perl cannot convert a(.)\g{4294967297} into qr/.../ form
+	Expected error: Test count: 321. Parsing 'a(.)\g{4294967298}' => (qr/.../) => 
+1 Error str: 321: Perl cannot convert a(.)\g{4294967298} into qr/.../ form
+Test count: 322. Parsing '[\8\9]' => (qr/.../) => '(?^u:[\8\9])'. 
+Test count: 323. Parsing '[\0]' => (qr/.../) => '(?^u:[\0])'. 
+Test count: 324. Parsing '[\07]' => (qr/.../) => '(?^u:[\07])'. 
+Test count: 325. Parsing '[\006]' => (qr/.../) => '(?^u:[\006])'. 
+Test count: 326. Parsing '^m?(\S)(.*)\1$' => (qr/.../) => '(?^u:^m?(\S)(.*)\1$)'. 
+Test count: 327. Parsing '^m?(\s)(.*)\1$' => (qr/.../) => '(?^u:^m?(\s)(.*)\1$)'. 
+Test count: 328. Parsing '^m?(\W)(.*)\1$' => (qr/.../) => '(?^u:^m?(\W)(.*)\1$)'. 
+Test count: 329. Parsing '^m?(\w)(.*)\1$' => (qr/.../) => '(?^u:^m?(\w)(.*)\1$)'. 
+Test count: 330. Parsing '^m?(\D)(.*)\1$' => (qr/.../) => '(?^u:^m?(\D)(.*)\1$)'. 
+Test count: 331. Parsing '^m?(\d)(.*)\1$' => (qr/.../) => '(?^u:^m?(\d)(.*)\1$)'. 
+Test count: 332. Parsing '/s/aia' => (qr/.../) => '(?^u:/s/aia)'. 
+Test count: 333. Parsing '/(?aia:s)/' => (qr/.../) => '(?^u:/(?aia:s)/)'. 
+Test count: 334. Parsing '/[^\x{1E9E}]/i' => (qr/.../) => '(?^u:/[^\x{1E9E}]/i)'. 
+Test count: 335. Parsing '/^.*\d\H/' => (qr/.../) => '(?^u:/^.*\d\H/)'. 
+Test count: 336. Parsing '/^.*\d\V/' => (qr/.../) => '(?^u:/^.*\d\V/)'. 
+Test count: 337. Parsing '/^\p{L_}/' => (qr/.../) => '(?^u:/^\p{L_}/)'. 
+Test count: 338. Parsing '/^\R\x0A$/' => (qr/.../) => '(?^u:/^\R\x0A$/)'. 
+Test count: 339. Parsing '/[s]s/i' => (qr/.../) => '(?^u:/[s]s/i)'. 
+Test count: 340. Parsing '/s[s]/i' => (qr/.../) => '(?^u:/s[s]/i)'. 
+Test count: 341. Parsing '/[[:ascii:]]/i' => (qr/.../) => '(?^u:/[[:ascii:]]/i)'. 
+Test count: 342. Parsing '/[[:lower:]]/i' => (qr/.../) => '(?^u:/[[:lower:]]/i)'. 
+Test count: 343. Parsing '/[[:upper:]]/i' => (qr/.../) => '(?^u:/[[:upper:]]/i)'. 
+Test count: 344. Parsing '[^\p{Alphabetic}]' => (qr/.../) => '(?^u:[^\p{Alphabetic}])'. 
+Test count: 345. Parsing '/[[:alnum:]]/' => (qr/.../) => '(?^u:/[[:alnum:]]/)'. 
+Test count: 346. Parsing '/[[:alpha:]]/' => (qr/.../) => '(?^u:/[[:alpha:]]/)'. 
+Test count: 347. Parsing '/[[:graph:]]/' => (qr/.../) => '(?^u:/[[:graph:]]/)'. 
+Test count: 348. Parsing '/[[:lower:]]/' => (qr/.../) => '(?^u:/[[:lower:]]/)'. 
+Test count: 349. Parsing '/[[:print:]]/' => (qr/.../) => '(?^u:/[[:print:]]/)'. 
+Test count: 350. Parsing '/[[:punct:]]/' => (qr/.../) => '(?^u:/[[:punct:]]/)'. 
+Test count: 351. Parsing '/[[:upper:]]/' => (qr/.../) => '(?^u:/[[:upper:]]/)'. 
+Test count: 352. Parsing '/[[:word:]]/' => (qr/.../) => '(?^u:/[[:word:]]/)'. 
+Test count: 353. Parsing '/^((??{'\d'}))$/a' => (qr/.../) => '(?^u:/^((??{'\d'}))$/a)'. 
+Test count: 354. Parsing '/^(??{"s"})$/iaa' => (qr/.../) => '(?^u:/^(??{"s"})$/iaa)'. 
+Test count: 355. Parsing '/[\H]/' => (qr/.../) => '(?^u:/[\H]/)'. 
+Test count: 356. Parsing '/^\D{11}/a' => (qr/.../) => '(?^u:/^\D{11}/a)'. 
+Test count: 357. Parsing '/^\S{11}/a' => (qr/.../) => '(?^u:/^\S{11}/a)'. 
+Test count: 358. Parsing '/^\W{11}/a' => (qr/.../) => '(?^u:/^\W{11}/a)'. 
+Test count: 359. Parsing '(A(*PRUNE)B|A(*PRUNE)C)' => (qr/.../) => '(?^u:(A(*PRUNE)B|A(*PRUNE)C))'. 
+Test count: 360. Parsing '(A(*PRUNE)B|A(*PRUNE)D|A(*PRUNE)C)' => (qr/.../) => '(?^u:(A(*PRUNE)B|A(*PRUNE)D|A(*PRUNE)C))'. 
+Test count: 361. Parsing '(A(*PRUNE)B|A(*PRUNE)C|A(*PRUNE)D)' => (qr/.../) => '(?^u:(A(*PRUNE)B|A(*PRUNE)C|A(*PRUNE)D))'. 
+Test count: 362. Parsing '((A(*PRUNE)B|A(*PRUNE)C))' => (qr/.../) => '(?^u:((A(*PRUNE)B|A(*PRUNE)C)))'. 
+Test count: 363. Parsing '((A(*PRUNE)B|A(*PRUNE)D|A(*PRUNE)C))' => (qr/.../) => '(?^u:((A(*PRUNE)B|A(*PRUNE)D|A(*PRUNE)C)))'. 
+Test count: 364. Parsing '((A(*PRUNE)B|A(*PRUNE)C|A(*PRUNE)D))' => (qr/.../) => '(?^u:((A(*PRUNE)B|A(*PRUNE)C|A(*PRUNE)D)))'. 
+Test count: 365. Parsing '(?:(a(*SKIP)b)){0}(?:(?1)|ac)' => (qr/.../) => '(?^u:(?:(a(*SKIP)b)){0}(?:(?1)|ac))'. 
+Test count: 366. Parsing ''(?-m:^abc)'m' => (qr/.../) => '(?^u:'(?-m:^abc)'m)'. 
+Test count: 367. Parsing '/^[+]([^(]+)$/mi' => (qr/.../) => '(?^u:/^[+]([^(]+)$/mi)'. 
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, character_set, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis
+1 Error str: Error: Parse failed
+	Expected error: Test count: 368. Parsing '/(a)\2/' => (qr/.../) => 
+1 Error str: 368: Perl cannot convert /(a)\2/ into qr/.../ form
+	Expected error: Test count: 369. Parsing '/(a)(b)\3/' => (qr/.../) => 
+1 Error str: 369: Perl cannot convert /(a)(b)\3/ into qr/.../ form
+	Expected error: Test count: 370. Parsing '/(a)(b)(c)\4/' => (qr/.../) => 
+1 Error str: 370: Perl cannot convert /(a)(b)(c)\4/ into qr/.../ form
+	Expected error: Test count: 371. Parsing '/(a)(b)(c)(d)\5/' => (qr/.../) => 
+1 Error str: 371: Perl cannot convert /(a)(b)(c)(d)\5/ into qr/.../ form
+	Expected error: Test count: 372. Parsing '/(a)(b)(c)(d)(e)\6/' => (qr/.../) => 
+1 Error str: 372: Perl cannot convert /(a)(b)(c)(d)(e)\6/ into qr/.../ form
+	Expected error: Test count: 373. Parsing '/(a)(b)(c)(d)(e)(f)\7/' => (qr/.../) => 
+1 Error str: 373: Perl cannot convert /(a)(b)(c)(d)(e)(f)\7/ into qr/.../ form
+Test count: 374. Parsing '\d<(.*?)>' => (qr/.../) => '(?^u:\d<(.*?)>)'. 
+Test count: 375. Parsing '/[A-Z]/iaa' => (qr/.../) => '(?^u:/[A-Z]/iaa)'. 
+Test count: 376. Parsing '/w\zxy?\z/i' => (qr/.../) => '(?^u:/w\zxy?\z/i)'. 
+Test count: 377. Parsing '/w\z\R\z/i' => (qr/.../) => '(?^u:/w\z\R\z/i)'. 
+Perl error count:  119
+Marpa error count: 0
