@@ -11,6 +11,12 @@ use Regexp::Parsertron;
 
 my($input_file_name)	= 'perl-5.21.11/re_tests';
 my(@lines)				= grep{! /#/ && ! /^\s*$/ && ! /^__END__/} read_lines($input_file_name);
+my(%expected_failure)	=
+(
+	14 => 1,
+	15 => 1,
+	16 => 1,
+);
 
 my(@fields);
 my(@re);
@@ -44,13 +50,12 @@ for my $re (@re)
 
 	next if ( ($number > 0) && ($count != $number) );
 
-	$result = $parser -> parse(re => $re);
-	$error	= $parser -> error_str;
-
-	if ($error)
+	if ($expected_failure{$count})
 	{
-		print "$error\n";
+		print "Expected failure: ";
 	}
+
+	$result = $parser -> parse(re => $re);
 
 	# Reset tree for next test.
 

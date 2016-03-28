@@ -206,7 +206,7 @@ sub parse
 
 			$self -> error_str('Error: Parse failed') if (! $self -> error_str);
 
-			print '1 Error str: ', $self -> error_str, "\n" if ($self -> error_str);
+			print '1 Error str: ', $self -> error_str, "\n" if ($self -> verbose && $self -> error_str);
 		}
 	}
 	catch
@@ -215,12 +215,12 @@ sub parse
 
 		$self -> error_str("Error: Parse failed. $_");
 
-		print '2 Error str: ', $self -> error_str, "\n" if ($self -> error_str);
+		print '2 Error str: ', $self -> error_str, "\n" if ($self -> verbose && $self -> error_str);
 	};
 
 	# Return 0 for success and 1 for failure.
 
-	return 0;
+	return $result;
 
 } # End of parse.
 
@@ -230,15 +230,23 @@ sub _process
 {
 	my($self)		= @_;
 	my($raw_re)		= $self -> re;
+	my($test_count)	= $self -> test_count($self -> test_count + 1);
+
+	print "Test count: $test_count. Parsing '$raw_re' => (qr/.../) => " if ($self -> verbose);
+
 	my($string_re)	= $self -> _string2re($raw_re);
 
-	return undef if ($string_re eq '');
+	if ($string_re eq '')
+	{
+		print "\n" if ($self -> verbose);
+
+		return undef;
+	}
+
+	print "'$string_re'. \n" if ($self -> verbose);
 
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
-	my($test_count)	= $self -> test_count($self -> test_count + 1);
-
-	print "Test count: $test_count. Parsing '$raw_re' => '$string_re'. \n" if ($self -> verbose > 0);
 
 	my($child);
 	my($event_name);
@@ -324,8 +332,9 @@ sub report
 
 sub _string2re
 {
-	my($self, $candidate)	= @_;
-	my($re)					= '';
+	my($self, $candidate) = @_;
+
+	my($re);
 
 	try
 	{
@@ -333,9 +342,10 @@ sub _string2re
 	}
 	catch
 	{
-	};
+		$re = '';
 
-	print '3 Error str: ', $self -> error_str, "\n" if ($self -> error_str);
+		$self -> error_str("Perl cannot convert $candidate into qr/.../ form");
+	};
 
 	return $re;
 
