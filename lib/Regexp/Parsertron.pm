@@ -17,7 +17,7 @@ use Tree;
 
 use Try::Tiny;
 
-use Types::Standard qw/Any Bool Int Str/;
+use Types::Standard qw/Any Int Str/;
 
 has bnf =>
 (
@@ -103,7 +103,7 @@ has verbose =>
 (
 	default  => sub {return 0},
 	is       => 'rw',
-	isa      => Bool,
+	isa      => Int,
 	required => 0,
 );
 
@@ -474,6 +474,7 @@ pattern_sequence			::= parenthesis_pattern
 
 parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
+pattern						::=
 pattern						::= character_set
 								| pattern_set
 

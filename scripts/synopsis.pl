@@ -153,7 +153,7 @@ for my $line (@lines)
 
 my($count)	= 0;
 my($number)	= shift(@ARGV) || 0;
-my($parser)	= Regexp::Parsertron -> new(verbose => 1);
+my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 
 my($error);
 my($result);
