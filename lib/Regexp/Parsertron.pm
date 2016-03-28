@@ -51,6 +51,22 @@ has grammar =>
 	required => 0,
 );
 
+has marpa_error_count =>
+(
+	default  => sub{return 0},
+	is       => 'rw',
+	isa      => Int,
+	required => 0,
+);
+
+has perl_error_count =>
+(
+	default  => sub{return 0},
+	is       => 'rw',
+	isa      => Int,
+	required => 0,
+);
+
 has re =>
 (
 	default  => sub {return ''},
@@ -213,6 +229,7 @@ sub parse
 	{
 		$result = 1;
 
+		$self -> marpa_error_count($self -> marpa_error_count + 1);
 		$self -> error_str("Error: Parse failed. $_");
 
 		print '2 Error str: ', $self -> error_str, "\n" if ($self -> verbose && $self -> error_str);
@@ -344,7 +361,8 @@ sub _string2re
 	{
 		$re = '';
 
-		$self -> error_str("Perl cannot convert $candidate into qr/.../ form");
+		$self -> perl_error_count($self -> perl_error_count + 1);
+		$self -> error_str($self -> test_count . ": Perl cannot convert $candidate into qr/.../ form");
 	};
 
 	return $re;
@@ -387,32 +405,32 @@ sub _validate_event
 
 __DATA__
 @@ V 5.20
-:default					::= action => [values]
+:default		::= action => [values]
 
-lexeme default				= latm => 1
+lexeme default	= latm => 1
 
-:start						::= regexp
+:start			::= regexp
 
 # G1 stuff.
 
-regexp						::= open_parenthesis pattern_sequence close_parenthesis
+regexp			::= open_parenthesis basic_pattern close_parenthesis
 
 # TODO: I may be able to chop the ranks later.
 
-pattern_sequence			::= question_mark comment												rank => 1
-								| question_mark flag_sequence optional_pattern_set					rank => 2
-								| question_mark optional_caret positive_flags optional_pattern_set	rank => 3
-								| question_mark vertical_bar pattern_set							rank => 4
-								| question_mark equals pattern_set									rank => 5
-								| question_mark exclamation_mark pattern_set						rank => 6
-								| question_mark less_equals pattern_set								rank => 7
-								| escaped_K															rank => 7
-								| question_mark less_exclamation_mark pattern_set					rank => 8
-								| question_mark named_capture_group pattern_set						rank => 9
-								| named_backreference												rank => 10
-								| question_mark open_brace code close_brace							rank => 11
-								| question_mark question_mark open_brace code close_brace			rank => 12
-								| question_mark parameter_number									rank => 13
+basic_pattern	::= question_mark comment												rank => 1
+					| question_mark flag_sequence optional_pattern_set					rank => 2
+					| question_mark optional_caret positive_flags optional_pattern_set	rank => 3
+					| question_mark vertical_bar pattern_set							rank => 4
+					| question_mark equals pattern_set									rank => 5
+					| question_mark exclamation_mark pattern_set						rank => 6
+					| question_mark less_equals pattern_set								rank => 7
+					| escaped_K															rank => 7
+					| question_mark less_exclamation_mark pattern_set					rank => 8
+					| question_mark named_capture_group pattern_set						rank => 9
+					| named_backreference												rank => 10
+					| question_mark open_brace code close_brace							rank => 11
+					| question_mark question_mark open_brace code close_brace			rank => 12
+					| question_mark parameter_number									rank => 13
 
 comment						::= hash non_close_parenthesis_set
 
@@ -448,12 +466,18 @@ positive_integer			::= non_zero_digit digit_sequence
 
 digit_sequence				::= digit_set*
 
-pattern_set					::= open_parenthesis pattern close_parenthesis
-								| open_bracket character_in_set close_bracket
+pattern_set					::= pattern_sequence+
+
+pattern_sequence			::= parenthesis_pattern
+								| bracket_pattern
 								| character_sequence
+
+parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
 pattern						::= character_set
 								| pattern_set
+
+bracket_pattern				::= open_bracket character_in_set close_bracket
 
 character_in_set			::= escaped_close_bracket
 								| non_close_bracket
