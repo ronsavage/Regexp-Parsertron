@@ -35,6 +35,14 @@ has current_node =>
 	required => 0,
 );
 
+has error_str =>
+(
+	default  => sub {return ''},
+	is       => 'rw',
+	isa      => Str,
+	required => 0,
+);
+
 has grammar =>
 (
 	default  => sub {return ''},
@@ -56,6 +64,14 @@ has recce =>
 	default  => sub{return ''},
 	is       => 'rw',
 	isa      => Any,
+	required => 0,
+);
+
+has test_count =>
+(
+	default  => sub{return 0},
+	is       => 'rw',
+	isa      => Int,
 	required => 0,
 );
 
@@ -159,6 +175,7 @@ sub parse
 
 	# Emulate parts of new(), which makes things a bit earier for the caller.
 
+	$self -> error_str('');
 	$self -> re($opts{re}) if (defined $opts{re});
 
 	$self -> recce
@@ -187,14 +204,18 @@ sub parse
 		{
 			$result = 1;
 
-			print "Error: Parse failed\n";
+			$self -> error_str('Error: Parse failed') if (! $self -> error_str);
+
+			print '1 Error str: ', $self -> error_str, "\n" if ($self -> error_str);
 		}
 	}
 	catch
 	{
 		$result = 1;
 
-		print "Error: Parse failed. ${_}";
+		$self -> error_str("Error: Parse failed. $_");
+
+		print '2 Error str: ', $self -> error_str, "\n" if ($self -> error_str);
 	};
 
 	# Return 0 for success and 1 for failure.
@@ -213,10 +234,11 @@ sub _process
 
 	return undef if ($string_re eq '');
 
-	my($ref_re)	= \"$string_re"; # Use " in comment for UltraEdit.
-	my($length)	= length($string_re);
+	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
+	my($length)		= length($string_re);
+	my($test_count)	= $self -> test_count($self -> test_count + 1);
 
-	print "Parsing '$raw_re' => '$string_re'. \n" if ($self -> verbose > 0);
+	print "Test count: $test_count. Parsing '$raw_re' => '$string_re'. \n" if ($self -> verbose > 0);
 
 	my($child);
 	my($event_name);
@@ -255,9 +277,12 @@ sub _process
 
 	if ($self -> recce -> exhausted)
 	{
+		# See https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion
+		# for why this code is exhaustion-loving.
+
 		$message = 'Parse exhausted';
 
-		print "Warning: $message\n";
+		#print "Warning: $message\n";
 	}
 	elsif (my $status = $self -> recce -> ambiguous)
 	{
@@ -299,20 +324,20 @@ sub report
 
 sub _string2re
 {
-	my($self, $candidate) = @_;
-
-	my($result);
+	my($self, $candidate)	= @_;
+	my($re)					= '';
 
 	try
 	{
-		$result = does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
+		$re = does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
 	}
 	catch
 	{
-		$result = '';
 	};
 
-	return $result;
+	print '3 Error str: ', $self -> error_str, "\n" if ($self -> error_str);
+
+	return $re;
 
 } # End of _string2re.
 
@@ -350,6 +375,194 @@ sub _validate_event
 
 1;
 
+__DATA__
+@@ V 5.20
+:default					::= action => [values]
+
+lexeme default				= latm => 1
+
+:start						::= regexp
+
+# G1 stuff.
+
+regexp						::= open_parenthesis pattern_sequence close_parenthesis
+
+# TODO: I may be able to chop the ranks later.
+
+pattern_sequence			::= question_mark comment												rank => 1
+								| question_mark flag_sequence optional_pattern_set					rank => 2
+								| question_mark optional_caret positive_flags optional_pattern_set	rank => 3
+								| question_mark vertical_bar pattern_set							rank => 4
+								| question_mark equals pattern_set									rank => 5
+								| question_mark exclamation_mark pattern_set						rank => 6
+								| question_mark less_equals pattern_set								rank => 7
+								| escaped_K															rank => 7
+								| question_mark less_exclamation_mark pattern_set					rank => 8
+								| question_mark named_capture_group pattern_set						rank => 9
+								| named_backreference												rank => 10
+								| question_mark open_brace code close_brace							rank => 11
+								| question_mark question_mark open_brace code close_brace			rank => 12
+								| question_mark parameter_number									rank => 13
+
+comment						::= hash non_close_parenthesis_set
+
+non_close_parenthesis_set	::= non_close_parenthesis*
+
+flag_sequence				::= positive_flags negative_flag_set
+
+positive_flags				::=
+positive_flags				::= a2z
+
+negative_flag_set			::=
+negative_flag_set			::= minus negative_flags
+
+negative_flags				::= a2z
+
+optional_pattern_set		::= colon pattern_set
+
+optional_caret				::=
+optional_caret				::= caret
+
+named_capture_group			::= single_quote capture_name single_quote
+								| less_than capture_name greater_than
+
+capture_name				::= word
+
+named_backreference			::= escaped_k single_quote capture_name single_quote
+								| escaped_k less_than capture_name greater_than
+
+code						::= [[:print:]]
+
+positive_integer			::= non_zero_digit digit_sequence
+								| minus positive_integer
+
+digit_sequence				::= digit_set*
+
+pattern_set					::= open_parenthesis pattern close_parenthesis
+								| open_bracket character_in_set close_bracket
+								| character_sequence
+
+pattern						::= character_set
+								| pattern_set
+
+character_in_set			::= escaped_close_bracket
+								| non_close_bracket
+
+character_sequence			::= escaped_close_parenthesis
+								| escaped_open_parenthesis
+								| character_set
+
+parameter_number			::= positive_integer
+								| plus positive_integer
+								| minus positive_integer
+								| R
+								| zero
+
+# L0 stuff, in alphabetical order.
+
+:lexeme						~ a2z					pause => before		event => a2z
+a2z							~ [a-z]
+
+:lexeme						~ caret					pause => before		event => caret
+caret						~ '^'
+
+:lexeme						~ character_set			pause => before		event => character_set
+character_set				~ [^()]*
+
+:lexeme						~ close_brace			pause => before		event => close_brace
+close_brace					~ '}'
+
+:lexeme						~ close_bracket			pause => before		event => close_bracket
+close_bracket				~ '])'
+
+:lexeme						~ close_parenthesis		pause => before		event => close_parenthesis
+close_parenthesis			~ ')'
+
+:lexeme						~ colon					pause => before		event => colon
+colon						~ ':'
+
+:lexeme						~ digit_set				pause => before		event => digit_set
+digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
+
+:lexeme						~ equals				pause => before		event => equals
+equals						~ '='
+
+:lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
+escaped_close_bracket		~ '\\' ']'
+
+:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
+escaped_close_parenthesis	~ '\\)'
+
+:lexeme						~ escaped_k				pause => before		event => escaped_k
+escaped_k					~ '\\k'
+
+:lexeme						~ escaped_K				pause => before		event => escaped_K
+escaped_K					~ '\\K'
+
+:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
+escaped_open_parenthesis	~ '\\)'
+
+:lexeme						~ exclamation_mark		pause => before		event => exclamation_mark
+exclamation_mark			~ '!'
+
+:lexeme						~ greater_than			pause => before		event => greater_than
+greater_than				~ '>'
+
+:lexeme						~ hash					pause => before		event => hash
+hash						~ ':'
+
+:lexeme						~ less_equals			pause => before		event => less_equals
+less_equals					~ '<='
+
+:lexeme						~ less_exclamation_mark	pause => before		event => less_exclamation_mark
+less_exclamation_mark		~ '<!'
+
+:lexeme						~ less_than				pause => before		event => less_than
+less_than					~ '<'
+
+:lexeme						~ minus					pause => before		event => minus
+minus						~ '-'
+
+:lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
+non_close_bracket			~ [^\]]*
+
+:lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
+non_close_parenthesis		~ [^\)]*
+
+:lexeme						~ non_zero_digit		pause => before		event => non_zero_digit
+non_zero_digit				~ [1-9]
+
+:lexeme						~ open_brace			pause => before		event => open_brace
+open_brace					~ '{'
+
+:lexeme						~ open_bracket			pause => before		event => open_bracket
+open_bracket				~ '['
+
+:lexeme						~ open_parenthesis		pause => before		event => open_parenthesis
+open_parenthesis			~ '('
+
+:lexeme						~ plus					pause => before		event => plus
+plus						~ '-'
+
+:lexeme						~ question_mark			pause => before		event => question_mark
+question_mark				~ '?'
+
+:lexeme						~ R						pause => before		event => R
+R							~ '-'
+
+:lexeme						~ single_quote			pause => before		event => single_quote
+single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
+
+:lexeme						~ vertical_bar			pause => before		event => vertical_bar
+vertical_bar				~ '|'
+
+:lexeme						~ word					pause => before		event => word
+word						~ [\w]+
+
+:lexeme						~ zero					pause => before		event => zero
+zero						~ '-'
+
+@@ POD
 =pod
 
 =head1 NAME
@@ -538,6 +751,12 @@ Initially, it will only handle Perl5 syntax.
 Yes, version-dependent regexp syntax will be supported for recent versions of Perl. This is done by
 having tokens within the BNF which are replaced at start-up time with version-dependent details.
 
+=head2 Is this an exhaustion-hating or exhaustion-loving app?
+
+Exhaustion-loving.
+
+See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
+
 =head1 References
 
 L<http://perldoc.perl.org/perlre.html>. This is the definitive document.
@@ -619,188 +838,3 @@ Australian copyright (c) 2016, Ron Savage.
 #
 # Note:   Tokens of the form '_xxx_' are replaced with version-dependent values.
 
-__DATA__
-@@ V 5.20
-:default					::= action => [values]
-
-lexeme default				= latm => 1
-
-:start						::= regexp
-
-# G1 stuff.
-
-regexp						::= open_parenthesis pattern_sequence close_parenthesis
-
-# TODO: I may be able to chop the ranks later.
-
-pattern_sequence			::= question_mark comment												rank => 1
-								| question_mark flag_sequence optional_pattern_set					rank => 2
-								| question_mark optional_caret positive_flags optional_pattern_set	rank => 3
-								| question_mark vertical_bar pattern_set							rank => 4
-								| question_mark equals pattern_set									rank => 5
-								| question_mark exclamation_mark pattern_set						rank => 6
-								| question_mark less_equals pattern_set								rank => 7
-								| escaped_K															rank => 7
-								| question_mark less_exclamation_mark pattern_set					rank => 8
-								| question_mark named_capture_group pattern_set						rank => 9
-								| named_backreference												rank => 10
-								| question_mark open_brace code close_brace							rank => 11
-								| question_mark question_mark open_brace code close_brace			rank => 12
-								| question_mark parameter_number									rank => 13
-
-comment						::= hash non_close_parenthesis_set
-
-non_close_parenthesis_set	::= non_close_parenthesis*
-
-flag_sequence				::= positive_flags negative_flag_set
-
-positive_flags				::=
-positive_flags				::= a2z
-
-negative_flag_set			::=
-negative_flag_set			::= minus negative_flags
-
-negative_flags				::= a2z
-
-optional_pattern_set		::= colon pattern_set
-
-optional_caret				::=
-optional_caret				::= caret
-
-named_capture_group			::= single_quote capture_name single_quote
-								| less_than capture_name greater_than
-
-capture_name				::= word
-
-named_backreference			::= escaped_k single_quote capture_name single_quote
-								| escaped_k less_than capture_name greater_than
-
-code						::= [[:print:]]
-
-positive_integer			::= non_zero_digit digit_sequence
-								| minus positive_integer
-
-digit_sequence				::= digit_set*
-
-pattern_set					::= open_parenthesis pattern close_parenthesis
-								| open_bracket character_in_set close_bracket
-								| character_sequence
-
-pattern						::= character_set
-
-character_in_set			::= escaped_close_bracket
-								| non_close_bracket
-
-character_sequence			::= escaped_close_parenthesis
-								| escaped_open_parenthesis
-								| character_set
-
-parameter_number			::= positive_integer
-								| plus positive_integer
-								| minus positive_integer
-								| R
-								| zero
-
-# L0 stuff, in alphabetical order.
-
-:lexeme						~ a2z					pause => before		event => a2z
-a2z							~ [a-z]
-
-:lexeme						~ caret					pause => before		event => caret
-caret						~ '^'
-
-:lexeme						~ character_set			pause => before		event => character_set
-character_set				~ [^()]*
-
-:lexeme						~ close_brace			pause => before		event => close_brace
-close_brace					~ '}'
-
-:lexeme						~ close_bracket			pause => before		event => close_bracket
-close_bracket				~ '])'
-
-:lexeme						~ close_parenthesis		pause => before		event => close_parenthesis
-close_parenthesis			~ ')'
-
-:lexeme						~ colon					pause => before		event => colon
-colon						~ ':'
-
-:lexeme						~ digit_set				pause => before		event => digit_set
-digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
-
-:lexeme						~ equals				pause => before		event => equals
-equals						~ '='
-
-:lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
-escaped_close_bracket		~ '\\' ']'
-
-:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
-escaped_close_parenthesis	~ '\\)'
-
-:lexeme						~ escaped_k				pause => before		event => escaped_k
-escaped_k					~ '\\k'
-
-:lexeme						~ escaped_K				pause => before		event => escaped_K
-escaped_K					~ '\\K'
-
-:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
-escaped_open_parenthesis	~ '\\)'
-
-:lexeme						~ exclamation_mark		pause => before		event => exclamation_mark
-exclamation_mark			~ '!'
-
-:lexeme						~ greater_than			pause => before		event => greater_than
-greater_than				~ '>'
-
-:lexeme						~ hash					pause => before		event => hash
-hash						~ ':'
-
-:lexeme						~ less_equals			pause => before		event => less_equals
-less_equals					~ '<='
-
-:lexeme						~ less_exclamation_mark	pause => before		event => less_exclamation_mark
-less_exclamation_mark		~ '<!'
-
-:lexeme						~ less_than		pause => before		event => less_than
-less_than					~ '<'
-
-:lexeme						~ minus					pause => before		event => minus
-minus						~ '-'
-
-:lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
-non_close_bracket			~ [^\]]*
-
-:lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
-non_close_parenthesis		~ [^\)]*
-
-:lexeme						~ non_zero_digit		pause => before		event => non_zero_digit
-non_zero_digit				~ [1-9]
-
-:lexeme						~ open_brace			pause => before		event => open_brace
-open_brace					~ '{'
-
-:lexeme						~ open_bracket			pause => before		event => open_bracket
-open_bracket				~ '['
-
-:lexeme						~ open_parenthesis		pause => before		event => open_parenthesis
-open_parenthesis			~ '('
-
-:lexeme						~ plus					pause => before		event => plus
-plus						~ '-'
-
-:lexeme						~ question_mark			pause => before		event => question_mark
-question_mark				~ '?'
-
-:lexeme						~ R						pause => before		event => R
-R							~ '-'
-
-:lexeme						~ single_quote			pause => before		event => single_quote
-single_quote				~ [\'] # The '\' is for UltraEdit's syntiax hiliter.
-
-:lexeme						~ vertical_bar			pause => before		event => vertical_bar
-vertical_bar				~ '|'
-
-:lexeme						~ word					pause => before		event => word
-word						~ [\w]+
-
-:lexeme						~ zero					pause => before		event => zero
-zero						~ '-'

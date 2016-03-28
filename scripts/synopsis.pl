@@ -33,6 +33,7 @@ my($count)	= 0;
 my($number)	= shift(@ARGV) || 0;
 my($parser)	= Regexp::Parsertron -> new(verbose => 1);
 
+my($error);
 my($result);
 
 for my $re (@re)
@@ -44,6 +45,12 @@ for my $re (@re)
 	next if ( ($number > 0) && ($count != $number) );
 
 	$result = $parser -> parse(re => $re);
+	$error	= $parser -> error_str;
+
+	if ($error)
+	{
+		print "$error\n";
+	}
 
 	# Reset tree for next test.
 
