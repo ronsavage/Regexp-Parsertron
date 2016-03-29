@@ -3,30 +3,19 @@
 use strict;
 use warnings;
 
+use Regexp::Parsertron;
+
 # ---------------------
 
-my($s)	= 'z';
-my($re)	= qr/(?s-i:)/;
+my($s)	= '+a';
+my($re)	= '/^[+]([^(]+)$/mi';
 
-if ($s =~ $re) {print ''}else{print ''};
+print "String: $s. Regexp: $re. ", ( ($s =~ /$re/) ? "Match. \n" : "No match. \n");
 
-print "$re\n";
+my($parser)	= Regexp::Parsertron -> new(verbose => 2);
+my($result)	= $parser -> parse(re => $re);
 
-$re = qr/A|B/x;
+$parser -> report_tree;
 
-if ($s =~ $re) {print ''}else{print ''};
-
-print "$re\n";
-
-$re = qr/(?s-i:more.*than).*million/;
-
-if ($s =~ $re) {print ''}else{print ''};
-
-print "$re\n";
-
-$re = qr/my.STRING/is;
-
-if ($s =~ $re) {print ''}else{print ''};
-
-print "$re\n";
-
+print 'Perl error count:  ', $parser -> perl_error_count, "\n";
+print 'Marpa error count: ', $parser -> marpa_error_count, "\n";

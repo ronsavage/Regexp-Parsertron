@@ -71,7 +71,7 @@ has re =>
 (
 	default  => sub {return ''},
 	is       => 'rw',
-	isa      => Str,
+	isa      => Any,
 	required => 0,
 );
 
@@ -318,6 +318,8 @@ sub _process
 		print "Warning: $message\n";
 	}
 
+	$self -> report_tree if ($self -> verbose);
+
 	# Return a defined value for success and undef for failure.
 
 	return $self -> recce -> value;
@@ -344,6 +346,16 @@ sub report
 	}
 
 } # End of report.
+
+# ------------------------------------------------
+
+sub report_tree
+{
+	my($self) = @_;
+
+	print map("$_\n", @{$self -> tree -> tree2string});
+
+} # End of report_tree.
 
 # ------------------------------------------------
 
@@ -413,13 +425,13 @@ lexeme default	= latm => 1
 
 # G1 stuff.
 
-regexp			::= open_parenthesis basic_pattern close_parenthesis
+regexp			::= open_parenthesis entire_pattern close_parenthesis
 
 # TODO: I may be able to chop the ranks later.
 
-basic_pattern	::= question_mark comment												rank => 1
+entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_set	rank => 1
 					| question_mark flag_sequence optional_pattern_set					rank => 2
-					| question_mark optional_caret positive_flags optional_pattern_set	rank => 3
+					| question_mark comment												rank => 3
 					| question_mark vertical_bar pattern_set							rank => 4
 					| question_mark equals pattern_set									rank => 5
 					| question_mark exclamation_mark pattern_set						rank => 6
@@ -432,24 +444,55 @@ basic_pattern	::= question_mark comment												rank => 1
 					| question_mark question_mark open_brace code close_brace			rank => 12
 					| question_mark parameter_number									rank => 13
 
+optional_caret				::=
+optional_caret				::= caret
+
+positive_flags				::=
+positive_flags				::= flag_set
+
+optional_pattern_set		::= colon slash_pattern
+
+# TODO: Let's hope users always use /.../ and not something like m|...|!
+
+slash_pattern				::= slash optional_caret pattern_set optional_dollar slash optional_switches
+
+pattern_set					::= pattern_sequence+
+
+pattern_sequence			::= parenthesis_pattern
+								| bracket_pattern
+								| character_sequence
+
+parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
+
+pattern						::=
+pattern						::= character_set
+#								| pattern_set
+
+bracket_pattern				::= open_bracket character_in_set close_bracket
+
+character_in_set			::= escaped_close_bracket
+								| non_close_bracket
+
+character_sequence			::= escaped_close_parenthesis
+								| escaped_open_parenthesis
+								| character_set
+
+optional_dollar				::=
+optional_dollar				::= dollar
+
+optional_switches			::=
+optional_switches			::= flag_set
+
 comment						::= hash non_close_parenthesis_set
 
 non_close_parenthesis_set	::= non_close_parenthesis*
 
 flag_sequence				::= positive_flags negative_flag_set
 
-positive_flags				::=
-positive_flags				::= a2z
-
 negative_flag_set			::=
 negative_flag_set			::= minus negative_flags
 
-negative_flags				::= a2z
-
-optional_pattern_set		::= colon pattern_set
-
-optional_caret				::=
-optional_caret				::= caret
+negative_flags				::= flag_set
 
 named_capture_group			::= single_quote capture_name single_quote
 								| less_than capture_name greater_than
@@ -466,27 +509,6 @@ positive_integer			::= non_zero_digit digit_sequence
 
 digit_sequence				::= digit_set*
 
-pattern_set					::= pattern_sequence+
-
-pattern_sequence			::= parenthesis_pattern
-								| bracket_pattern
-								| character_sequence
-
-parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
-
-pattern						::=
-pattern						::= character_set
-								| pattern_set
-
-bracket_pattern				::= open_bracket character_in_set close_bracket
-
-character_in_set			::= escaped_close_bracket
-								| non_close_bracket
-
-character_sequence			::= escaped_close_parenthesis
-								| escaped_open_parenthesis
-								| character_set
-
 parameter_number			::= positive_integer
 								| plus positive_integer
 								| minus positive_integer
@@ -494,9 +516,6 @@ parameter_number			::= positive_integer
 								| zero
 
 # L0 stuff, in alphabetical order.
-
-:lexeme						~ a2z					pause => before		event => a2z
-a2z							~ [a-z]
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
@@ -519,6 +538,9 @@ colon						~ ':'
 :lexeme						~ digit_set				pause => before		event => digit_set
 digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
 
+:lexeme						~ dollar				pause => before		event => dollar
+dollar						~ '$'
+
 :lexeme						~ equals				pause => before		event => equals
 equals						~ '='
 
@@ -539,6 +561,9 @@ escaped_open_parenthesis	~ '\\)'
 
 :lexeme						~ exclamation_mark		pause => before		event => exclamation_mark
 exclamation_mark			~ '!'
+
+:lexeme						~ flag_set				pause => before		event => flag_set
+flag_set					~ [a-z]+
 
 :lexeme						~ greater_than			pause => before		event => greater_than
 greater_than				~ '>'
@@ -587,6 +612,9 @@ R							~ '-'
 
 :lexeme						~ single_quote			pause => before		event => single_quote
 single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
+
+:lexeme						~ slash					pause => before		event => slash
+slash						~ '/'
 
 :lexeme						~ vertical_bar			pause => before		event => vertical_bar
 vertical_bar				~ '|'
