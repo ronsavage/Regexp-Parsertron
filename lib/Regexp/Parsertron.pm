@@ -149,7 +149,7 @@ sub _add_daughter
 		{
 		}
 
-		$self -> tree -> add_child($node);
+		$self -> current_node -> add_child($node);
 
 		if ($event_name eq 'close_parenthesis')
 		{
