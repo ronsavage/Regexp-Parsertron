@@ -1,5 +1,9 @@
 Revision history for Perl extension Regexp::Parserton.
 
+0.80  2016-03-30T15:04:00
+	- Expand BNF. Output to indented tree.
+	- Add scripts/simple.pl.
+
 0.50  2016-03-07T10:13:00
 	- Add BNF for extended patterns.
 	- Expand scripts/synopsis.pl to effectivly run tests.

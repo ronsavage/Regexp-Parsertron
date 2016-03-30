@@ -99,6 +99,14 @@ has tree =>
 	required => 0,
 );
 
+has uid =>
+(
+	default  => sub {return 0},
+	is       => 'rw',
+	isa      => Int,
+	required => 0,
+);
+
 has verbose =>
 (
 	default  => sub {return 0},
@@ -132,6 +140,7 @@ sub BUILD
 sub _add_daughter
 {
 	my($self, $event_name, $attributes)	= @_;
+	$$attributes{uid}					= $self -> uid($self -> uid + 1);
 	my($node)							= Tree -> new($event_name);
 
 	$node -> meta($attributes);
@@ -151,11 +160,11 @@ sub _add_daughter
 		{
 			print 'Before: ', $self -> current_node -> value, '. ',
 				($self -> current_node -> is_root ? 'Root' : ''), "\n";
-			$self -> current_node($self -> current_node -> parent);
+			$self -> current_node($self -> current_node -> parent) if (! $self -> current_node -> is_root);
 			print 'After:  ', $self -> current_node -> value, "\n";
 		}
 
-		if ($self -> current_node -> is_root)
+		if ($self -> current_node -> parent -> is_root)
 		{
 			$self -> tree -> add_child($node);
 		}
@@ -344,10 +353,10 @@ sub _process
 sub report
 {
 	my($self)	= @_;
-	my($format)	= "%-20s  %s\n";
+	my($format)	= "%-20s  %3s  %s\n";
 
-	print sprintf($format, 'Name', 'Text');
-	print sprintf($format, '----', '----');
+	print sprintf($format, 'Name', 'Uid', 'Text');
+	print sprintf($format, '----', '---', '----');
 
 	my($meta);
 
@@ -355,7 +364,7 @@ sub report
 	{
 		$meta = $node -> meta;
 
-		print sprintf($format, $node -> value, $$meta{text});
+		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
 	}
 
 } # End of report.
@@ -471,7 +480,7 @@ pattern_set					::= pattern_sequence+
 
 pattern_sequence			::= parenthesis_pattern
 								| bracket_pattern
-#								| character_sequence
+								| character_sequence
 
 parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
@@ -479,7 +488,6 @@ parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
 pattern						::=
 pattern						::= bracket_pattern
-#								| pattern_set
 
 bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket set_modifiers
 
@@ -495,9 +503,12 @@ set_modifiers				::= plus
 								| question_mark
 #								| TBA. E.g. {...}.
 
-#character_sequence			::= escaped_close_parenthesis
-#								| escaped_open_parenthesis
-#								| character_set
+character_sequence			::= simple_character_sequence+
+
+simple_character_sequence	::= escaped_close_parenthesis
+								| escaped_open_parenthesis
+								| escaped_slash
+								| character_set
 
 optional_dollar				::=
 optional_dollar				::= dollar
@@ -542,8 +553,8 @@ parameter_number			::= positive_integer
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
 
-#:lexeme						~ character_set			pause => before		event => character_set
-#character_set				~ [^()]*
+:lexeme						~ character_set			pause => before		event => character_set
+character_set				~ [^()/]*
 
 :lexeme						~ close_brace			pause => before		event => close_brace
 close_brace					~ '}'
@@ -569,8 +580,8 @@ equals						~ '='
 :lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
 escaped_close_bracket		~ '\\' ']'
 
-#:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
-#escaped_close_parenthesis	~ '\\)'
+:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
+escaped_close_parenthesis	~ '\\)'
 
 :lexeme						~ escaped_k				pause => before		event => escaped_k
 escaped_k					~ '\\k'
@@ -578,8 +589,11 @@ escaped_k					~ '\\k'
 :lexeme						~ escaped_K				pause => before		event => escaped_K
 escaped_K					~ '\\K'
 
-#:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
-#escaped_open_parenthesis	~ '\\)'
+:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
+escaped_open_parenthesis	~ '\\)'
+
+:lexeme						~ escaped_slash			pause => before		event => escaped_slash
+escaped_slash				~ '\\\\'
 
 :lexeme						~ exclamation_mark		pause => before		event => exclamation_mark
 exclamation_mark			~ '!'
