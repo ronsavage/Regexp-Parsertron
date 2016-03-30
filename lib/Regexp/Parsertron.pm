@@ -145,15 +145,19 @@ sub _add_daughter
 	}
 	else
 	{
-		if ($event_name eq 'open_parenthesis')
+		if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
 		{
+			$self -> current_node($self -> current_node -> parent) if (! $self -> current_node -> is_root);
 		}
 
 		$self -> current_node -> add_child($node);
 
-		if ($event_name eq 'close_parenthesis')
+		# In this 'if', the ^ and $ are mandatory, since we have events
+		# with names like non_close_bracket.
+
+		if ($event_name =~ /^open_(?:bracket|parenthesis)$/)
 		{
-			$self -> current_node($self -> current_node -> getParent) if (! $self -> current_node -> is_root);
+			$self -> current_node($node);
 		}
 	}
 
@@ -427,22 +431,20 @@ lexeme default	= latm => 1
 
 regexp			::= open_parenthesis entire_pattern close_parenthesis
 
-# TODO: I may be able to chop the ranks later.
-
-entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_set	rank => 1
-					| question_mark flag_sequence optional_pattern_set					rank => 2
-					| question_mark comment												rank => 3
-					| question_mark vertical_bar pattern_set							rank => 4
-					| question_mark equals pattern_set									rank => 5
-					| question_mark exclamation_mark pattern_set						rank => 6
-					| question_mark less_equals pattern_set								rank => 7
-					| escaped_K															rank => 7
-					| question_mark less_exclamation_mark pattern_set					rank => 8
-					| question_mark named_capture_group pattern_set						rank => 9
-					| named_backreference												rank => 10
-					| question_mark open_brace code close_brace							rank => 11
-					| question_mark question_mark open_brace code close_brace			rank => 12
-					| question_mark parameter_number									rank => 13
+entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_set
+					| question_mark flag_sequence optional_pattern_set
+					| question_mark comment
+					| question_mark vertical_bar pattern_set
+					| question_mark equals pattern_set
+					| question_mark exclamation_mark pattern_set
+					| question_mark less_equals pattern_set
+					| escaped_K
+					| question_mark less_exclamation_mark pattern_set
+					| question_mark named_capture_group pattern_set
+					| named_backreference
+					| question_mark open_brace code close_brace
+					| question_mark question_mark open_brace code close_brace
+					| question_mark parameter_number
 
 optional_caret				::=
 optional_caret				::= caret
@@ -464,17 +466,25 @@ pattern_sequence			::= parenthesis_pattern
 
 parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
+# Perl accepts /()/.
+
 pattern						::=
 pattern						::= bracket_pattern
-								| non_close_parenthesis_set
 #								| pattern_set
 
-bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket
+bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket set_modifiers
+
+# Perl does not accept /[]/.
 
 characters_in_set			::= character_in_set+
 
 character_in_set			::= escaped_close_bracket
 								| non_close_bracket
+
+set_modifiers				::=
+set_modifiers				::= plus
+								| question_mark
+#								| TBA. E.g. {...}.
 
 #character_sequence			::= escaped_close_parenthesis
 #								| escaped_open_parenthesis
@@ -587,7 +597,7 @@ less_than					~ '<'
 minus						~ '-'
 
 :lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
-non_close_bracket			~ [^\]]
+non_close_bracket			~ [^\]]+
 
 :lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
 non_close_parenthesis		~ [^\)]*
@@ -605,7 +615,7 @@ open_bracket				~ '['
 open_parenthesis			~ '('
 
 :lexeme						~ plus					pause => before		event => plus
-plus						~ '-'
+plus						~ '+'
 
 :lexeme						~ question_mark			pause => before		event => question_mark
 question_mark				~ '?'
