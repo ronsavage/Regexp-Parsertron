@@ -460,22 +460,25 @@ pattern_set					::= pattern_sequence+
 
 pattern_sequence			::= parenthesis_pattern
 								| bracket_pattern
-								| character_sequence
+#								| character_sequence
 
 parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
 pattern						::=
-pattern						::= character_set
+pattern						::= bracket_pattern
+								| non_close_parenthesis_set
 #								| pattern_set
 
-bracket_pattern				::= open_bracket character_in_set close_bracket
+bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket
+
+characters_in_set			::= character_in_set+
 
 character_in_set			::= escaped_close_bracket
 								| non_close_bracket
 
-character_sequence			::= escaped_close_parenthesis
-								| escaped_open_parenthesis
-								| character_set
+#character_sequence			::= escaped_close_parenthesis
+#								| escaped_open_parenthesis
+#								| character_set
 
 optional_dollar				::=
 optional_dollar				::= dollar
@@ -520,14 +523,14 @@ parameter_number			::= positive_integer
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
 
-:lexeme						~ character_set			pause => before		event => character_set
-character_set				~ [^()]*
+#:lexeme						~ character_set			pause => before		event => character_set
+#character_set				~ [^()]*
 
 :lexeme						~ close_brace			pause => before		event => close_brace
 close_brace					~ '}'
 
 :lexeme						~ close_bracket			pause => before		event => close_bracket
-close_bracket				~ '])'
+close_bracket				~ ']'
 
 :lexeme						~ close_parenthesis		pause => before		event => close_parenthesis
 close_parenthesis			~ ')'
@@ -547,8 +550,8 @@ equals						~ '='
 :lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
 escaped_close_bracket		~ '\\' ']'
 
-:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
-escaped_close_parenthesis	~ '\\)'
+#:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
+#escaped_close_parenthesis	~ '\\)'
 
 :lexeme						~ escaped_k				pause => before		event => escaped_k
 escaped_k					~ '\\k'
@@ -556,8 +559,8 @@ escaped_k					~ '\\k'
 :lexeme						~ escaped_K				pause => before		event => escaped_K
 escaped_K					~ '\\K'
 
-:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
-escaped_open_parenthesis	~ '\\)'
+#:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
+#escaped_open_parenthesis	~ '\\)'
 
 :lexeme						~ exclamation_mark		pause => before		event => exclamation_mark
 exclamation_mark			~ '!'
@@ -584,7 +587,7 @@ less_than					~ '<'
 minus						~ '-'
 
 :lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
-non_close_bracket			~ [^\]]*
+non_close_bracket			~ [^\]]
 
 :lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
 non_close_parenthesis		~ [^\)]*

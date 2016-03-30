@@ -10,7 +10,7 @@ use Regexp::Parsertron;
 my($s)	= '+a';
 my($re)	= '/^[+]([^(]+)$/mi';
 
-print "String: $s. Regexp: $re. ", ( ($s =~ /$re/) ? "Match. \n" : "No match. \n");
+print "String: $s. Regexp: $re. ", ( ($s =~ $re) ? "Match. \n" : "No match. \n");
 
 my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 my($result)	= $parser -> parse(re => $re);
