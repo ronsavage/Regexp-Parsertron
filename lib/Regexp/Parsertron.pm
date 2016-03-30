@@ -145,15 +145,24 @@ sub _add_daughter
 	}
 	else
 	{
+		# Note: the ^ and $ are mandatory, due to event names like non_close_bracket.
+
 		if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
 		{
-			$self -> current_node($self -> current_node -> parent) if (! $self -> current_node -> is_root);
+			print 'Before: ', $self -> current_node -> value, '. ',
+				($self -> current_node -> is_root ? 'Root' : ''), "\n";
+			$self -> current_node($self -> current_node -> parent);
+			print 'After:  ', $self -> current_node -> value, "\n";
 		}
 
-		$self -> current_node -> add_child($node);
-
-		# In this 'if', the ^ and $ are mandatory, since we have events
-		# with names like non_close_bracket.
+		if ($self -> current_node -> is_root)
+		{
+			$self -> tree -> add_child($node);
+		}
+		else
+		{
+			$self -> current_node -> add_child($node);
+		}
 
 		if ($event_name =~ /^open_(?:bracket|parenthesis)$/)
 		{
