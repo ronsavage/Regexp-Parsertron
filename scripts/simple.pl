@@ -8,7 +8,7 @@ use Regexp::Parsertron;
 # ---------------------
 
 my($re)		= qr/Perl|JavaScript/i;
-my($parser)	= Regexp::Parsertron -> new(verbose => 2);
+my($parser)	= Regexp::Parsertron -> new(verbose => 1);
 
 # Return 0 for success and 1 for failure.
 

@@ -479,6 +479,457 @@ sub _validate_event
 
 1;
 
+=pod
+
+=head1 NAME
+
+C<Regexp::Parsertron> - Parse a Perl regexp into a data structure of type L<Tree>
+
+Warning: Development version. See L</Version Numbers> for details.
+
+=head1 Synopsis
+
+This is scripts/simple.pl:
+
+	#!/usr/bin/env perl
+
+	use strict;
+	use warnings;
+
+	use Regexp::Parsertron;
+
+	# ---------------------
+
+	my($re)		= qr/Perl|JavaScript/i;
+	my($parser)	= Regexp::Parsertron -> new(verbose => 1);
+
+	# Return 0 for success and 1 for failure.
+
+	my($result) = $parser -> parse(re => $re);
+
+	print "Calling add(text => '|C++', uid => 6)\n";
+
+	$parser -> add(text => '|C++', uid => 6);
+	$parser -> raw_tree;
+	$parser -> cooked_tree;
+
+	my($as_string)	= $parser -> as_string;
+	my($as_re)		= $parser -> as_re;
+
+	print "Original:  $re. Result: $result. (0 is success)\n";
+	print "as_string: $as_string\n";
+	print "as_re:     $as_re\n";
+	print 'Perl error count:  ', $parser -> perl_error_count, "\n";
+	print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
+
+	my($target) = 'C++';
+
+	if ($target =~ $as_re)
+	{
+		print "Matches $target (without using \Q...\E)\n";
+	}
+	else
+	{
+		print "Doesn't match $target\n";
+	}
+
+And its output:
+
+	Test count: 1. Parsing '(?^i:Perl|JavaScript)' => (qr/.../) => '(?^i:Perl|JavaScript)'.
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- caret. Attributes: {text => "^", uid => "3"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
+	    |    |--- colon. Attributes: {text => ":", uid => "5"}
+	    |    |--- character_set. Attributes: {text => "Perl|JavaScript", uid => "6"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
+	Calling add(text => '|C++', uid => 6)
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- caret. Attributes: {text => "^", uid => "3"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
+	    |    |--- colon. Attributes: {text => ":", uid => "5"}
+	    |    |--- character_set. Attributes: {text => "Perl|JavaScript|C++", uid => "6"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
+	Name                  Uid  Text
+	----                  ---  ----
+	open_parenthesis        1  (
+	question_mark           2  ?
+	caret                   3  ^
+	flag_set                4  i
+	colon                   5  :
+	character_set           6  Perl|JavaScript|C++
+	close_parenthesis       7  )
+	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
+	as_string: (?^i:Perl|JavaScript|C++)
+	as_re:     (?^i:Perl|JavaScript|C++)
+	Perl error count:  0
+	Marpa error count: 0
+	Matches C++ (without using \Q...\E)
+
+=head1 Description
+
+Parses a regexp into a tree object managed by the L<Tree> module, and provided various methods for
+updating and retrieving that tree's contents.
+
+Warning: Development version. See L</Version Numbers> for details.
+
+This module uses L<Moo>.
+
+=head1 Distributions
+
+This module is available as a Unix-style distro (*.tgz).
+
+See L<http://savage.net.au/Perl-modules/html/installing-a-module.html>
+for help on unpacking and installing distros.
+
+=head1 Installation
+
+Install L<Regexp::Parsertron> as you would any C<Perl> module:
+
+Run:
+
+	cpanm Regexp::Parsertron
+
+or run:
+
+	sudo cpan Regexp::Parsertron
+
+or unpack the distro, and then either:
+
+	perl Build.PL
+	./Build
+	./Build test
+	sudo ./Build install
+
+or:
+
+	perl Makefile.PL
+	make (or dmake or nmake)
+	make test
+	make install
+
+=head1 Constructor and Initialization
+
+C<new()> is called as C<< my($parser) = Regexp::Parsertron -> new(k1 => v1, k2 => v2, ...) >>.
+
+It returns a new object of type C<Regexp::Parsertron>.
+
+Key-value pairs accepted in the parameter list (see corresponding methods for details
+[e.g. L</re([$regexp])>]):
+
+=over 4
+
+=item o re => $regexp
+
+The C<does()> method of L<Scalar::Does> is called to see what C<re> is. If it's already of the
+form C<qr/$re/>, then it's processed as is, but if it's not, then it's transformed using C<qr/$re/>.
+
+Warning: Currently, the input is expected to have been process by Perl via rq/$regexp/.
+
+Default: ''.
+
+=item o verbose => $integer
+
+Takes values 0, 1, 2, which print more and more progress reports. Used for debugging.
+
+Default: 0 (print nothing).
+
+=back
+
+=head1 Methods
+
+=head2 add(%opts)
+
+Add a string to the text of a node.
+
+%opts is a hash with these (key => value) pairs:
+
+=over 4
+
+=item o text => $string
+
+The text to add.
+
+See scripts/simple.pl for sample code.
+
+=item o uid => $uid
+
+The uid of the node to update.
+
+=back
+
+Note: Calling C<add()> never changes the uids of nodes, so repeated calling C<add()> with the same
+C<uid> will apply add updates to the same node.
+
+=head2 as_re()
+
+Returns the parsed regexp as a string matching what Perl would return from qr/.../.
+
+=head2 as_string()
+
+Returns the parsed regexp as a string.
+
+=head2 cooked_tree()
+
+Prints, in a pretty format, the tree built from parsing.
+
+See also L</raw_tree>.
+
+=head2 error_str()
+
+Returns the last error, as a string.
+
+Errors will be in 1 of 2 categories:
+
+=over 4
+
+=item o Perl errors
+
+These arise when Perl cannot interpret the string form of the regexp supplied by you, when the code
+checks it using qr/$re/.
+
+=item o Marpa errors
+
+These arise when the BNF within the module is such that the string form of the regexp cannot be
+parsed by Marpa.
+
+
+If you can use the regexp in Perl code, then you should never get this error. In other words, if
+Perl accepts the regexp and the module does not, then the BNF in this module is wrong (barring bugs
+in Perl of course).
+
+=back
+
+See also L</marpa_error_count()> and L<perl_error_count()>.
+
+=head2 marpa_error_count()
+
+Returns an integer count of errors detected by Marpa. This value should always be 0.
+
+See also L</error_str()>.
+
+Used basically for testing.
+
+=head2 new([%opts])
+
+Here, '[]' indicate an optional parameter.
+
+See L</Constructor and Initialization> for details on the parameters accepted by L</new()>.
+
+=head2 parse([%opts])
+
+Here, '[]' indicate an optional parameter.
+
+Parses the regexp supplied with the parameter C<re> in the call to L</new()> or in the call to
+L</re($regexp)>, or in the call to C<parse(re => $regexp)> itself. The latter takes precedence.
+
+The hash C<%opts> takes these (key => value) pairs, just as L</new()> does:
+
+=over 4
+
+=head2 perl_error_count()
+
+Returns an integer count of errors detected by perl. This value should always be 0.
+
+See also L</error_str()>.
+
+Used basically for testing.
+
+=item o re => $regexp
+
+See L</Constructor and Initialization> for how $regexp might be pre-processed (i.e. modified before
+being parsed).
+
+=back
+
+=head2 raw_tree()
+
+Prints, in a simple format, the tree built from parsing.
+
+See also L</cooked_tree>.
+
+=head2 re([$regexp])
+
+Here, '[]' indicate an optional parameter.
+
+Gets or sets the regexp to be processed.
+
+Note: C<re> is a parameter to L</new([%opts])>.
+
+=head2 tree()
+
+Returns an object of type L<Tree>. Ignore the root node.
+
+Each node's C<meta> method returns a hashref of information about the node. See the L</FAQ> for
+details.
+
+See also the source code for L</cooked_tree()> and L</raw_tree()> for ideas on how to use this
+object.
+
+=head2 uid()
+
+Returns the last-used uid.
+
+Each node in the tree is given a uid, which allows methods like L</add(%opts)> to work.
+
+=head2 verbose([$integer])
+
+Here, '[]' indicate an optional parameter.
+
+Gets or sets the verbosity level, within the range 0 .. 2. Higher numbers print more progress
+reports.
+
+=head1 FAQ
+
+=head2 What is the format of the nodes in the tree build by this module?
+
+Each node's C<meta> method returns a hashref with these (key => value) pairs:
+
+=over 4
+
+=item o name => $string
+
+This is the name of the Marpa-style event which was triggered by detection of some C<text> within
+the regexp.
+
+=item o text => $string
+
+This is the text within the regexp which triggered the event just mentioned.
+
+=back
+
+See also the source code for L</cooked_tree()> and L</raw_tree()> for ideas on how to use this
+object.
+
+See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
+
+=head2 What is the purpose of this module?
+
+=over 4
+
+=item o To provide a stand-alone parser for regexps
+
+=item o To help me learn more about regexps
+
+=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
+
+=back
+
+=head2 Does this module interpret regexps in any way?
+
+No. You have to run your own Perl code to do that. This module just parses them into a data
+structure.
+
+And that really means this module does not match the regexp against anything. If I appear to do that
+while testing new code, you can't rely on that appearing in production versions of the module.
+
+=head2 Does this module re-write regexps?
+
+Yes, on a small scale so far. See scripts/simple.pl for sample code. The source of this program
+and its output are given in the L</Synopsis>.
+
+=head2 Does this module handle both Perl5 and Perl6?
+
+Initially, it will only handle Perl5 syntax.
+
+=head2 Does this module handle various versions of regexps (i.e., of Perl5)?
+
+Yes, version-dependent regexp syntax will be supported for recent versions of Perl. This is done by
+having tokens within the BNF which are replaced at start-up time with version-dependent details.
+
+There are no such tokens at the moment.
+
+All testing is done assuming the regexp syntax as documented online. See L</References> for the
+urls in question.
+
+=head2 Is this an exhaustion-hating or exhaustion-loving app?
+
+Exhaustion-loving.
+
+In short, Marpa will always report 'Parse exhausted', but I<this is not an error>.
+
+See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
+
+=head1 References
+
+L<http://perldoc.perl.org/perlre.html>. This is the definitive document.
+
+L<http://perldoc.perl.org/perlretut.html>. Samples with commentary.
+
+L<http://perldoc.perl.org/perlop.html#Regexp-Quote-Like-Operators>
+
+L<http://perldoc.perl.org/perlrequick.html>
+
+L<http://perldoc.perl.org/perlrebackslash.html>
+
+L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>
+
+=head1 See Also
+
+L<Graph::Regexp>
+
+L<Regexp::Assemble>
+
+L<Regexp::ERE>
+
+L<Regexp::Keywords>
+
+L<Regexp::Lexer>
+
+L<Regexp::List>
+
+L<Regexp::Optimizer>
+
+L<Regexp::Parser>
+
+L<Regexp::SAR>. This is vaguely a version of L<Set::FA::Element>.
+
+L<Regexp::Stringify>
+
+L<Regexp::Trie>
+
+And many others...
+
+=head1 Machine-Readable Change Log
+
+The file Changes was converted into Changelog.ini by L<Module::Metadata::Changes>.
+
+=head1 Version Numbers
+
+Version numbers < 1.00 represent development versions. From 1.00 up, they are production versions.
+
+=head1 Repository
+
+L<https://github.com/ronsavage/Regexp-Parsertron>
+
+=head1 Support
+
+Email the author, or log a bug on RT:
+
+L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp::Parsertron>.
+
+=head1 Author
+
+L<Regexp::Parsertron> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2016.
+
+Marpa's homepage: L<http://savage.net.au/Marpa.html>.
+
+My homepage: L<http://savage.net.au/>.
+
+=head1 Copyright
+
+Australian copyright (c) 2016, Ron Savage.
+
+	All Programs of mine are 'OSI Certified Open Source Software';
+	you can redistribute them and/or modify them under the terms of
+	The Artistic License 2.0, a copy of which is available at:
+	http://opensource.org/licenses/alphabetical.
+
+=cut
+
 __DATA__
 @@ V 5.20
 :default		::= action => [values]
@@ -710,275 +1161,3 @@ word						~ [\w]+
 
 :lexeme						~ zero					pause => before		event => zero
 zero						~ '-'
-
-@@ POD
-=pod
-
-=head1 NAME
-
-C<Regexp::Parsertron> - Parse a Perl regexp into a Tree
-
-=head1 Synopsis
-
-This is part of scripts/synopsis.pl:
-
-	#!/usr/bin/env perl
-
-	use strict;
-	use warnings;
-
-	use Regexp::Parsertron;
-
-	# ---------------------
-
-	my($parser) = Regexp::Parsertron -> new;
-	my($re)     ='[yY][eE][sS]';
-	my($result) = $parser -> parse(re => $re);
-
-	$parser -> report;
-
-Since that regexp stringifies via C<qr/$re/> to C<(?^:[yY][eE][sS])>, the report says:
-
-	Name                  Text
-	----                  ----
-	open_parenthesis      (
-	question_mark         ?
-	caret                 ^
-	colon                 :
-	text                  [yY][eE][sS]
-	close_parenthesis     )
-
-=head1 Description
-
-Parses a regexp into a tree object managed by the L<Tree> module.
-
-This module uses L<Moo>.
-
-=head1 Distributions
-
-This module is available as a Unix-style distro (*.tgz).
-
-See L<http://savage.net.au/Perl-modules/html/installing-a-module.html>
-for help on unpacking and installing distros.
-
-=head1 Installation
-
-Install L<Regexp::Parsertron> as you would any C<Perl> module:
-
-Run:
-
-	cpanm Regexp::Parsertron
-
-or run:
-
-	sudo cpan Regexp::Parsertron
-
-or unpack the distro, and then either:
-
-	perl Build.PL
-	./Build
-	./Build test
-	sudo ./Build install
-
-or:
-
-	perl Makefile.PL
-	make (or dmake or nmake)
-	make test
-	make install
-
-=head1 Constructor and Initialization
-
-C<new()> is called as C<< my($parser) = Regexp::Parsertron -> new(k1 => v1, k2 => v2, ...) >>.
-
-It returns a new object of type C<Regexp::Parsertron>.
-
-Key-value pairs accepted in the parameter list (see corresponding methods for details
-[e.g. L</re([$regexp])>]):
-
-=over 4
-
-=item o re => $regexp
-
-The C<does()> method of L<Scalar::Does> is called to see what C<re> is. If it's already of the
-form C<qr/$re/>, then it's processed as is, but if it's not, then it's transformed using C<qr/$re/>.
-
-=back
-
-=head1 Methods
-
-=head2 new()
-
-See L</Constructor and Initialization> for details on the parameters accepted by L</new()>.
-
-=head2 parse([%opts])
-
-Here, '[]' indicate an optional parameter.
-
-Parses the regexp supplied in the call to L</new()> or in the call to L</re($regexp)>, or in the
-call to C<parse()> itself. The latter takes precedence.
-
-The hash C<%opts> takes these (key => value) pairs, just as L</new()> does:
-
-=over 4
-
-=item o re => $regexp
-
-See L</Constructor and Initialization> for how $regexp might be pre-processed (i.e. modified before
-being parsed).
-
-=back
-
-=head2 re([$regexp])
-
-Here, '[]' indicate an optional parameter.
-
-Gets or sets the regexp to be processed.
-
-=head2 tree()
-
-Returns an object of type L<Tree>. Ignore the root node.
-
-Each node's C<meta> method returns a hashref of information about the node. See the L</FAQ> for
-details.
-
-=head1 FAQ
-
-=head2 What is the format of the nodes in the tree build by this module?
-
-Each node's C<meta> method returns a hashref with these (key => value) pairs:
-
-=over 4
-
-=item o name => $string
-
-This is the name of the Marpa-style event which was triggered by detection of some C<text> within
-the regexp.
-
-=item o text => $string
-
-This is the text within the regexp which triggered the event just mentioned.
-
-=back
-
-See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
-
-=head2 What is the purpose of this module?
-
-=over 4
-
-=item o To provide a stand-alone parser for regexps
-
-=item o To help me learn more about regexps
-
-=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
-
-=back
-
-=head2 Does this module interpret regexps in any way?
-
-No. You have to run your own Perl code to do that. This module just parses them into a data
-structure.
-
-And that really means this module does not match the regexp against anything. If I appear to do that
-while testing new code, you can't rely on that appearing in production versions of the module.
-
-=head2 Does this module re-write regexps?
-
-Not yet, but that's the plan. So, ultimately, this module might be able to replace some of
-L<Regexp::Assemble>'s functionality.
-
-This would include support for assembling complex regexps out of repeated calls to methods within
-this module.
-
-=head2 Does this module handle both Perl5 and Perl6?
-
-Initially, it will only handle Perl5 syntax.
-
-=head2 Does this module handle various versions of regexps (i.e., of Perl5)?
-
-Yes, version-dependent regexp syntax will be supported for recent versions of Perl. This is done by
-having tokens within the BNF which are replaced at start-up time with version-dependent details.
-
-=head2 Is this an exhaustion-hating or exhaustion-loving app?
-
-Exhaustion-loving.
-
-See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
-
-=head1 References
-
-L<http://perldoc.perl.org/perlre.html>. This is the definitive document.
-
-L<http://perldoc.perl.org/perlretut.html>. Samples with commentary.
-
-L<http://perldoc.perl.org/perlop.html#Regexp-Quote-Like-Operators>
-
-L<http://perldoc.perl.org/perlrequick.html>
-
-L<http://perldoc.perl.org/perlrebackslash.html>
-
-L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>
-
-=head1 See Also
-
-L<Graph::Regexp>
-
-L<Regexp::Assemble>
-
-L<Regexp::ERE>
-
-L<Regexp::Keywords>
-
-L<Regexp::Lexer>
-
-L<Regexp::List>
-
-L<Regexp::Optimizer>
-
-L<Regexp::Parser>
-
-L<Regexp::SAR>. This is vaguely a version of L<Set::FA::Element>.
-
-L<Regexp::Stringify>
-
-L<Regexp::Trie>
-
-And many others...
-
-=head1 Machine-Readable Change Log
-
-The file Changes was converted into Changelog.ini by L<Module::Metadata::Changes>.
-
-=head1 Version Numbers
-
-Version numbers < 1.00 represent development versions. From 1.00 up, they are production versions.
-
-=head1 Repository
-
-L<https://github.com/ronsavage/Regexp-Parsertron>
-
-=head1 Support
-
-Email the author, or log a bug on RT:
-
-L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp::Parsertron>.
-
-=head1 Author
-
-L<Regexp::Parsertron> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2016.
-
-Marpa's homepage: L<http://savage.net.au/Marpa.html>.
-
-My homepage: L<http://savage.net.au/>.
-
-=head1 Copyright
-
-Australian copyright (c) 2016, Ron Savage.
-
-	All Programs of mine are 'OSI Certified Open Source Software';
-	you can redistribute them and/or modify them under the terms of
-	The Artistic License 2.0, a copy of which is available at:
-	http://opensource.org/licenses/alphabetical.
-
-=cut
