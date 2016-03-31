@@ -59,10 +59,20 @@ my(@test)	=
 	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
+{
+	count		=> 11,
+	expected	=> '(?^i:Perl|JavaScript)',
+	re			=> qr/Perl|JavaScript/i,
+},
+{
+	count		=> 12,
+	expected	=> '(?^i:Perl|JavaScript|C++)',
+	re			=> qr/Perl|JavaScript/i,
+},
 );
 
 my($limit)	= shift || 0;
-my($parser)	= Regexp::Parsertron -> new(verbose => 2);
+my($parser)	= Regexp::Parsertron -> new(verbose => 0);
 
 my($expected);
 my($got);
@@ -78,19 +88,24 @@ for my $test (@test)
 
 	print "$$test{count}. re: $$test{re}. result: $result\n";
 
+	if ($$test{count} == 12)
+	{
+		$parser -> add(text => '|C++', uid => 6);
+	}
+
 	if ($result == 0)
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
 
-		print "$$test{count}: OK\n" if ("$got" eq $expected);
+		print "$$test{count}: ", ( ("$got" eq $expected) ? 'OK' : 'Mismatch'), "\n";
 	}
 	else
 	{
-		die "Test $$test{count} failed to return 0 from run()\n";
+		print "Test $$test{count} failed to return 0 from parse()\n";
 	}
 
-	# Reset tree for next test.
+	# Reset for next test.
 
-	$parser -> tree('');
+	$parser -> reset;
 }

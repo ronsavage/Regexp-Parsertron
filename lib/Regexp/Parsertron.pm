@@ -115,7 +115,7 @@ has verbose =>
 	required => 0,
 );
 
-our $VERSION = '0.80';
+our $VERSION = '0.60';
 
 # ------------------------------------------------
 
@@ -132,8 +132,7 @@ sub BUILD
 			source => \$self -> bnf
 		})
 	);
-	$self -> tree -> meta({text => 'Root', uid => 0});
-	$self -> current_node($self -> tree);
+	$self -> reset;
 
 } # End of BUILD.
 
@@ -178,17 +177,17 @@ sub _add_daughter
 
 	print "Adding $event_name to tree. \n" if ($self -> verbose > 1);
 
-		if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
-		{
-			$self -> current_node($self -> current_node -> parent);
-		}
+	if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
+	{
+		$self -> current_node($self -> current_node -> parent);
+	}
 
-		$self -> current_node -> add_child($node);
+	$self -> current_node -> add_child($node);
 
-		if ($event_name =~ /^open_(?:bracket|parenthesis)$/)
-		{
-			$self -> current_node($node);
-		}
+	if ($event_name =~ /^open_(?:bracket|parenthesis)$/)
+	{
+		$self -> current_node($node);
+	}
 
 } # End of _add_daughter.
 
@@ -236,7 +235,7 @@ sub as_string
 sub cooked_tree
 {
 	my($self)	= @_;
-	my($format)	= "%-20s  %3s  %s\n";
+	my($format)	= "%-30s  %3s  %s\n";
 
 	print sprintf($format, 'Name', 'Uid', 'Text');
 	print sprintf($format, '----', '---', '----');
@@ -421,6 +420,21 @@ sub raw_tree
 	print map("$_\n", @{$self -> tree -> tree2string});
 
 } # End of raw_tree.
+
+# ------------------------------------------------
+
+sub reset
+{
+	my($self) = @_;
+
+	$self -> tree(Tree -> new('Root') );
+	$self -> tree -> meta({text => 'Root', uid => 0});
+	$self -> current_node($self -> tree);
+	$self -> marpa_error_count(0);
+	$self -> perl_error_count(0);
+	$self -> uid(0);
+
+} # End of reset.
 
 # ------------------------------------------------
 
@@ -748,6 +762,12 @@ Gets or sets the regexp to be processed.
 
 Note: C<re> is a parameter to L</new([%opts])>.
 
+=head2 reset()
+
+Resets various internal thingys, except test_count.
+
+Used basically for debugging.
+
 =head2 tree()
 
 Returns an object of type L<Tree>. Ignore the root node.
@@ -935,8 +955,8 @@ lexeme default	= latm => 1
 
 regexp			::= open_parenthesis entire_pattern close_parenthesis
 
-entire_pattern	::= question_mark caret colon open_parenthesis comment close_parenthesis
-					| question_mark optional_caret positive_flags optional_pattern_set
+entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_set
+					| question_mark caret colon open_parenthesis comment close_parenthesis
 					| question_mark flag_sequence optional_pattern_set
 					| question_mark vertical_bar pattern_set
 					| question_mark equals pattern_set
@@ -964,6 +984,8 @@ optional_pattern_set		::= colon slash_pattern
 slash_pattern				::=
 slash_pattern				::= slash optional_caret pattern_set optional_dollar slash optional_switches
 
+slashless_pattern			::= optional_caret pattern_set optional_dollar
+
 pattern_set					::= pattern_sequence+
 
 pattern_sequence			::= parenthesis_pattern
@@ -976,6 +998,7 @@ parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
 pattern						::=
 pattern						::= bracket_pattern
+								| non_close_parenthesis_set
 
 bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket set_modifiers
 
@@ -1003,8 +1026,6 @@ optional_dollar				::= dollar
 
 optional_switches			::=
 optional_switches			::= flag_set
-
-slashless_pattern			::= optional_caret pattern_set optional_dollar
 
 comment						::= question_mark hash non_close_parenthesis_set
 
@@ -1117,7 +1138,7 @@ minus						~ '-'
 non_close_bracket			~ [^\]]+
 
 :lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
-non_close_parenthesis		~ [^\)]*
+non_close_parenthesis		~ [^)]*
 
 :lexeme						~ non_zero_digit		pause => before		event => non_zero_digit
 non_zero_digit				~ [1-9]

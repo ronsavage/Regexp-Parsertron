@@ -1,9 +1,11 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 
 use Regexp::Parsertron;
 
-# Warning: Can't use Test::Stream because of the '#' in the regexps.
+# Warning: Can't use Test2 or Test::Stream because of the '#' in the regexps.
 
 use Test::More;
 
@@ -18,78 +20,94 @@ my(@test)	=
 },
 {
 	count		=> 2,
+	expected	=> '(?^:(?))',
+	re			=> qr/(?)/,
+},
+{
+	count		=> 3,
 	expected	=> '(?^:(?a))',
 	re			=> qr/(?a)/,
 },
 {
-	count		=> 3,
+	count		=> 4,
 	expected	=> '(?^:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
-	count		=> 4,
+	count		=> 5,
 	expected	=> '(?^:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
-	count		=> 5,
+	count		=> 6,
 	expected	=> '(?^:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
-	count		=> 6,
+	count		=> 7,
 	expected	=> '(?^:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
 {
-	count		=> 7,
+	count		=> 8,
 	expected	=> '(?^:(?:))',
 	re			=> qr/(?:)/,
 },
 {
-	count		=> 8,
+	count		=> 9,
 	expected	=> '(?^:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
-	count		=> 9,
+	count		=> 10,
 	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
+{
+	count		=> 11,
+	expected	=> '(?^i:Perl|JavaScript)',
+	re			=> qr/Perl|JavaScript/i,
+},
+{
+	count		=> 12,
+	expected	=> '(?^i:Perl|JavaScript|C++)',
+	re			=> qr/Perl|JavaScript/i,
+},
 );
 
-my($limit)	= shift || 0;
 my($parser)	= Regexp::Parsertron -> new;
 
 my($expected);
 my($got);
+my($message);
 my($result);
 
 for my $test (@test)
 {
-	# Use this trick to run the tests one-at-a-time. See scripts/test.sh.
-
-	next if ( ($limit > 0) && ($$test{count} != $limit) );
-
 	$result = $parser -> parse(re => $$test{re});
 
-	note "$$test{count}. re: $$test{re}. result: $result\n";
+	if ($$test{count} == 12)
+	{
+		$parser -> add(text => '|C++', uid => 6);
+	}
 
 	if ($result == 0)
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
+		$message	= "$$test{count}: re: $$test{re}. got: $got";
+		$message	.= ' (After calling add(...) )' if ($$test{count} == 12);
 
-		is_deeply("$got", $expected, "$$test{count}: $$test{re}");
+		is_deeply("$got", $expected, $message);
 	}
 	else
 	{
-		die "Test $$test{count} failed to return 0 from run()\n";
+		BAIL_OUT("Test $$test{count} failed to return 0 from process()");
 	}
 
-	# Reset tree for next test.
+	# Reset for next test.
 
-	$parser -> tree('');
+	$parser -> reset;
 }
 
 done_testing;
