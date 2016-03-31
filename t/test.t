@@ -14,52 +14,52 @@ my(@test)	=
 {
 	count		=> 1,
 	expected	=> '(?^:(?#Comment))',
-	re			=> '(?#Comment)',
+	re			=> qr/(?#Comment)/,
 },
 {
 	count		=> 2,
 	expected	=> '(?^:(?))',
-	re			=> '(?)',
+	re			=> qr/(?)/,
 },
 {
 	count		=> 3,
 	expected	=> '(?^:(?a))',
-	re			=> '(?a)',
+	re			=> qr/(?a)/,
 },
 {
 	count		=> 4,
 	expected	=> '(?^:(?a-i))',
-	re			=> '(?a-i)',
+	re			=> qr/(?a-i)/,
 },
 {
 	count		=> 5,
 	expected	=> '(?^:(?^a))',
-	re			=> '(?^a)',
+	re			=> qr/(?^a)/,
 },
 {
 	count		=> 6,
 	expected	=> '(?^:(?a:))',
-	re			=> '(?a:)',
+	re			=> qr/(?a:)/,
 },
 {
 	count		=> 7,
 	expected	=> '(?^:(?a:b))',
-	re			=> '(?a:b)',
+	re			=> qr/(?a:b)/,
 },
 {
 	count		=> 8,
 	expected	=> '(?^:(?:))',
-	re			=> '(?:)',
+	re			=> qr/(?:)/,
 },
 {
 	count		=> 9,
 	expected	=> '(?^:[yY][eE][sS])',
-	re			=> '[yY][eE][sS]',
+	re			=> qr/[yY][eE][sS]/,
 },
 {
 	count		=> 10,
 	expected	=> '(?^:(A|B))',
-	re			=> '(A|B)',
+	re			=> qr/(A|B)/,
 },
 );
 

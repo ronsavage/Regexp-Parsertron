@@ -277,7 +277,8 @@ sub parse
 	# Emulate parts of new(), which makes things a bit earier for the caller.
 
 	$self -> error_str('');
-	$self -> re($opts{re}) if (defined $opts{re});
+	$self -> re($opts{re})				if (defined $opts{re});
+	$self -> verbose($opts{verbose})	if (defined $opts{verbose});
 
 	$self -> recce
 	(
@@ -571,7 +572,7 @@ And its output:
 
 =head1 Description
 
-Parses a regexp into a tree object managed by the L<Tree> module, and provided various methods for
+Parses a regexp into a tree object managed by the L<Tree> module, and provides various methods for
 updating and retrieving that tree's contents.
 
 Warning: Development version. See L</Version Numbers> for details.
@@ -597,14 +598,7 @@ or run:
 
 	sudo cpan Regexp::Parsertron
 
-or unpack the distro, and then either:
-
-	perl Build.PL
-	./Build
-	./Build test
-	sudo ./Build install
-
-or:
+or unpack the distro, and then use:
 
 	perl Makefile.PL
 	make (or dmake or nmake)
@@ -627,13 +621,15 @@ Key-value pairs accepted in the parameter list (see corresponding methods for de
 The C<does()> method of L<Scalar::Does> is called to see what C<re> is. If it's already of the
 form C<qr/$re/>, then it's processed as is, but if it's not, then it's transformed using C<qr/$re/>.
 
-Warning: Currently, the input is expected to have been process by Perl via rq/$regexp/.
+Warning: Currently, the input is expected to have been pre-processed by Perl via qr/$regexp/.
 
 Default: ''.
 
 =item o verbose => $integer
 
-Takes values 0, 1, 2, which print more and more progress reports. Used for debugging.
+Takes values 0, 1 or 2, which print more and more progress reports.
+
+Used for debugging.
 
 Default: 0 (print nothing).
 
@@ -653,16 +649,16 @@ Add a string to the text of a node.
 
 The text to add.
 
-See scripts/simple.pl for sample code.
-
 =item o uid => $uid
 
 The uid of the node to update.
 
 =back
 
-Note: Calling C<add()> never changes the uids of nodes, so repeated calling C<add()> with the same
-C<uid> will apply add updates to the same node.
+See scripts/simple.pl for sample code.
+
+Note: Calling C<add()> never changes the uids of nodes, so repeated calling of C<add()> with the
+same C<uid> will apply more and more updates to the same node.
 
 =head2 as_re()
 
@@ -711,7 +707,7 @@ Returns an integer count of errors detected by Marpa. This value should always b
 
 See also L</error_str()>.
 
-Used basically for testing.
+Used basically for debugging.
 
 =head2 new([%opts])
 
@@ -724,11 +720,11 @@ See L</Constructor and Initialization> for details on the parameters accepted by
 Here, '[]' indicate an optional parameter.
 
 Parses the regexp supplied with the parameter C<re> in the call to L</new()> or in the call to
-L</re($regexp)>, or in the call to C<parse(re => $regexp)> itself. The latter takes precedence.
+L</re($regexp)>, or in the call to C<< parse(re => $regexp) >> itself. The latter takes precedence.
 
-The hash C<%opts> takes these (key => value) pairs, just as L</new()> does:
+The hash C<%opts> takes the same (key => value) pairs as L</new()> does.
 
-=over 4
+See L</Constructor and Initialization> for details.
 
 =head2 perl_error_count()
 
@@ -736,14 +732,7 @@ Returns an integer count of errors detected by perl. This value should always be
 
 See also L</error_str()>.
 
-Used basically for testing.
-
-=item o re => $regexp
-
-See L</Constructor and Initialization> for how $regexp might be pre-processed (i.e. modified before
-being parsed).
-
-=back
+Used basically for debugging.
 
 =head2 raw_tree()
 
@@ -781,6 +770,10 @@ Here, '[]' indicate an optional parameter.
 
 Gets or sets the verbosity level, within the range 0 .. 2. Higher numbers print more progress
 reports.
+
+Used basically for debugging.
+
+Note: C<verbose> is a parameter to L</new([%opts])>.
 
 =head1 FAQ
 
@@ -824,7 +817,7 @@ No. You have to run your own Perl code to do that. This module just parses them 
 structure.
 
 And that really means this module does not match the regexp against anything. If I appear to do that
-while testing new code, you can't rely on that appearing in production versions of the module.
+while debugging new code, you can't rely on that appearing in production versions of the module.
 
 =head2 Does this module re-write regexps?
 
@@ -842,7 +835,7 @@ having tokens within the BNF which are replaced at start-up time with version-de
 
 There are no such tokens at the moment.
 
-All testing is done assuming the regexp syntax as documented online. See L</References> for the
+All debugging is done assuming the regexp syntax as documented online. See L</References> for the
 urls in question.
 
 =head2 Is this an exhaustion-hating or exhaustion-loving app?
@@ -913,7 +906,7 @@ L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp::Parsertron>.
 
 =head1 Author
 
-L<Regexp::Parsertron> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2016.
+L<Regexp::Parsertron> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> in 2011.
 
 Marpa's homepage: L<http://savage.net.au/Marpa.html>.
 
