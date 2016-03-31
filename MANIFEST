@@ -14,9 +14,7 @@ scripts/re.pl
 scripts/simple.pl
 scripts/synopsis.log
 scripts/synopsis.pl
-scripts/synopsis.sh
 scripts/test.pl
 scripts/test.sh
-scripts/traverse.pl
 t/test.t
 xt/author/pod.t
