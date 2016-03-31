@@ -1,11 +1,9 @@
+#!/usr/bin/env perl
+
 use strict;
 use warnings;
 
 use Regexp::Parsertron;
-
-# Warning: Can't use Test::Stream because of the '#' in the regexps.
-
-use Test::More;
 
 # ------------------------------------------------
 
@@ -18,48 +16,53 @@ my(@test)	=
 },
 {
 	count		=> 2,
+	expected	=> '(?^:(?))',
+	re			=> qr/(?)/,
+},
+{
+	count		=> 3,
 	expected	=> '(?^:(?a))',
 	re			=> qr/(?a)/,
 },
 {
-	count		=> 3,
+	count		=> 4,
 	expected	=> '(?^:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
-	count		=> 4,
+	count		=> 5,
 	expected	=> '(?^:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
-	count		=> 5,
+	count		=> 6,
 	expected	=> '(?^:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
-	count		=> 6,
+	count		=> 7,
 	expected	=> '(?^:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
 {
-	count		=> 7,
+	count		=> 8,
 	expected	=> '(?^:(?:))',
 	re			=> qr/(?:)/,
 },
 {
-	count		=> 8,
+	count		=> 9,
 	expected	=> '(?^:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
-	count		=> 9,
+	count		=> 10,
 	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
 );
 
 my($limit)	= shift || 0;
-my($parser)	= Regexp::Parsertron -> new;
+my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 
 my($expected);
 my($got);
@@ -73,14 +76,14 @@ for my $test (@test)
 
 	$result = $parser -> parse(re => $$test{re});
 
-	note "$$test{count}. re: $$test{re}. result: $result\n";
+	print "$$test{count}. re: $$test{re}. result: $result\n";
 
 	if ($result == 0)
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
 
-		is_deeply("$got", $expected, "$$test{count}: $$test{re}");
+		print "$$test{count}: OK\n" if ("$got" eq $expected);
 	}
 	else
 	{
@@ -91,5 +94,3 @@ for my $test (@test)
 
 	$parser -> tree('');
 }
-
-done_testing;

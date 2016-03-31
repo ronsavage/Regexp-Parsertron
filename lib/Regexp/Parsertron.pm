@@ -935,9 +935,9 @@ lexeme default	= latm => 1
 
 regexp			::= open_parenthesis entire_pattern close_parenthesis
 
-entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_set
+entire_pattern	::= question_mark caret colon open_parenthesis comment close_parenthesis
+					| question_mark optional_caret positive_flags optional_pattern_set
 					| question_mark flag_sequence optional_pattern_set
-					| question_mark comment
 					| question_mark vertical_bar pattern_set
 					| question_mark equals pattern_set
 					| question_mark exclamation_mark pattern_set
@@ -1006,7 +1006,7 @@ optional_switches			::= flag_set
 
 slashless_pattern			::= optional_caret pattern_set optional_dollar
 
-comment						::= hash non_close_parenthesis_set
+comment						::= question_mark hash non_close_parenthesis_set
 
 non_close_parenthesis_set	::= non_close_parenthesis*
 
@@ -1099,7 +1099,7 @@ flag_set					~ [a-z]+
 greater_than				~ '>'
 
 :lexeme						~ hash					pause => before		event => hash
-hash						~ ':'
+hash						~ '#'
 
 :lexeme						~ less_equals			pause => before		event => less_equals
 less_equals					~ '<='
