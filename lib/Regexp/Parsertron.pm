@@ -93,7 +93,7 @@ has test_count =>
 
 has tree =>
 (
-	default  => sub{return ''},
+	default  => sub{return Tree -> new('Root')},
 	is       => 'rw',
 	isa      => Any,
 	required => 0,
@@ -132,8 +132,39 @@ sub BUILD
 			source => \$self -> bnf
 		})
 	);
+	$self -> tree -> meta({text => 'Root', uid => 0});
+	$self -> current_node($self -> tree);
 
 } # End of BUILD.
+
+# ------------------------------------------------
+
+sub add
+{
+	my($self, %opts) = @_;
+
+	for my $param (qw/text uid/)
+	{
+		die "Method add() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
+	}
+
+	my($meta);
+	my($uid);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$uid	= $$meta{uid};
+
+		if ($opts{uid} == $uid)
+		{
+			$$meta{text} .= $opts{text};
+		}
+	}
+
+} # End of add.
 
 # ------------------------------------------------
 
@@ -147,53 +178,85 @@ sub _add_daughter
 
 	print "Adding $event_name to tree. \n" if ($self -> verbose > 1);
 
-	if ($self -> tree eq '')
-	{
-		$self -> tree($node);
-		$self -> current_node($node);
-	}
-	else
-	{
-		# Note: the ^ and $ are mandatory, due to event names like non_close_bracket.
-
 		if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
 		{
-			print 'Before: ', $self -> current_node -> value, '. ',
-				($self -> current_node -> is_root ? 'Root' : ''), "\n";
-			$self -> current_node($self -> current_node -> parent) if (! $self -> current_node -> is_root);
-			print 'After:  ', $self -> current_node -> value, "\n";
+			$self -> current_node($self -> current_node -> parent);
 		}
 
-		if ($self -> current_node -> parent -> is_root)
-		{
-			$self -> tree -> add_child($node);
-		}
-		else
-		{
-			$self -> current_node -> add_child($node);
-		}
+		$self -> current_node -> add_child($node);
 
 		if ($event_name =~ /^open_(?:bracket|parenthesis)$/)
 		{
 			$self -> current_node($node);
 		}
-	}
 
 } # End of _add_daughter.
 
 # ------------------------------------------------
 
+sub as_re
+{
+	my($self)	= @_;
+	my($string)	= $self -> as_string;
+	my($index)	= index($string, '/');
+
+	if ($index >= 0)
+	{
+		$string				= substr($string, $index);
+		substr($string, -1)	= '';
+	}
+
+	return $string;
+
+} # End of as_re.
+
+# ------------------------------------------------
+
 sub as_string
 {
-	my($self) = @_;
+	my($self)	= @_;
+	my($string)	= '';
 
-	return $self -> _string2re($self -> re);
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$string .= $$meta{text};
+	}
+
+	return $string;
 
 } # End of as_string.
 
 # ------------------------------------------------
 
-sub next_few_chars
+sub cooked_tree
+{
+	my($self)	= @_;
+	my($format)	= "%-20s  %3s  %s\n";
+
+	print sprintf($format, 'Name', 'Uid', 'Text');
+	print sprintf($format, '----', '---', '----');
+
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta = $node -> meta;
+
+		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
+	}
+
+} # End of cooked_tree.
+
+# ------------------------------------------------
+
+sub _next_few_chars
 {
 	my($self, $stringref, $offset) = @_;
 	my($s) = substr($$stringref, $offset, 20);
@@ -203,7 +266,7 @@ sub next_few_chars
 
 	return $s;
 
-} # End of next_few_chars.
+} # End of _next_few_chars.
 
 # ------------------------------------------------
 
@@ -236,7 +299,7 @@ sub parse
 	{
 		if (defined (my $value = $self -> _process) )
 		{
-			$self -> report if ($self -> verbose > 1);
+			$self -> cooked_tree if ($self -> verbose > 1);
 		}
 		else
 		{
@@ -340,7 +403,7 @@ sub _process
 		print "Warning: $message\n";
 	}
 
-	$self -> report_tree if ($self -> verbose);
+	$self -> raw_tree if ($self -> verbose);
 
 	# Return a defined value for success and undef for failure.
 
@@ -350,34 +413,13 @@ sub _process
 
 # ------------------------------------------------
 
-sub report
-{
-	my($self)	= @_;
-	my($format)	= "%-20s  %3s  %s\n";
-
-	print sprintf($format, 'Name', 'Uid', 'Text');
-	print sprintf($format, '----', '---', '----');
-
-	my($meta);
-
-	for my $node ($self -> tree -> traverse)
-	{
-		$meta = $node -> meta;
-
-		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
-	}
-
-} # End of report.
-
-# ------------------------------------------------
-
-sub report_tree
+sub raw_tree
 {
 	my($self) = @_;
 
 	print map("$_\n", @{$self -> tree -> tree2string});
 
-} # End of report_tree.
+} # End of raw_tree.
 
 # ------------------------------------------------
 
@@ -423,7 +465,7 @@ sub _validate_event
 
 	my($lexeme)        = substr($$stringref, $start, $span);
 	my($line, $column) = $self -> recce -> line_column($start);
-	my($literal)       = $self -> next_few_chars($stringref, $start + $span);
+	my($literal)       = $self -> _next_few_chars($stringref, $start + $span);
 	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
 	$message           = "$message. Events: $event_count. Names: ";
 
@@ -471,9 +513,11 @@ positive_flags				::=
 positive_flags				::= flag_set
 
 optional_pattern_set		::= colon slash_pattern
+								| colon slashless_pattern
 
 # TODO: Let's hope users always use /.../ and not something like m|...|!
 
+slash_pattern				::=
 slash_pattern				::= slash optional_caret pattern_set optional_dollar slash optional_switches
 
 pattern_set					::= pattern_sequence+
@@ -516,6 +560,8 @@ optional_dollar				::= dollar
 optional_switches			::=
 optional_switches			::= flag_set
 
+slashless_pattern			::= optional_caret pattern_set optional_dollar
+
 comment						::= hash non_close_parenthesis_set
 
 non_close_parenthesis_set	::= non_close_parenthesis*
@@ -549,6 +595,10 @@ parameter_number			::= positive_integer
 								| zero
 
 # L0 stuff, in alphabetical order.
+#
+# Policy: Event names are always the same as the name of the corresponding lexeme.
+#
+# Note:   Tokens of the form '_xxx_', if any, are replaced with version-dependent values.
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
@@ -932,8 +982,3 @@ Australian copyright (c) 2016, Ron Savage.
 	http://opensource.org/licenses/alphabetical.
 
 =cut
-
-# Policy: Event names are always the same as the name of the corresponding lexeme.
-#
-# Note:   Tokens of the form '_xxx_' are replaced with version-dependent values.
-
