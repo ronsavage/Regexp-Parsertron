@@ -30,8 +30,10 @@ my(%params) =
 	PREREQ_PM =>
 	{
 		'Data::Section::Simple'	=> 0.07,
+		'File::Slurper'			=> 0.008,
 		'Marpa::R2'				=> 3.000000,
 		'Moo'					=> 2.001001,
+		're'					=> 0,
 		'Scalar::Does'			=> 0.202,
 		'strict'				=> 0,
 		'Test::More'			=> 1.001014,

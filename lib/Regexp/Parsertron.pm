@@ -115,7 +115,7 @@ has verbose =>
 	required => 0,
 );
 
-our $VERSION = '0.60';
+our $VERSION = '0.61';
 
 # ------------------------------------------------
 
@@ -504,7 +504,7 @@ Warning: Development version. See L</Version Numbers> for details.
 
 =head1 Synopsis
 
-This is scripts/simple.pl:
+This is scripts/synopsis.pl:
 
 	#!/usr/bin/env perl
 
