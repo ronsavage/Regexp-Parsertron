@@ -69,10 +69,15 @@ my(@test)	=
 	expected	=> '(?^i:Perl|JavaScript|C++)',
 	re			=> qr/Perl|JavaScript/i,
 },
+{
+	count		=> 13,
+	expected	=> '(?^:/ab+bc/)',
+	re			=> '/ab+bc/',
+},
 );
 
 my($limit)	= shift || 0;
-my($parser)	= Regexp::Parsertron -> new(verbose => 0);
+my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 
 my($expected);
 my($got);
@@ -86,7 +91,6 @@ for my $test (@test)
 
 	$result = $parser -> parse(re => $$test{re});
 
-	print "$$test{count}. re: $$test{re}. result: $result\n";
 
 	if ($$test{count} == 12)
 	{
@@ -98,7 +102,7 @@ for my $test (@test)
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
 
-		print "$$test{count}: ", ( ("$got" eq $expected) ? 'OK' : 'Mismatch'), "\n";
+		print "$$test{count}: got: $got. expected: $expected. result: $result. \n";
 	}
 	else
 	{

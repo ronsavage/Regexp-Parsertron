@@ -1,6 +1,5 @@
 package Regexp::Parsertron;
 
-use re 'eval';
 use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
@@ -115,7 +114,7 @@ has verbose =>
 	required => 0,
 );
 
-our $VERSION = '0.51';
+our $VERSION = '0.52';
 
 # ------------------------------------------------
 

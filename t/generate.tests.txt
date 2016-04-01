@@ -13,14 +13,14 @@ my($input_file_name)	= 'perl-5.21.11/re_tests';
 my(@lines)				= grep{! /#/ && ! /^\s*$/ && ! /^__END__/} read_lines($input_file_name);
 my(%expected_failure)	=
 (
-	 14 => 1,
-	 15 => 1,
-	 16 => 1,
-	 34 => 1,
-	 35 => 1,
-	 36 => 1,
-	 38 => 1,
-	 39 => 1,
+	 41 => 1,
+	 42 => 1,
+	 43 => 1,
+	 71 => 1,
+	 72 => 1,
+	 73 => 1,
+	 75 => 1,
+
 	 40 => 1,
 	 42 => 1,
 	 43 => 1,
@@ -133,7 +133,7 @@ my(%expected_failure)	=
 	372 => 1,
 	373 => 1,
 );
-$expected_failure = ();
+%expected_failure = ();
 
 my(@fields);
 my(@re);
@@ -144,7 +144,6 @@ for my $line (@lines)
 	@fields		= split(/\t/, $line);
 	$fields[0]	=~ s/^\s+//;
 
-	next if ($fields[2] =~ /y/);
 	next if ($seen{$fields[0]});
 
 	$seen{$fields[0]} = 1;
@@ -154,7 +153,7 @@ for my $line (@lines)
 
 my($count)	= 0;
 my($number)	= shift(@ARGV) || 0;
-my($parser)	= Regexp::Parsertron -> new(verbose => 2);
+my($parser)	= Regexp::Parsertron -> new(verbose => 1);
 
 my($error);
 my($result);
@@ -174,9 +173,9 @@ for my $re (@re)
 
 	$result = $parser -> parse(re => $re);
 
-	# Reset tree for next test.
+	# Reset for next test.
 
-	$parser -> tree('');
+	$parser -> reset;
 }
 
 print 'Perl error count:  ', $parser -> perl_error_count, "\n";
