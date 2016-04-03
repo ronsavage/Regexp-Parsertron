@@ -1,5 +1,6 @@
 Changelog.ini
 Changes
+INSTALL
 lib/Regexp/Parsertron.pm
 LICENSE
 Makefile.PL
@@ -9,11 +10,15 @@ META.yml
 perl-5.21.11/re_tests
 perl-5.21.11/regexp.txt
 README
+scripts/extract.errors.pl
 scripts/pod2html.sh
 scripts/re.pl
 scripts/synopsis.pl
 scripts/test.pl
 scripts/test.sh
+t/generate.tests.log
 t/generate.tests.txt
+t/perl-5.21.11.t
+t/perl-5.21.11.tests
 t/test.t
 xt/author/pod.t
