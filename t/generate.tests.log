@@ -202,7 +202,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "abc$", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 23. Parsing '^' => (qr/.../) => '(?^u:^)'. 
+Marpa error: Test count: 23. Parsing '^' => (qr/.../) => '(?^u:^)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 7
 * String before error: (?^u:^
 * The error was at line 1, column 7, and at character 0x0029 ')', ...
@@ -372,11 +372,11 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "a[b-]", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 41. Parsing 'a[b-a]' => (qr/.../) => 
+Perl error: Test count: 41. Parsing 'a[b-a]' => (qr/.../) => 
 1 Error str: 41: Perl cannot convert a[b-a] into qr/.../ form
-Test count: 42. Parsing 'a[]b' => (qr/.../) => 
+Perl error: Test count: 42. Parsing 'a[]b' => (qr/.../) => 
 1 Error str: 42: Perl cannot convert a[]b into qr/.../ form
-Test count: 43. Parsing 'a[' => (qr/.../) => 
+Perl error: Test count: 43. Parsing 'a[' => (qr/.../) => 
 1 Error str: 43: Perl cannot convert a[ into qr/.../ form
 Test count: 44. Parsing 'a]' => (qr/.../) => '(?^u:a])'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -625,11 +625,11 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
     |    |--- character_set. Attributes: {text => "\x{100}\x{1000}", uid => "8"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
-Test count: 71. Parsing '*a' => (qr/.../) => 
+Perl error: Test count: 71. Parsing '*a' => (qr/.../) => 
 1 Error str: 71: Perl cannot convert *a into qr/.../ form
-Test count: 72. Parsing '(|*)b' => (qr/.../) => 
+Perl error: Test count: 72. Parsing '(|*)b' => (qr/.../) => 
 1 Error str: 72: Perl cannot convert (|*)b into qr/.../ form
-Test count: 73. Parsing '(*)b' => (qr/.../) => 
+Perl error: Test count: 73. Parsing '(*)b' => (qr/.../) => 
 1 Error str: 73: Perl cannot convert (*)b into qr/.../ form
 Test count: 74. Parsing '$b' => (qr/.../) => '(?^u:$b)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -640,7 +640,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "$b", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 75. Parsing 'a\' => (qr/.../) => 
+Perl error: Test count: 75. Parsing 'a\' => (qr/.../) => 
 1 Error str: 75: Perl cannot convert a\ into qr/.../ form
 Test count: 76. Parsing 'a\(b' => (qr/.../) => '(?^u:a\(b)'. 
 Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
@@ -677,9 +677,9 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "a\\b", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 79. Parsing 'abc)' => (qr/.../) => 
+Perl error: Test count: 79. Parsing 'abc)' => (qr/.../) => 
 1 Error str: 79: Perl cannot convert abc) into qr/.../ form
-Test count: 80. Parsing '(abc' => (qr/.../) => 
+Perl error: Test count: 80. Parsing '(abc' => (qr/.../) => 
 1 Error str: 80: Perl cannot convert (abc into qr/.../ form
 Test count: 81. Parsing '((a))' => (qr/.../) => '(?^u:((a)))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -725,7 +725,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "a{1,}b{1,}c", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 85. Parsing 'a**' => (qr/.../) => 
+Perl error: Test count: 85. Parsing 'a**' => (qr/.../) => 
 1 Error str: 85: Perl cannot convert a** into qr/.../ form
 Test count: 86. Parsing 'a.+?c' => (qr/.../) => '(?^u:a.+?c)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -808,7 +808,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |    |--- character_set. Attributes: {text => "{0,1}", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 93. Parsing ')(' => (qr/.../) => 
+Perl error: Test count: 93. Parsing ')(' => (qr/.../) => 
 1 Error str: 93: Perl cannot convert )( into qr/.../ form
 Test count: 94. Parsing '[^ab]*' => (qr/.../) => '(?^u:[^ab]*)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1255,25 +1255,25 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |    |--- character_set. Attributes: {text => "\1", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 133. Parsing '\1' => (qr/.../) => 
+Perl error: Test count: 133. Parsing '\1' => (qr/.../) => 
 1 Error str: 133: Perl cannot convert \1 into qr/.../ form
-Test count: 134. Parsing '\2' => (qr/.../) => 
+Perl error: Test count: 134. Parsing '\2' => (qr/.../) => 
 1 Error str: 134: Perl cannot convert \2 into qr/.../ form
-Test count: 135. Parsing '\g1' => (qr/.../) => 
+Perl error: Test count: 135. Parsing '\g1' => (qr/.../) => 
 1 Error str: 135: Perl cannot convert \g1 into qr/.../ form
-Test count: 136. Parsing '\g-1' => (qr/.../) => 
+Perl error: Test count: 136. Parsing '\g-1' => (qr/.../) => 
 1 Error str: 136: Perl cannot convert \g-1 into qr/.../ form
-Test count: 137. Parsing '\g{1}' => (qr/.../) => 
+Perl error: Test count: 137. Parsing '\g{1}' => (qr/.../) => 
 1 Error str: 137: Perl cannot convert \g{1} into qr/.../ form
-Test count: 138. Parsing '\g{-1}' => (qr/.../) => 
+Perl error: Test count: 138. Parsing '\g{-1}' => (qr/.../) => 
 1 Error str: 138: Perl cannot convert \g{-1} into qr/.../ form
-Test count: 139. Parsing '\g0' => (qr/.../) => 
+Perl error: Test count: 139. Parsing '\g0' => (qr/.../) => 
 1 Error str: 139: Perl cannot convert \g0 into qr/.../ form
-Test count: 140. Parsing '\g-0' => (qr/.../) => 
+Perl error: Test count: 140. Parsing '\g-0' => (qr/.../) => 
 1 Error str: 140: Perl cannot convert \g-0 into qr/.../ form
-Test count: 141. Parsing '\g{0}' => (qr/.../) => 
+Perl error: Test count: 141. Parsing '\g{0}' => (qr/.../) => 
 1 Error str: 141: Perl cannot convert \g{0} into qr/.../ form
-Test count: 142. Parsing '\g{-0}' => (qr/.../) => 
+Perl error: Test count: 142. Parsing '\g{-0}' => (qr/.../) => 
 1 Error str: 142: Perl cannot convert \g{-0} into qr/.../ form
 Test count: 143. Parsing '(a)|\1' => (qr/.../) => '(?^u:(a)|\1)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1299,7 +1299,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |    |--- character_set. Attributes: {text => "?a", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 145. Parsing '(a)|\2' => (qr/.../) => 
+Perl error: Test count: 145. Parsing '(a)|\2' => (qr/.../) => 
 1 Error str: 145: Perl cannot convert (a)|\2 into qr/.../ form
 Test count: 146. Parsing '(([a-c])b*?\2)*' => (qr/.../) => '(?^u:(([a-c])b*?\2)*)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1654,11 +1654,11 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "'a[b-]'i", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 182. Parsing ''a[b-a]'i' => (qr/.../) => 
+Perl error: Test count: 182. Parsing ''a[b-a]'i' => (qr/.../) => 
 1 Error str: 182: Perl cannot convert 'a[b-a]'i into qr/.../ form
-Test count: 183. Parsing ''a[]b'i' => (qr/.../) => 
+Perl error: Test count: 183. Parsing ''a[]b'i' => (qr/.../) => 
 1 Error str: 183: Perl cannot convert 'a[]b'i into qr/.../ form
-Test count: 184. Parsing ''a['i' => (qr/.../) => 
+Perl error: Test count: 184. Parsing ''a['i' => (qr/.../) => 
 1 Error str: 184: Perl cannot convert 'a['i into qr/.../ form
 Test count: 185. Parsing ''a]'i' => (qr/.../) => '(?^u:'a]'i)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1735,9 +1735,9 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "'*a'i", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 193. Parsing ''(|*)b'i' => (qr/.../) => 
+Perl error: Test count: 193. Parsing ''(|*)b'i' => (qr/.../) => 
 1 Error str: 193: Perl cannot convert '(|*)b'i into qr/.../ form
-Test count: 194. Parsing ''(*)b'i' => (qr/.../) => 
+Perl error: Test count: 194. Parsing ''(*)b'i' => (qr/.../) => 
 1 Error str: 194: Perl cannot convert '(*)b'i into qr/.../ form
 Test count: 195. Parsing ''$b'i' => (qr/.../) => '(?^u:'$b'i)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1792,9 +1792,9 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "'a\\b'i", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 200. Parsing ''abc)'i' => (qr/.../) => 
+Perl error: Test count: 200. Parsing ''abc)'i' => (qr/.../) => 
 1 Error str: 200: Perl cannot convert 'abc)'i into qr/.../ form
-Test count: 201. Parsing ''(abc'i' => (qr/.../) => 
+Perl error: Test count: 201. Parsing ''(abc'i' => (qr/.../) => 
 1 Error str: 201: Perl cannot convert '(abc'i into qr/.../ form
 Test count: 202. Parsing ''((a))'i' => (qr/.../) => '(?^u:'((a))'i)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1843,7 +1843,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "'a{1,}b{1,}c'i", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 206. Parsing ''a**'i' => (qr/.../) => 
+Perl error: Test count: 206. Parsing ''a**'i' => (qr/.../) => 
 1 Error str: 206: Perl cannot convert 'a**'i into qr/.../ form
 Test count: 207. Parsing ''a.+?c'i' => (qr/.../) => '(?^u:'a.+?c'i)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -1954,7 +1954,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
     |    |--- character_set. Attributes: {text => "{0,1}?'i", uid => "10"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "11"}
-Test count: 216. Parsing '')('i' => (qr/.../) => 
+Perl error: Test count: 216. Parsing '')('i' => (qr/.../) => 
 1 Error str: 216: Perl cannot convert ')('i into qr/.../ form
 Test count: 217. Parsing ''[^ab]*'i' => (qr/.../) => '(?^u:'[^ab]*'i)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -2623,7 +2623,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "bar", uid => "11"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "13"}
-Test count: 270. Parsing ':(?:' => (qr/.../) => 
+Perl error: Test count: 270. Parsing ':(?:' => (qr/.../) => 
 1 Error str: 270: Perl cannot convert :(?: into qr/.../ form
 Test count: 271. Parsing 'a(?:b|c|d){6,7}(.)' => (qr/.../) => '(?^u:a(?:b|c|d){6,7}(.))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -2886,7 +2886,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |    |--- character_set. Attributes: {text => "b", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 289. Parsing '(?<%)b' => (qr/.../) => 
+Perl error: Test count: 289. Parsing '(?<%)b' => (qr/.../) => 
 1 Error str: 289: Perl cannot convert (?<%)b into qr/.../ form
 Test count: 290. Parsing '(?:..)*a' => (qr/.../) => '(?^u:(?:..)*a)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -3213,23 +3213,23 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "foo\w*\d{4}baz", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 315. Parsing 'a(?{})b' => (qr/.../) => 
+Perl error: Test count: 315. Parsing 'a(?{})b' => (qr/.../) => 
 1 Error str: 315: Perl cannot convert a(?{})b into qr/.../ form
-Test count: 316. Parsing 'a(?{f()+' => (qr/.../) => 
+Perl error: Test count: 316. Parsing 'a(?{f()+' => (qr/.../) => 
 1 Error str: 316: Perl cannot convert a(?{f()+ into qr/.../ form
-Test count: 317. Parsing 'a(?{{1}+' => (qr/.../) => 
+Perl error: Test count: 317. Parsing 'a(?{{1}+' => (qr/.../) => 
 1 Error str: 317: Perl cannot convert a(?{{1}+ into qr/.../ form
-Test count: 318. Parsing '(?{(^{})' => (qr/.../) => 
+Perl error: Test count: 318. Parsing '(?{(^{})' => (qr/.../) => 
 1 Error str: 318: Perl cannot convert (?{(^{}) into qr/.../ form
-Test count: 319. Parsing 'a(?{}})b' => (qr/.../) => 
+Perl error: Test count: 319. Parsing 'a(?{}})b' => (qr/.../) => 
 1 Error str: 319: Perl cannot convert a(?{}})b into qr/.../ form
-Test count: 320. Parsing 'a(?{"{"})b' => (qr/.../) => 
+Perl error: Test count: 320. Parsing 'a(?{"{"})b' => (qr/.../) => 
 1 Error str: 320: Perl cannot convert a(?{"{"})b into qr/.../ form
-Test count: 321. Parsing 'a(?{"\{"})b' => (qr/.../) => 
+Perl error: Test count: 321. Parsing 'a(?{"\{"})b' => (qr/.../) => 
 1 Error str: 321: Perl cannot convert a(?{"\{"})b into qr/.../ form
-Test count: 322. Parsing 'a(?{"{"}})b' => (qr/.../) => 
+Perl error: Test count: 322. Parsing 'a(?{"{"}})b' => (qr/.../) => 
 1 Error str: 322: Perl cannot convert a(?{"{"}})b into qr/.../ form
-Test count: 323. Parsing 'a(?{$::bl="\{"}).b' => (qr/.../) => 
+Perl error: Test count: 323. Parsing 'a(?{$::bl="\{"}).b' => (qr/.../) => 
 1 Error str: 323: Perl cannot convert a(?{$::bl="\{"}).b into qr/.../ form
 Test count: 324. Parsing 'x(~~)*(?:(?:F)?)?' => (qr/.../) => '(?^u:x(~~)*(?:(?:F)?)?)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -3609,17 +3609,17 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "\", uid => "15"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "16"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "17"}
-Test count: 352. Parsing '(?(1?)a|b)' => (qr/.../) => 
+Perl error: Test count: 352. Parsing '(?(1?)a|b)' => (qr/.../) => 
 1 Error str: 352: Perl cannot convert (?(1?)a|b) into qr/.../ form
-Test count: 353. Parsing '(?(1)a|b|c)' => (qr/.../) => 
+Perl error: Test count: 353. Parsing '(?(1)a|b|c)' => (qr/.../) => 
 1 Error str: 353: Perl cannot convert (?(1)a|b|c) into qr/.../ form
-Test count: 354. Parsing '(?(?{0})a|b)' => (qr/.../) => 
+Perl error: Test count: 354. Parsing '(?(?{0})a|b)' => (qr/.../) => 
 1 Error str: 354: Perl cannot convert (?(?{0})a|b) into qr/.../ form
-Test count: 355. Parsing '(?(?{0})b|a)' => (qr/.../) => 
+Perl error: Test count: 355. Parsing '(?(?{0})b|a)' => (qr/.../) => 
 1 Error str: 355: Perl cannot convert (?(?{0})b|a) into qr/.../ form
-Test count: 356. Parsing '(?(?{1})b|a)' => (qr/.../) => 
+Perl error: Test count: 356. Parsing '(?(?{1})b|a)' => (qr/.../) => 
 1 Error str: 356: Perl cannot convert (?(?{1})b|a) into qr/.../ form
-Test count: 357. Parsing '(?(?{1})a|b)' => (qr/.../) => 
+Perl error: Test count: 357. Parsing '(?(?{1})a|b)' => (qr/.../) => 
 1 Error str: 357: Perl cannot convert (?(?{1})a|b) into qr/.../ form
 Test count: 358. Parsing '(?(?!a)a|b)' => (qr/.../) => '(?^u:(?(?!a)a|b))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -3804,11 +3804,11 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |    |--- character_set. Attributes: {text => "b+", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 373. Parsing '(?{$a=2})a*aa(?{local$a=$a+1})k*c(?{$b=$a})' => (qr/.../) => 
+Perl error: Test count: 373. Parsing '(?{$a=2})a*aa(?{local$a=$a+1})k*c(?{$b=$a})' => (qr/.../) => 
 1 Error str: 373: Perl cannot convert (?{$a=2})a*aa(?{local$a=$a+1})k*c(?{$b=$a}) into qr/.../ form
-Test count: 374. Parsing '(?{$a=2})(a(?{local$a=$a+1}))*aak*c(?{$b=$a})' => (qr/.../) => 
+Perl error: Test count: 374. Parsing '(?{$a=2})(a(?{local$a=$a+1}))*aak*c(?{$b=$a})' => (qr/.../) => 
 1 Error str: 374: Perl cannot convert (?{$a=2})(a(?{local$a=$a+1}))*aak*c(?{$b=$a}) into qr/.../ form
-Test count: 375. Parsing '^(a(?{ "x" =~ m{x}})b)(??{ $1 })' => (qr/.../) => 
+Perl error: Test count: 375. Parsing '^(a(?{ "x" =~ m{x}})b)(??{ $1 })' => (qr/.../) => 
 1 Error str: 375: Perl cannot convert ^(a(?{ "x" =~ m{x}})b)(??{ $1 }) into qr/.../ form
 Test count: 376. Parsing '(>a+)ab' => (qr/.../) => '(?^u:(>a+)ab)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -3867,9 +3867,9 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "[[.]+", uid => "7"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
-Test count: 381. Parsing '[a[:xyz:' => (qr/.../) => 
+Perl error: Test count: 381. Parsing '[a[:xyz:' => (qr/.../) => 
 1 Error str: 381: Perl cannot convert [a[:xyz: into qr/.../ form
-Test count: 382. Parsing '[a[:xyz:]' => (qr/.../) => 
+Perl error: Test count: 382. Parsing '[a[:xyz:]' => (qr/.../) => 
 1 Error str: 382: Perl cannot convert [a[:xyz:] into qr/.../ form
 Test count: 383. Parsing '[a[:]b[:c]' => (qr/.../) => '(?^u:[a[:]b[:c])'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -3880,7 +3880,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "[a[:]b[:c]", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 384. Parsing '([a[:xyz:]b]+)' => (qr/.../) => 
+Perl error: Test count: 384. Parsing '([a[:xyz:]b]+)' => (qr/.../) => 
 1 Error str: 384: Perl cannot convert ([a[:xyz:]b]+) into qr/.../ form
 Test count: 385. Parsing '([[:alpha:]]+)' => (qr/.../) => '(?^u:([[:alpha:]]+))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -4160,9 +4160,9 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "[[:^xdigit:]]+", uid => "7"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
-Test count: 410. Parsing '[[:foo:]]' => (qr/.../) => 
+Perl error: Test count: 410. Parsing '[[:foo:]]' => (qr/.../) => 
 1 Error str: 410: Perl cannot convert [[:foo:]] into qr/.../ form
-Test count: 411. Parsing '[[:^foo:]]' => (qr/.../) => 
+Perl error: Test count: 411. Parsing '[[:^foo:]]' => (qr/.../) => 
 1 Error str: 411: Perl cannot convert [[:^foo:]] into qr/.../ form
 Test count: 412. Parsing ''[[:^cntrl:]]+'u' => (qr/.../) => '(?^u:'[[:^cntrl:]]+'u)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -4208,7 +4208,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
     |    |--- character_set. Attributes: {text => "]+", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 416. Parsing '(?<=x+)y' => (qr/.../) => 
+Perl error: Test count: 416. Parsing '(?<=x+)y' => (qr/.../) => 
 1 Error str: 416: Perl cannot convert (?<=x+)y into qr/.../ form
 Test count: 417. Parsing '((def){37,17})?ABC' => (qr/.../) => '(?^u:((def){37,17})?ABC)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -4515,7 +4515,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "a*abc?xyz+pqr{3}ab{2,}xy{4,5}pq{0,6}AB{0,}zz", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 450. Parsing 'a(?{$a=2;$b=3;($b)=$a})b' => (qr/.../) => 
+Perl error: Test count: 450. Parsing 'a(?{$a=2;$b=3;($b)=$a})b' => (qr/.../) => 
 1 Error str: 450: Perl cannot convert a(?{$a=2;$b=3;($b)=$a})b into qr/.../ form
 Test count: 451. Parsing 'round\(((?>[^()]+))\)' => (qr/.../) => '(?^u:round\(((?>[^()]+))\))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -5956,7 +5956,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
     |    |--- character_set. Attributes: {text => "?$\1", uid => "10"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "11"}
-Test count: 558. Parsing '(??{})' => (qr/.../) => 
+Perl error: Test count: 558. Parsing '(??{})' => (qr/.../) => 
 1 Error str: 558: Perl cannot convert (??{}) into qr/.../ form
 Test count: 559. Parsing '^(?:f|o|b){3,4}(.+)\1\z' => (qr/.../) => '(?^u:^(?:f|o|b){3,4}(.+)\1\z)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -6283,9 +6283,9 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "b|c", uid => "10"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "11"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
-Test count: 582. Parsing '(a|aa|aaa||aaaa|aaaaa|aaaaaa)(??{$1&&""})(b|c)' => (qr/.../) => 
+Perl error: Test count: 582. Parsing '(a|aa|aaa||aaaa|aaaaa|aaaaaa)(??{$1&&""})(b|c)' => (qr/.../) => 
 1 Error str: 582: Perl cannot convert (a|aa|aaa||aaaa|aaaaa|aaaaaa)(??{$1&&""})(b|c) into qr/.../ form
-Test count: 583. Parsing '(a|aa|aaa|aaaa|aaaaa|aaaaaa)(??{$1&&"foo"})(b|c)' => (qr/.../) => 
+Perl error: Test count: 583. Parsing '(a|aa|aaa|aaaa|aaaaa|aaaaaa)(??{$1&&"foo"})(b|c)' => (qr/.../) => 
 1 Error str: 583: Perl cannot convert (a|aa|aaa|aaaa|aaaaa|aaaaaa)(??{$1&&"foo"})(b|c) into qr/.../ form
 Test count: 584. Parsing '^(a*?)(?!(aa|aaaa)*$)(?=a\z)' => (qr/.../) => '(?^u:^(a*?)(?!(aa|aaaa)*$)(?=a\z))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -6650,29 +6650,29 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "?=XY*foo", uid => "8"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 612. Parsing '^(??{"a+"})a' => (qr/.../) => 
+Perl error: Test count: 612. Parsing '^(??{"a+"})a' => (qr/.../) => 
 1 Error str: 612: Perl cannot convert ^(??{"a+"})a into qr/.../ form
-Test count: 613. Parsing '^(?:(??{"a+"})|b)a' => (qr/.../) => 
+Perl error: Test count: 613. Parsing '^(?:(??{"a+"})|b)a' => (qr/.../) => 
 1 Error str: 613: Perl cannot convert ^(?:(??{"a+"})|b)a into qr/.../ form
-Test count: 614. Parsing '^(??{chr 0x100}).$' => (qr/.../) => 
+Perl error: Test count: 614. Parsing '^(??{chr 0x100}).$' => (qr/.../) => 
 1 Error str: 614: Perl cannot convert ^(??{chr 0x100}).$ into qr/.../ form
-Test count: 615. Parsing '^(??{q(\x{100})}).' => (qr/.../) => 
+Perl error: Test count: 615. Parsing '^(??{q(\x{100})}).' => (qr/.../) => 
 1 Error str: 615: Perl cannot convert ^(??{q(\x{100})}). into qr/.../ form
-Test count: 616. Parsing '^(??{q(.+)})\x{100}' => (qr/.../) => 
+Perl error: Test count: 616. Parsing '^(??{q(.+)})\x{100}' => (qr/.../) => 
 1 Error str: 616: Perl cannot convert ^(??{q(.+)})\x{100} into qr/.../ form
-Test count: 617. Parsing '^(??{q(.)})\x{100}' => (qr/.../) => 
+Perl error: Test count: 617. Parsing '^(??{q(.)})\x{100}' => (qr/.../) => 
 1 Error str: 617: Perl cannot convert ^(??{q(.)})\x{100} into qr/.../ form
-Test count: 618. Parsing '^(??{chr 0x100})\xbb' => (qr/.../) => 
+Perl error: Test count: 618. Parsing '^(??{chr 0x100})\xbb' => (qr/.../) => 
 1 Error str: 618: Perl cannot convert ^(??{chr 0x100})\xbb into qr/.../ form
-Test count: 619. Parsing '^(.)(??{"(.)(.)"})(.)$' => (qr/.../) => 
+Perl error: Test count: 619. Parsing '^(.)(??{"(.)(.)"})(.)$' => (qr/.../) => 
 1 Error str: 619: Perl cannot convert ^(.)(??{"(.)(.)"})(.)$ into qr/.../ form
-Test count: 620. Parsing '^(.)(??{"(bz+|.)(.)"})(.)$' => (qr/.../) => 
+Perl error: Test count: 620. Parsing '^(.)(??{"(bz+|.)(.)"})(.)$' => (qr/.../) => 
 1 Error str: 620: Perl cannot convert ^(.)(??{"(bz+|.)(.)"})(.)$ into qr/.../ form
-Test count: 621. Parsing '^(.)((??{"(.)(cz+)"})|.)' => (qr/.../) => 
+Perl error: Test count: 621. Parsing '^(.)((??{"(.)(cz+)"})|.)' => (qr/.../) => 
 1 Error str: 621: Perl cannot convert ^(.)((??{"(.)(cz+)"})|.) into qr/.../ form
-Test count: 622. Parsing '^a(?>(??{q(b)}))(??{q(c)})d' => (qr/.../) => 
+Perl error: Test count: 622. Parsing '^a(?>(??{q(b)}))(??{q(c)})d' => (qr/.../) => 
 1 Error str: 622: Perl cannot convert ^a(?>(??{q(b)}))(??{q(c)})d into qr/.../ form
-Test count: 623. Parsing '^x(??{""})+$' => (qr/.../) => 
+Perl error: Test count: 623. Parsing '^x(??{""})+$' => (qr/.../) => 
 1 Error str: 623: Perl cannot convert ^x(??{""})+$ into qr/.../ form
 Test count: 624. Parsing '^(<(?:[^<>]+|(?3)|(?1))*>)()(!>!>!>)$' => (qr/.../) => '(?^u:^(<(?:[^<>]+|(?3)|(?1))*>)()(!>!>!>)$)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -6769,7 +6769,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "?<n>baz", uid => "15"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "16"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "17"}
-Test count: 631. Parsing '(?<n>foo)(??{ $+{n} })' => (qr/.../) => 
+Perl error: Test count: 631. Parsing '(?<n>foo)(??{ $+{n} })' => (qr/.../) => 
 1 Error str: 631: Perl cannot convert (?<n>foo)(??{ $+{n} }) into qr/.../ form
 Test count: 632. Parsing '(?P<n>foo|bar|baz)' => (qr/.../) => '(?^u:(?P<n>foo|bar|baz))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -6815,13 +6815,13 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "?P<n>baz", uid => "15"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "16"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "17"}
-Test count: 635. Parsing '(?P<n>foo)(??{ $+{n} })' => (qr/.../) => 
+Perl error: Test count: 635. Parsing '(?P<n>foo)(??{ $+{n} })' => (qr/.../) => 
 1 Error str: 635: Perl cannot convert (?P<n>foo)(??{ $+{n} }) into qr/.../ form
-Test count: 636. Parsing '(?P<=n>foo|bar|baz)' => (qr/.../) => 
+Perl error: Test count: 636. Parsing '(?P<=n>foo|bar|baz)' => (qr/.../) => 
 1 Error str: 636: Perl cannot convert (?P<=n>foo|bar|baz) into qr/.../ form
-Test count: 637. Parsing '(?P<!n>foo|bar|baz)' => (qr/.../) => 
+Perl error: Test count: 637. Parsing '(?P<!n>foo|bar|baz)' => (qr/.../) => 
 1 Error str: 637: Perl cannot convert (?P<!n>foo|bar|baz) into qr/.../ form
-Test count: 638. Parsing '(?PX<n>foo|bar|baz)' => (qr/.../) => 
+Perl error: Test count: 638. Parsing '(?PX<n>foo|bar|baz)' => (qr/.../) => 
 1 Error str: 638: Perl cannot convert (?PX<n>foo|bar|baz) into qr/.../ form
 Test count: 639. Parsing '/(?'n'foo|bar|baz)/' => (qr/.../) => '(?^u:/(?'n'foo|bar|baz)/)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -6873,7 +6873,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "17"}
     |    |--- slash. Attributes: {text => "/", uid => "18"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "19"}
-Test count: 642. Parsing '/(?'n'foo)(??{ $+{n} })/' => (qr/.../) => 
+Perl error: Test count: 642. Parsing '/(?'n'foo)(??{ $+{n} })/' => (qr/.../) => 
 1 Error str: 642: Perl cannot convert /(?'n'foo)(??{ $+{n} })/ into qr/.../ form
 Test count: 643. Parsing '/(?'n'foo)\k<n>/' => (qr/.../) => '(?^u:/(?'n'foo)\k<n>/)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -6903,28 +6903,28 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- character_set. Attributes: {text => "\k'n'", uid => "10"}
     |    |--- slash. Attributes: {text => "/", uid => "11"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
-Test count: 645. Parsing '/(?:(?<n>foo)|(?<n>bar))\k<n>/' => (qr/.../) => '(?^u:/(?:(?<n>foo)|(?<n>bar))\k<n>/)'. 
+Marpa error: Test count: 645. Parsing '/(?:(?<n>foo)|(?<n>bar))\k<n>/' => (qr/.../) => '(?^u:/(?:(?<n>foo)|(?<n>bar))\k<n>/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 29
 * String before error: (?^u:/(?:(?<n>foo)|(?<n>bar)
 * The error was at line 1, column 29, and at character 0x0029 ')', ...
 * here: )\\k<n>/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 646. Parsing '/^(?'main'<(?:[^<>]+|(?&crap)|(?&main))*>)(?'empty')(?'crap'!>!>!>)$/' => (qr/.../) => '(?^u:/^(?'main'<(?:[^<>]+|(?&crap)|(?&main))*>)(?'empty')(?'crap'!>!>!>)$/)'. 
+Marpa error: Test count: 646. Parsing '/^(?'main'<(?:[^<>]+|(?&crap)|(?&main))*>)(?'empty')(?'crap'!>!>!>)$/' => (qr/.../) => '(?^u:/^(?'main'<(?:[^<>]+|(?&crap)|(?&main))*>)(?'empty')(?'crap'!>!>!>)$/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 44
 * String before error: (?^u:/^(?'main'<(?:[^<>]+|(?&crap)|(?&main)
 * The error was at line 1, column 44, and at character 0x0029 ')', ...
 * here: )*>)(?'empty')(?'crap'!>!>!>)$/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 647. Parsing '/^(?'main'<(?:[^<>]+|(?&main))*>)$/' => (qr/.../) => '(?^u:/^(?'main'<(?:[^<>]+|(?&main))*>)$/)'. 
+Marpa error: Test count: 647. Parsing '/^(?'main'<(?:[^<>]+|(?&main))*>)$/' => (qr/.../) => '(?^u:/^(?'main'<(?:[^<>]+|(?&main))*>)$/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 35
 * String before error: (?^u:/^(?'main'<(?:[^<>]+|(?&main)
 * The error was at line 1, column 35, and at character 0x0029 ')', ...
 * here: )*>)$/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 648. Parsing '/(?'first'(?&second)*)(?'second'[fF]o+)/' => (qr/.../) => '(?^u:/(?'first'(?&second)*)(?'second'[fF]o+)/)'. 
+Marpa error: Test count: 648. Parsing '/(?'first'(?&second)*)(?'second'[fF]o+)/' => (qr/.../) => '(?^u:/(?'first'(?&second)*)(?'second'[fF]o+)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 27
 * String before error: (?^u:/(?'first'(?&second)*
 * The error was at line 1, column 27, and at character 0x0029 ')', ...
@@ -7022,77 +7022,77 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "blah", uid => "13"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "14"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "15"}
-Test count: 655. Parsing '/^(?<PAL>(?<CHAR>.)((?&PAL)|.?)\k<CHAR>)$/' => (qr/.../) => '(?^u:/^(?<PAL>(?<CHAR>.)((?&PAL)|.?)\k<CHAR>)$/)'. 
+Marpa error: Test count: 655. Parsing '/^(?<PAL>(?<CHAR>.)((?&PAL)|.?)\k<CHAR>)$/' => (qr/.../) => '(?^u:/^(?<PAL>(?<CHAR>.)((?&PAL)|.?)\k<CHAR>)$/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 36
 * String before error: (?^u:/^(?<PAL>(?<CHAR>.)((?&PAL)|.?
 * The error was at line 1, column 36, and at character 0x0029 ')', ...
 * here: )\\k<CHAR>)$/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 656. Parsing '/(a)?((?1))(fox)/' => (qr/.../) => '(?^u:/(a)?((?1))(fox)/)'. 
+Marpa error: Test count: 656. Parsing '/(a)?((?1))(fox)/' => (qr/.../) => '(?^u:/(a)?((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 16
 * String before error: (?^u:/(a)?((?1)
 * The error was at line 1, column 16, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 657. Parsing '/(a)*((?1))(fox)/' => (qr/.../) => '(?^u:/(a)*((?1))(fox)/)'. 
+Marpa error: Test count: 657. Parsing '/(a)*((?1))(fox)/' => (qr/.../) => '(?^u:/(a)*((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 16
 * String before error: (?^u:/(a)*((?1)
 * The error was at line 1, column 16, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 658. Parsing '/(a)+((?1))(fox)/' => (qr/.../) => '(?^u:/(a)+((?1))(fox)/)'. 
+Marpa error: Test count: 658. Parsing '/(a)+((?1))(fox)/' => (qr/.../) => '(?^u:/(a)+((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 16
 * String before error: (?^u:/(a)+((?1)
 * The error was at line 1, column 16, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 659. Parsing '/(a){1,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(a){1,100}((?1))(fox)/)'. 
+Marpa error: Test count: 659. Parsing '/(a){1,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(a){1,100}((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 22
 * String before error: (?^u:/(a){1,100}((?1)
 * The error was at line 1, column 22, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 660. Parsing '/(a){0,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(a){0,100}((?1))(fox)/)'. 
+Marpa error: Test count: 660. Parsing '/(a){0,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(a){0,100}((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 22
 * String before error: (?^u:/(a){0,100}((?1)
 * The error was at line 1, column 22, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 661. Parsing '/(ab)?((?1))(fox)/' => (qr/.../) => '(?^u:/(ab)?((?1))(fox)/)'. 
+Marpa error: Test count: 661. Parsing '/(ab)?((?1))(fox)/' => (qr/.../) => '(?^u:/(ab)?((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 17
 * String before error: (?^u:/(ab)?((?1)
 * The error was at line 1, column 17, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 662. Parsing '/(ab)*((?1))(fox)/' => (qr/.../) => '(?^u:/(ab)*((?1))(fox)/)'. 
+Marpa error: Test count: 662. Parsing '/(ab)*((?1))(fox)/' => (qr/.../) => '(?^u:/(ab)*((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 17
 * String before error: (?^u:/(ab)*((?1)
 * The error was at line 1, column 17, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 663. Parsing '/(ab)+((?1))(fox)/' => (qr/.../) => '(?^u:/(ab)+((?1))(fox)/)'. 
+Marpa error: Test count: 663. Parsing '/(ab)+((?1))(fox)/' => (qr/.../) => '(?^u:/(ab)+((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 17
 * String before error: (?^u:/(ab)+((?1)
 * The error was at line 1, column 17, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 664. Parsing '/(ab){1,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(ab){1,100}((?1))(fox)/)'. 
+Marpa error: Test count: 664. Parsing '/(ab){1,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(ab){1,100}((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 23
 * String before error: (?^u:/(ab){1,100}((?1)
 * The error was at line 1, column 23, and at character 0x0029 ')', ...
 * here: )(fox)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 665. Parsing '/(ab){0,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(ab){0,100}((?1))(fox)/)'. 
+Marpa error: Test count: 665. Parsing '/(ab){0,100}((?1))(fox)/' => (qr/.../) => '(?^u:/(ab){0,100}((?1))(fox)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 23
 * String before error: (?^u:/(ab){0,100}((?1)
 * The error was at line 1, column 23, and at character 0x0029 ')', ...
@@ -8688,53 +8688,53 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- character_set. Attributes: {text => " \k<_0_>", uid => "10"}
     |    |--- slash. Attributes: {text => "/", uid => "11"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
-Test count: 786. Parsing '/(?'0'foo) bar/' => (qr/.../) => 
+Perl error: Test count: 786. Parsing '/(?'0'foo) bar/' => (qr/.../) => 
 1 Error str: 786: Perl cannot convert /(?'0'foo) bar/ into qr/.../ form
-Test count: 787. Parsing '/(?<0>foo) bar/' => (qr/.../) => 
+Perl error: Test count: 787. Parsing '/(?<0>foo) bar/' => (qr/.../) => 
 1 Error str: 787: Perl cannot convert /(?<0>foo) bar/ into qr/.../ form
-Test count: 788. Parsing '/(?'12'foo) bar/' => (qr/.../) => 
+Perl error: Test count: 788. Parsing '/(?'12'foo) bar/' => (qr/.../) => 
 1 Error str: 788: Perl cannot convert /(?'12'foo) bar/ into qr/.../ form
-Test count: 789. Parsing '/(?<12>foo) bar/' => (qr/.../) => 
+Perl error: Test count: 789. Parsing '/(?<12>foo) bar/' => (qr/.../) => 
 1 Error str: 789: Perl cannot convert /(?<12>foo) bar/ into qr/.../ form
-Test count: 790. Parsing '/(?'1a'foo) bar/' => (qr/.../) => 
+Perl error: Test count: 790. Parsing '/(?'1a'foo) bar/' => (qr/.../) => 
 1 Error str: 790: Perl cannot convert /(?'1a'foo) bar/ into qr/.../ form
-Test count: 791. Parsing '/(?<1a>foo) bar/' => (qr/.../) => 
+Perl error: Test count: 791. Parsing '/(?<1a>foo) bar/' => (qr/.../) => 
 1 Error str: 791: Perl cannot convert /(?<1a>foo) bar/ into qr/.../ form
-Test count: 792. Parsing '/(?''foo) bar/' => (qr/.../) => 
+Perl error: Test count: 792. Parsing '/(?''foo) bar/' => (qr/.../) => 
 1 Error str: 792: Perl cannot convert /(?''foo) bar/ into qr/.../ form
-Test count: 793. Parsing '/(?<>foo) bar/' => (qr/.../) => 
+Perl error: Test count: 793. Parsing '/(?<>foo) bar/' => (qr/.../) => 
 1 Error str: 793: Perl cannot convert /(?<>foo) bar/ into qr/.../ form
-Test count: 794. Parsing '/foo \k'n'/' => (qr/.../) => 
+Perl error: Test count: 794. Parsing '/foo \k'n'/' => (qr/.../) => 
 1 Error str: 794: Perl cannot convert /foo \k'n'/ into qr/.../ form
-Test count: 795. Parsing '/foo \k<n>/' => (qr/.../) => 
+Perl error: Test count: 795. Parsing '/foo \k<n>/' => (qr/.../) => 
 1 Error str: 795: Perl cannot convert /foo \k<n>/ into qr/.../ form
-Test count: 796. Parsing '/foo \k'a1'/' => (qr/.../) => 
+Perl error: Test count: 796. Parsing '/foo \k'a1'/' => (qr/.../) => 
 1 Error str: 796: Perl cannot convert /foo \k'a1'/ into qr/.../ form
-Test count: 797. Parsing '/foo \k<a1>/' => (qr/.../) => 
+Perl error: Test count: 797. Parsing '/foo \k<a1>/' => (qr/.../) => 
 1 Error str: 797: Perl cannot convert /foo \k<a1>/ into qr/.../ form
-Test count: 798. Parsing '/foo \k'_'/' => (qr/.../) => 
+Perl error: Test count: 798. Parsing '/foo \k'_'/' => (qr/.../) => 
 1 Error str: 798: Perl cannot convert /foo \k'_'/ into qr/.../ form
-Test count: 799. Parsing '/foo \k<_>/' => (qr/.../) => 
+Perl error: Test count: 799. Parsing '/foo \k<_>/' => (qr/.../) => 
 1 Error str: 799: Perl cannot convert /foo \k<_>/ into qr/.../ form
-Test count: 800. Parsing '/foo \k'_0_'/' => (qr/.../) => 
+Perl error: Test count: 800. Parsing '/foo \k'_0_'/' => (qr/.../) => 
 1 Error str: 800: Perl cannot convert /foo \k'_0_'/ into qr/.../ form
-Test count: 801. Parsing '/foo \k<_0_>/' => (qr/.../) => 
+Perl error: Test count: 801. Parsing '/foo \k<_0_>/' => (qr/.../) => 
 1 Error str: 801: Perl cannot convert /foo \k<_0_>/ into qr/.../ form
-Test count: 802. Parsing '/foo \k'0'/' => (qr/.../) => 
+Perl error: Test count: 802. Parsing '/foo \k'0'/' => (qr/.../) => 
 1 Error str: 802: Perl cannot convert /foo \k'0'/ into qr/.../ form
-Test count: 803. Parsing '/foo \k<0>/' => (qr/.../) => 
+Perl error: Test count: 803. Parsing '/foo \k<0>/' => (qr/.../) => 
 1 Error str: 803: Perl cannot convert /foo \k<0>/ into qr/.../ form
-Test count: 804. Parsing '/foo \k'12'/' => (qr/.../) => 
+Perl error: Test count: 804. Parsing '/foo \k'12'/' => (qr/.../) => 
 1 Error str: 804: Perl cannot convert /foo \k'12'/ into qr/.../ form
-Test count: 805. Parsing '/foo \k<12>/' => (qr/.../) => 
+Perl error: Test count: 805. Parsing '/foo \k<12>/' => (qr/.../) => 
 1 Error str: 805: Perl cannot convert /foo \k<12>/ into qr/.../ form
-Test count: 806. Parsing '/foo \k'1a'/' => (qr/.../) => 
+Perl error: Test count: 806. Parsing '/foo \k'1a'/' => (qr/.../) => 
 1 Error str: 806: Perl cannot convert /foo \k'1a'/ into qr/.../ form
-Test count: 807. Parsing '/foo \k<1a>/' => (qr/.../) => 
+Perl error: Test count: 807. Parsing '/foo \k<1a>/' => (qr/.../) => 
 1 Error str: 807: Perl cannot convert /foo \k<1a>/ into qr/.../ form
-Test count: 808. Parsing '/foo \k''/' => (qr/.../) => 
+Perl error: Test count: 808. Parsing '/foo \k''/' => (qr/.../) => 
 1 Error str: 808: Perl cannot convert /foo \k''/ into qr/.../ form
-Test count: 809. Parsing '/foo \k<>/' => (qr/.../) => 
+Perl error: Test count: 809. Parsing '/foo \k<>/' => (qr/.../) => 
 1 Error str: 809: Perl cannot convert /foo \k<>/ into qr/.../ form
 Test count: 810. Parsing '/(?<as>as) (\w+) \k<as> (\w+)/' => (qr/.../) => '(?^u:/(?<as>as) (\w+) \k<as> (\w+)/)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -8822,14 +8822,14 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
     |    |--- slash. Attributes: {text => "/", uid => "13"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "14"}
-Test count: 815. Parsing '/(?:(?P<n>foo)|(?P<n>bar))(?P=n)/' => (qr/.../) => '(?^u:/(?:(?P<n>foo)|(?P<n>bar))(?P=n)/)'. 
+Marpa error: Test count: 815. Parsing '/(?:(?P<n>foo)|(?P<n>bar))(?P=n)/' => (qr/.../) => '(?^u:/(?:(?P<n>foo)|(?P<n>bar))(?P=n)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 31
 * String before error: (?^u:/(?:(?P<n>foo)|(?P<n>bar)
 * The error was at line 1, column 31, and at character 0x0029 ')', ...
 * here: )(?P=n)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 816. Parsing '/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?)(?P=CHAR))$/' => (qr/.../) => '(?^u:/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?)(?P=CHAR))$/)'. 
+Marpa error: Test count: 816. Parsing '/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?)(?P=CHAR))$/' => (qr/.../) => '(?^u:/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?)(?P=CHAR))$/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 39
 * String before error: (?^u:/^(?P<PAL>(?P<CHAR>.)((?P>PAL)|.?
 * The error was at line 1, column 39, and at character 0x0029 ')', ...
@@ -9522,7 +9522,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "11"}
     |    |--- character_set. Attributes: {text => "+", uid => "12"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "13"}
-Test count: 839. Parsing '\x{100}?(??{""})xxx' => (qr/.../) => 
+Perl error: Test count: 839. Parsing '\x{100}?(??{""})xxx' => (qr/.../) => 
 1 Error str: 839: Perl cannot convert \x{100}?(??{""})xxx into qr/.../ form
 Test count: 840. Parsing 'foo(\R)bar' => (qr/.../) => '(?^u:foo(\R)bar)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -9904,14 +9904,14 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- slash. Attributes: {text => "/", uid => "8"}
     |    |--- flag_set. Attributes: {text => "s", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 870. Parsing '/(.*?)a(?!(a+)b\2c)/' => (qr/.../) => '(?^u:/(.*?)a(?!(a+)b\2c)/)'. 
+Marpa error: Test count: 870. Parsing '/(.*?)a(?!(a+)b\2c)/' => (qr/.../) => '(?^u:/(.*?)a(?!(a+)b\2c)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 24
 * String before error: (?^u:/(.*?)a(?!(a+)b\\2c
 * The error was at line 1, column 24, and at character 0x0029 ')', ...
 * here: )/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 871. Parsing '/\A(?(?=db2)db2|\D+)(?<!processed)\.csv\z/xms' => (qr/.../) => '(?^u:/\A(?(?=db2)db2|\D+)(?<!processed)\.csv\z/xms)'. 
+Marpa error: Test count: 871. Parsing '/\A(?(?=db2)db2|\D+)(?<!processed)\.csv\z/xms' => (qr/.../) => '(?^u:/\A(?(?=db2)db2|\D+)(?<!processed)\.csv\z/xms)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 25
 * String before error: (?^u:/\\A(?(?=db2)db2|\\D+
 * The error was at line 1, column 25, and at character 0x0029 ')', ...
@@ -9962,7 +9962,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "'[\x{100}\xff]'i", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 876. Parsing '((??{ "(?:|)" }))\s' => (qr/.../) => 
+Perl error: Test count: 876. Parsing '((??{ "(?:|)" }))\s' => (qr/.../) => 
 1 Error str: 876: Perl cannot convert ((??{ "(?:|)" }))\s into qr/.../ form
 Test count: 877. Parsing 'abc\N\{U+BEEF}' => (qr/.../) => '(?^u:abc\N\{U+BEEF})'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -9973,7 +9973,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "abc\N\{U+BEEF}", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 878. Parsing '[abc\N\{U+BEEF}]' => (qr/.../) => 
+Perl error: Test count: 878. Parsing '[abc\N\{U+BEEF}]' => (qr/.../) => 
 1 Error str: 878: Perl cannot convert [abc\N\{U+BEEF}] into qr/.../ form
 Test count: 879. Parsing 'abc\N' => (qr/.../) => '(?^u:abc\N)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -9984,25 +9984,25 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "abc\N", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 880. Parsing '/\N{U+}/' => (qr/.../) => 
+Perl error: Test count: 880. Parsing '/\N{U+}/' => (qr/.../) => 
 1 Error str: 880: Perl cannot convert /\N{U+}/ into qr/.../ form
-Test count: 881. Parsing '/[\N{U+}]/' => (qr/.../) => 
+Perl error: Test count: 881. Parsing '/[\N{U+}]/' => (qr/.../) => 
 1 Error str: 881: Perl cannot convert /[\N{U+}]/ into qr/.../ form
-Test count: 882. Parsing '/abc\N{def/' => (qr/.../) => 
+Perl error: Test count: 882. Parsing '/abc\N{def/' => (qr/.../) => 
 1 Error str: 882: Perl cannot convert /abc\N{def/ into qr/.../ form
-Test count: 883. Parsing '/\N{U+4AG3}/' => (qr/.../) => 
+Perl error: Test count: 883. Parsing '/\N{U+4AG3}/' => (qr/.../) => 
 1 Error str: 883: Perl cannot convert /\N{U+4AG3}/ into qr/.../ form
-Test count: 884. Parsing '/[\N{U+4AG3}]/' => (qr/.../) => 
+Perl error: Test count: 884. Parsing '/[\N{U+4AG3}]/' => (qr/.../) => 
 1 Error str: 884: Perl cannot convert /[\N{U+4AG3}]/ into qr/.../ form
-Test count: 885. Parsing '\N{U+}' => (qr/.../) => 
+Perl error: Test count: 885. Parsing '\N{U+}' => (qr/.../) => 
 1 Error str: 885: Perl cannot convert \N{U+} into qr/.../ form
-Test count: 886. Parsing '[\N{U+}]' => (qr/.../) => 
+Perl error: Test count: 886. Parsing '[\N{U+}]' => (qr/.../) => 
 1 Error str: 886: Perl cannot convert [\N{U+}] into qr/.../ form
-Test count: 887. Parsing '\N{U+4AG3}' => (qr/.../) => 
+Perl error: Test count: 887. Parsing '\N{U+4AG3}' => (qr/.../) => 
 1 Error str: 887: Perl cannot convert \N{U+4AG3} into qr/.../ form
-Test count: 888. Parsing '[\N{U+4AG3}]' => (qr/.../) => 
+Perl error: Test count: 888. Parsing '[\N{U+4AG3}]' => (qr/.../) => 
 1 Error str: 888: Perl cannot convert [\N{U+4AG3}] into qr/.../ form
-Test count: 889. Parsing 'abc\N{def' => (qr/.../) => 
+Perl error: Test count: 889. Parsing 'abc\N{def' => (qr/.../) => 
 1 Error str: 889: Perl cannot convert abc\N{def into qr/.../ form
 Test count: 890. Parsing '/abc\N {U+41}/x' => (qr/.../) => '(?^u:/abc\N {U+41}/x)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -10028,7 +10028,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- slash. Attributes: {text => "/", uid => "8"}
     |    |--- flag_set. Attributes: {text => "x", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 892. Parsing '/\N{U+0xBEEF}/' => (qr/.../) => 
+Perl error: Test count: 892. Parsing '/\N{U+0xBEEF}/' => (qr/.../) => 
 1 Error str: 892: Perl cannot convert /\N{U+0xBEEF}/ into qr/.../ form
 Test count: 893. Parsing '/\N{U+BEEF.BEAD}/' => (qr/.../) => '(?^u:/\N{U+BEEF.BEAD}/)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -10041,7 +10041,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- character_set. Attributes: {text => "\N{U+BEEF.BEAD}", uid => "7"}
     |    |--- slash. Attributes: {text => "/", uid => "8"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
-Test count: 894. Parsing '\N{U+0xBEEF}' => (qr/.../) => 
+Perl error: Test count: 894. Parsing '\N{U+0xBEEF}' => (qr/.../) => 
 1 Error str: 894: Perl cannot convert \N{U+0xBEEF} into qr/.../ form
 Test count: 895. Parsing '\c`' => (qr/.../) => '(?^u:\c`)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -10322,59 +10322,59 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "[a\o{1000}]", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Test count: 926. Parsing '\87' => (qr/.../) => 
+Perl error: Test count: 926. Parsing '\87' => (qr/.../) => 
 1 Error str: 926: Perl cannot convert \87 into qr/.../ form
-Test count: 927. Parsing 'a\87' => (qr/.../) => 
+Perl error: Test count: 927. Parsing 'a\87' => (qr/.../) => 
 1 Error str: 927: Perl cannot convert a\87 into qr/.../ form
-Test count: 928. Parsing 'a\97' => (qr/.../) => 
+Perl error: Test count: 928. Parsing 'a\97' => (qr/.../) => 
 1 Error str: 928: Perl cannot convert a\97 into qr/.../ form
-Test count: 929. Parsing '(.)\g2147483648}' => (qr/.../) => 
+Perl error: Test count: 929. Parsing '(.)\g2147483648}' => (qr/.../) => 
 1 Error str: 929: Perl cannot convert (.)\g2147483648} into qr/.../ form
-Test count: 930. Parsing '(.)\g2147483649}' => (qr/.../) => 
+Perl error: Test count: 930. Parsing '(.)\g2147483649}' => (qr/.../) => 
 1 Error str: 930: Perl cannot convert (.)\g2147483649} into qr/.../ form
-Test count: 931. Parsing '(.)\g2147483650}' => (qr/.../) => 
+Perl error: Test count: 931. Parsing '(.)\g2147483650}' => (qr/.../) => 
 1 Error str: 931: Perl cannot convert (.)\g2147483650} into qr/.../ form
-Test count: 932. Parsing '(.)\g4294967296}' => (qr/.../) => 
+Perl error: Test count: 932. Parsing '(.)\g4294967296}' => (qr/.../) => 
 1 Error str: 932: Perl cannot convert (.)\g4294967296} into qr/.../ form
-Test count: 933. Parsing '(.)\g4294967297}' => (qr/.../) => 
+Perl error: Test count: 933. Parsing '(.)\g4294967297}' => (qr/.../) => 
 1 Error str: 933: Perl cannot convert (.)\g4294967297} into qr/.../ form
-Test count: 934. Parsing '(.)\g4294967298}' => (qr/.../) => 
+Perl error: Test count: 934. Parsing '(.)\g4294967298}' => (qr/.../) => 
 1 Error str: 934: Perl cannot convert (.)\g4294967298} into qr/.../ form
-Test count: 935. Parsing 'a(.)\g2147483648}' => (qr/.../) => 
+Perl error: Test count: 935. Parsing 'a(.)\g2147483648}' => (qr/.../) => 
 1 Error str: 935: Perl cannot convert a(.)\g2147483648} into qr/.../ form
-Test count: 936. Parsing 'a(.)\g2147483649}' => (qr/.../) => 
+Perl error: Test count: 936. Parsing 'a(.)\g2147483649}' => (qr/.../) => 
 1 Error str: 936: Perl cannot convert a(.)\g2147483649} into qr/.../ form
-Test count: 937. Parsing 'a(.)\g2147483650}' => (qr/.../) => 
+Perl error: Test count: 937. Parsing 'a(.)\g2147483650}' => (qr/.../) => 
 1 Error str: 937: Perl cannot convert a(.)\g2147483650} into qr/.../ form
-Test count: 938. Parsing 'a(.)\g4294967296}' => (qr/.../) => 
+Perl error: Test count: 938. Parsing 'a(.)\g4294967296}' => (qr/.../) => 
 1 Error str: 938: Perl cannot convert a(.)\g4294967296} into qr/.../ form
-Test count: 939. Parsing 'a(.)\g4294967297}' => (qr/.../) => 
+Perl error: Test count: 939. Parsing 'a(.)\g4294967297}' => (qr/.../) => 
 1 Error str: 939: Perl cannot convert a(.)\g4294967297} into qr/.../ form
-Test count: 940. Parsing 'a(.)\g4294967298}' => (qr/.../) => 
+Perl error: Test count: 940. Parsing 'a(.)\g4294967298}' => (qr/.../) => 
 1 Error str: 940: Perl cannot convert a(.)\g4294967298} into qr/.../ form
-Test count: 941. Parsing '(.)\g{2147483648}' => (qr/.../) => 
+Perl error: Test count: 941. Parsing '(.)\g{2147483648}' => (qr/.../) => 
 1 Error str: 941: Perl cannot convert (.)\g{2147483648} into qr/.../ form
-Test count: 942. Parsing '(.)\g{2147483649}' => (qr/.../) => 
+Perl error: Test count: 942. Parsing '(.)\g{2147483649}' => (qr/.../) => 
 1 Error str: 942: Perl cannot convert (.)\g{2147483649} into qr/.../ form
-Test count: 943. Parsing '(.)\g{2147483650}' => (qr/.../) => 
+Perl error: Test count: 943. Parsing '(.)\g{2147483650}' => (qr/.../) => 
 1 Error str: 943: Perl cannot convert (.)\g{2147483650} into qr/.../ form
-Test count: 944. Parsing '(.)\g{4294967296}' => (qr/.../) => 
+Perl error: Test count: 944. Parsing '(.)\g{4294967296}' => (qr/.../) => 
 1 Error str: 944: Perl cannot convert (.)\g{4294967296} into qr/.../ form
-Test count: 945. Parsing '(.)\g{4294967297}' => (qr/.../) => 
+Perl error: Test count: 945. Parsing '(.)\g{4294967297}' => (qr/.../) => 
 1 Error str: 945: Perl cannot convert (.)\g{4294967297} into qr/.../ form
-Test count: 946. Parsing '(.)\g{4294967298}' => (qr/.../) => 
+Perl error: Test count: 946. Parsing '(.)\g{4294967298}' => (qr/.../) => 
 1 Error str: 946: Perl cannot convert (.)\g{4294967298} into qr/.../ form
-Test count: 947. Parsing 'a(.)\g{2147483648}' => (qr/.../) => 
+Perl error: Test count: 947. Parsing 'a(.)\g{2147483648}' => (qr/.../) => 
 1 Error str: 947: Perl cannot convert a(.)\g{2147483648} into qr/.../ form
-Test count: 948. Parsing 'a(.)\g{2147483649}' => (qr/.../) => 
+Perl error: Test count: 948. Parsing 'a(.)\g{2147483649}' => (qr/.../) => 
 1 Error str: 948: Perl cannot convert a(.)\g{2147483649} into qr/.../ form
-Test count: 949. Parsing 'a(.)\g{2147483650}' => (qr/.../) => 
+Perl error: Test count: 949. Parsing 'a(.)\g{2147483650}' => (qr/.../) => 
 1 Error str: 949: Perl cannot convert a(.)\g{2147483650} into qr/.../ form
-Test count: 950. Parsing 'a(.)\g{4294967296}' => (qr/.../) => 
+Perl error: Test count: 950. Parsing 'a(.)\g{4294967296}' => (qr/.../) => 
 1 Error str: 950: Perl cannot convert a(.)\g{4294967296} into qr/.../ form
-Test count: 951. Parsing 'a(.)\g{4294967297}' => (qr/.../) => 
+Perl error: Test count: 951. Parsing 'a(.)\g{4294967297}' => (qr/.../) => 
 1 Error str: 951: Perl cannot convert a(.)\g{4294967297} into qr/.../ form
-Test count: 952. Parsing 'a(.)\g{4294967298}' => (qr/.../) => 
+Perl error: Test count: 952. Parsing 'a(.)\g{4294967298}' => (qr/.../) => 
 1 Error str: 952: Perl cannot convert a(.)\g{4294967298} into qr/.../ form
 Test count: 953. Parsing '(.)\2147483648' => (qr/.../) => '(?^u:(.)\2147483648)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -10664,7 +10664,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- slash. Attributes: {text => "/", uid => "8"}
     |    |--- flag_set. Attributes: {text => "i", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 976. Parsing '(?{})[\x{100}]' => (qr/.../) => 
+Perl error: Test count: 976. Parsing '(?{})[\x{100}]' => (qr/.../) => 
 1 Error str: 976: Perl cannot convert (?{})[\x{100}] into qr/.../ form
 Test count: 977. Parsing '^m?(\S)(.*)\1$' => (qr/.../) => '(?^u:^m?(\S)(.*)\1$)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -10928,11 +10928,11 @@ Root. Attributes: {text => "Root", uid => "0"}
          |    |--- non_close_parenthesis. Attributes: {text => "?{1\](?{2]", uid => "8"}
          |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
 1 Error str: Error: Parse failed
-Test count: 997. Parsing 'ab(?{"["})cd' => (qr/.../) => 
+Perl error: Test count: 997. Parsing 'ab(?{"["})cd' => (qr/.../) => 
 1 Error str: 997: Perl cannot convert ab(?{"["})cd into qr/.../ form
-Test count: 998. Parsing 'ab(??{"[x]"})cd' => (qr/.../) => 
+Perl error: Test count: 998. Parsing 'ab(??{"[x]"})cd' => (qr/.../) => 
 1 Error str: 998: Perl cannot convert ab(??{"[x]"})cd into qr/.../ form
-Test count: 999. Parsing 'ab\[(??{1})c' => (qr/.../) => 
+Perl error: Test count: 999. Parsing 'ab\[(??{1})c' => (qr/.../) => 
 1 Error str: 999: Perl cannot convert ab\[(??{1})c into qr/.../ form
 Test count: 1000. Parsing 'ab\\[(??{1;})]c' => (qr/.../) => '(?^u:ab\\[(??{1;})]c)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -10947,7 +10947,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
     |    |--- character_set. Attributes: {text => "]c", uid => "10"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "11"}
-Test count: 1001. Parsing 'ab\\\[(??{1})c' => (qr/.../) => 
+Perl error: Test count: 1001. Parsing 'ab\\\[(??{1})c' => (qr/.../) => 
 1 Error str: 1001: Perl cannot convert ab\\\[(??{1})c into qr/.../ form
 Test count: 1002. Parsing 'ab[c\](??{"]d' => (qr/.../) => '(?^u:ab[c\](??{"]d)'. 
 Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
@@ -10962,7 +10962,7 @@ Root. Attributes: {text => "Root", uid => "0"}
          |    |--- non_close_parenthesis. Attributes: {text => "??{"]d", uid => "8"}
          |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
 1 Error str: Error: Parse failed
-Test count: 1003. Parsing 'ab[c\\](??{"[x]"})d' => (qr/.../) => 
+Perl error: Test count: 1003. Parsing 'ab[c\\](??{"[x]"})d' => (qr/.../) => 
 1 Error str: 1003: Perl cannot convert ab[c\\](??{"[x]"})d into qr/.../ form
 Test count: 1004. Parsing 'ab[c\\\](??{"x"})]{3}d' => (qr/.../) => '(?^u:ab[c\\\](??{"x"})]{3}d)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -11443,39 +11443,39 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
     |    |--- character_set. Attributes: {text => "*.[CX]", uid => "13"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "14"}
-Test count: 1040. Parsing '^(A)(?{"xyz"})B$' => (qr/.../) => 
+Perl error: Test count: 1040. Parsing '^(A)(?{"xyz"})B$' => (qr/.../) => 
 1 Error str: 1040: Perl cannot convert ^(A)(?{"xyz"})B$ into qr/.../ form
-Test count: 1041. Parsing '^(A)(?{return "xyz"})B$' => (qr/.../) => 
+Perl error: Test count: 1041. Parsing '^(A)(?{return "xyz"})B$' => (qr/.../) => 
 1 Error str: 1041: Perl cannot convert ^(A)(?{return "xyz"})B$ into qr/.../ form
-Test count: 1042. Parsing '^(A)((??{"xyz"}))$' => (qr/.../) => 
+Perl error: Test count: 1042. Parsing '^(A)((??{"xyz"}))$' => (qr/.../) => 
 1 Error str: 1042: Perl cannot convert ^(A)((??{"xyz"}))$ into qr/.../ form
-Test count: 1043. Parsing '^(A)((??{return "xyz"}))$' => (qr/.../) => 
+Perl error: Test count: 1043. Parsing '^(A)((??{return "xyz"}))$' => (qr/.../) => 
 1 Error str: 1043: Perl cannot convert ^(A)((??{return "xyz"}))$ into qr/.../ form
-Test count: 1044. Parsing '^(A)((?(?{1})abc|xyz))$' => (qr/.../) => 
+Perl error: Test count: 1044. Parsing '^(A)((?(?{1})abc|xyz))$' => (qr/.../) => 
 1 Error str: 1044: Perl cannot convert ^(A)((?(?{1})abc|xyz))$ into qr/.../ form
-Test count: 1045. Parsing '^(A)((?(?{0})abc|xyz))$' => (qr/.../) => 
+Perl error: Test count: 1045. Parsing '^(A)((?(?{0})abc|xyz))$' => (qr/.../) => 
 1 Error str: 1045: Perl cannot convert ^(A)((?(?{0})abc|xyz))$ into qr/.../ form
-Test count: 1046. Parsing '^(A)((?(?{return 1})abc|xyz))$' => (qr/.../) => 
+Perl error: Test count: 1046. Parsing '^(A)((?(?{return 1})abc|xyz))$' => (qr/.../) => 
 1 Error str: 1046: Perl cannot convert ^(A)((?(?{return 1})abc|xyz))$ into qr/.../ form
-Test count: 1047. Parsing '^(A)((?(?{return 0})abc|xyz))$' => (qr/.../) => 
+Perl error: Test count: 1047. Parsing '^(A)((?(?{return 0})abc|xyz))$' => (qr/.../) => 
 1 Error str: 1047: Perl cannot convert ^(A)((?(?{return 0})abc|xyz))$ into qr/.../ form
-Test count: 1048. Parsing '/^(a)((??{"b"}))$/i' => (qr/.../) => 
+Perl error: Test count: 1048. Parsing '/^(a)((??{"b"}))$/i' => (qr/.../) => 
 1 Error str: 1048: Perl cannot convert /^(a)((??{"b"}))$/i into qr/.../ form
-Test count: 1049. Parsing '/^(A)((??{'B$'}))(\nC)$/m' => (qr/.../) => 
+Perl error: Test count: 1049. Parsing '/^(A)((??{'B$'}))(\nC)$/m' => (qr/.../) => 
 1 Error str: 1049: Perl cannot convert /^(A)((??{'B$'}))(\nC)$/m into qr/.../ form
-Test count: 1050. Parsing '/^(A)((??{'.'}))(B)$/s' => (qr/.../) => 
+Perl error: Test count: 1050. Parsing '/^(A)((??{'.'}))(B)$/s' => (qr/.../) => 
 1 Error str: 1050: Perl cannot convert /^(A)((??{'.'}))(B)$/s into qr/.../ form
-Test count: 1051. Parsing '/^(A) ((??{' .'}))(B)$/x' => (qr/.../) => 
+Perl error: Test count: 1051. Parsing '/^(A) ((??{' .'}))(B)$/x' => (qr/.../) => 
 1 Error str: 1051: Perl cannot convert /^(A) ((??{' .'}))(B)$/x into qr/.../ form
-Test count: 1052. Parsing '/^((??{'\d'}))$/a' => (qr/.../) => 
+Perl error: Test count: 1052. Parsing '/^((??{'\d'}))$/a' => (qr/.../) => 
 1 Error str: 1052: Perl cannot convert /^((??{'\d'}))$/a into qr/.../ form
-Test count: 1053. Parsing '/^(??{"s"})$/i' => (qr/.../) => 
+Perl error: Test count: 1053. Parsing '/^(??{"s"})$/i' => (qr/.../) => 
 1 Error str: 1053: Perl cannot convert /^(??{"s"})$/i into qr/.../ form
-Test count: 1054. Parsing '/^(??{"s"})$/ia' => (qr/.../) => 
+Perl error: Test count: 1054. Parsing '/^(??{"s"})$/ia' => (qr/.../) => 
 1 Error str: 1054: Perl cannot convert /^(??{"s"})$/ia into qr/.../ form
-Test count: 1055. Parsing '/^(??{"s"})$/iaa' => (qr/.../) => 
+Perl error: Test count: 1055. Parsing '/^(??{"s"})$/iaa' => (qr/.../) => 
 1 Error str: 1055: Perl cannot convert /^(??{"s"})$/iaa into qr/.../ form
-Test count: 1056. Parsing '/^(??{'\w'})$/u' => (qr/.../) => 
+Perl error: Test count: 1056. Parsing '/^(??{'\w'})$/u' => (qr/.../) => 
 1 Error str: 1056: Perl cannot convert /^(??{'\w'})$/u into qr/.../ form
 Test count: 1057. Parsing '^(?:(X)?(\d)|(X)?(\d\d))$' => (qr/.../) => '(?^u:^(?:(X)?(\d)|(X)?(\d\d))$)'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -11805,30 +11805,30 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- slash. Attributes: {text => "/", uid => "8"}
     |    |--- flag_set. Attributes: {text => "l", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
-Test count: 1084. Parsing '^(\x{100}|a)(??{ qr/.?\xF7/d})' => (qr/.../) => 
+Perl error: Test count: 1084. Parsing '^(\x{100}|a)(??{ qr/.?\xF7/d})' => (qr/.../) => 
 1 Error str: 1084: Perl cannot convert ^(\x{100}|a)(??{ qr/.?\xF7/d}) into qr/.../ form
-Test count: 1085. Parsing '/(a|(bc)){0,0}?xyz/' => (qr/.../) => '(?^u:/(a|(bc)){0,0}?xyz/)'. 
+Marpa error: Test count: 1085. Parsing '/(a|(bc)){0,0}?xyz/' => (qr/.../) => '(?^u:/(a|(bc)){0,0}?xyz/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 14
 * String before error: (?^u:/(a|(bc)
 * The error was at line 1, column 14, and at character 0x0029 ')', ...
 * here: ){0,0}?xyz/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1086. Parsing '/( a | ( bc ) ) {0,0} ? xyz/x' => (qr/.../) => '(?^u:/( a | ( bc ) ) {0,0} ? xyz/x)'. 
+Marpa error: Test count: 1086. Parsing '/( a | ( bc ) ) {0,0} ? xyz/x' => (qr/.../) => '(?^u:/( a | ( bc ) ) {0,0} ? xyz/x)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 20
 * String before error: (?^u:/( a | ( bc )\s
 * The error was at line 1, column 20, and at character 0x0029 ')', ...
 * here: ) {0,0} ? xyz/x)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1087. Parsing '/(a|(bc)){0,0}+xyz/' => (qr/.../) => '(?^u:/(a|(bc)){0,0}+xyz/)'. 
+Marpa error: Test count: 1087. Parsing '/(a|(bc)){0,0}+xyz/' => (qr/.../) => '(?^u:/(a|(bc)){0,0}+xyz/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 14
 * String before error: (?^u:/(a|(bc)
 * The error was at line 1, column 14, and at character 0x0029 ')', ...
 * here: ){0,0}+xyz/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1088. Parsing '/( a | ( bc ) ) {0,0} + xyz/x' => (qr/.../) => '(?^u:/( a | ( bc ) ) {0,0} + xyz/x)'. 
+Marpa error: Test count: 1088. Parsing '/( a | ( bc ) ) {0,0} + xyz/x' => (qr/.../) => '(?^u:/( a | ( bc ) ) {0,0} + xyz/x)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 20
 * String before error: (?^u:/( a | ( bc )\s
 * The error was at line 1, column 20, and at character 0x0029 ')', ...
@@ -11999,13 +11999,13 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
     |    |--- character_set. Attributes: {text => "BC", uid => "10"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "11"}
-Test count: 1099. Parsing 'A+?(*THEN)BC(?{})' => (qr/.../) => 
+Perl error: Test count: 1099. Parsing 'A+?(*THEN)BC(?{})' => (qr/.../) => 
 1 Error str: 1099: Perl cannot convert A+?(*THEN)BC(?{}) into qr/.../ form
-Test count: 1100. Parsing 'A+?(*PRUNE)BC(?{})' => (qr/.../) => 
+Perl error: Test count: 1100. Parsing 'A+?(*PRUNE)BC(?{})' => (qr/.../) => 
 1 Error str: 1100: Perl cannot convert A+?(*PRUNE)BC(?{}) into qr/.../ form
-Test count: 1101. Parsing 'A+(*THEN)BC(?{})' => (qr/.../) => 
+Perl error: Test count: 1101. Parsing 'A+(*THEN)BC(?{})' => (qr/.../) => 
 1 Error str: 1101: Perl cannot convert A+(*THEN)BC(?{}) into qr/.../ form
-Test count: 1102. Parsing 'A+(*PRUNE)BC(?{})' => (qr/.../) => 
+Perl error: Test count: 1102. Parsing 'A+(*PRUNE)BC(?{})' => (qr/.../) => 
 1 Error str: 1102: Perl cannot convert A+(*PRUNE)BC(?{}) into qr/.../ form
 Test count: 1103. Parsing '^(?=(a)){0}b(?1)' => (qr/.../) => '(?^u:^(?=(a)){0}b(?1))'. 
 Root. Attributes: {text => "Root", uid => "0"}
@@ -12134,21 +12134,21 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- slash. Attributes: {text => "/", uid => "12"}
     |    |--- flag_set. Attributes: {text => "mi", uid => "13"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "14"}
-Test count: 1114. Parsing '/(.)((o)\1)(?2)/' => (qr/.../) => '(?^u:/(.)((o)\1)(?2)/)'. 
+Marpa error: Test count: 1114. Parsing '/(.)((o)\1)(?2)/' => (qr/.../) => '(?^u:/(.)((o)\1)(?2)/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 16
 * String before error: (?^u:/(.)((o)\\1
 * The error was at line 1, column 16, and at character 0x0029 ')', ...
 * here: )(?2)/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1115. Parsing '/(.)(?2)((\1)(?4)(\1))/' => (qr/.../) => '(?^u:/(.)(?2)((\1)(?4)(\1))/)'. 
+Marpa error: Test count: 1115. Parsing '/(.)(?2)((\1)(?4)(\1))/' => (qr/.../) => '(?^u:/(.)(?2)((\1)(?4)(\1))/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 27
 * String before error: (?^u:/(.)(?2)((\\1)(?4)(\\1)
 * The error was at line 1, column 27, and at character 0x0029 ')', ...
 * here: )/)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1116. Parsing '/(.)(?2)((.)(?4)(\1))/' => (qr/.../) => '(?^u:/(.)(?2)((.)(?4)(\1))/)'. 
+Marpa error: Test count: 1116. Parsing '/(.)(?2)((.)(?4)(\1))/' => (qr/.../) => '(?^u:/(.)(?2)((.)(?4)(\1))/)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 26
 * String before error: (?^u:/(.)(?2)((.)(?4)(\\1)
 * The error was at line 1, column 26, and at character 0x0029 ')', ...
@@ -12194,31 +12194,31 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- character_set. Attributes: {text => "$", uid => "14"}
     |    |--- slash. Attributes: {text => "/", uid => "15"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "16"}
-Test count: 1119. Parsing '/^ (\3(?2)\3)? ((.)) (?1) $/x' => (qr/.../) => '(?^u:/^ (\3(?2)\3)? ((.)) (?1) $/x)'. 
+Marpa error: Test count: 1119. Parsing '/^ (\3(?2)\3)? ((.)) (?1) $/x' => (qr/.../) => '(?^u:/^ (\3(?2)\3)? ((.)) (?1) $/x)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 18
 * String before error: (?^u:/^ (\\3(?2)\\3
 * The error was at line 1, column 18, and at character 0x0029 ')', ...
 * here: )? ((.)) (?1) $/x)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1120. Parsing '/^ (a|\3(?1)\2|(?2)) ((b|c)(?4)?) (?1) (d(?1)) $/x' => (qr/.../) => '(?^u:/^ (a|\3(?1)\2|(?2)) ((b|c)(?4)?) (?1) (d(?1)) $/x)'. 
+Marpa error: Test count: 1120. Parsing '/^ (a|\3(?1)\2|(?2)) ((b|c)(?4)?) (?1) (d(?1)) $/x' => (qr/.../) => '(?^u:/^ (a|\3(?1)\2|(?2)) ((b|c)(?4)?) (?1) (d(?1)) $/x)'. 
 2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 25
 * String before error: (?^u:/^ (a|\\3(?1)\\2|(?2)
 * The error was at line 1, column 25, and at character 0x0029 ')', ...
 * here: ) ((b|c)(?4)?) (?1) (d(?1)) $/x)
 Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
 
-Test count: 1121. Parsing '/(a)\2/' => (qr/.../) => 
+Perl error: Test count: 1121. Parsing '/(a)\2/' => (qr/.../) => 
 1 Error str: 1121: Perl cannot convert /(a)\2/ into qr/.../ form
-Test count: 1122. Parsing '/(a)(b)\3/' => (qr/.../) => 
+Perl error: Test count: 1122. Parsing '/(a)(b)\3/' => (qr/.../) => 
 1 Error str: 1122: Perl cannot convert /(a)(b)\3/ into qr/.../ form
-Test count: 1123. Parsing '/(a)(b)(c)\4/' => (qr/.../) => 
+Perl error: Test count: 1123. Parsing '/(a)(b)(c)\4/' => (qr/.../) => 
 1 Error str: 1123: Perl cannot convert /(a)(b)(c)\4/ into qr/.../ form
-Test count: 1124. Parsing '/(a)(b)(c)(d)\5/' => (qr/.../) => 
+Perl error: Test count: 1124. Parsing '/(a)(b)(c)(d)\5/' => (qr/.../) => 
 1 Error str: 1124: Perl cannot convert /(a)(b)(c)(d)\5/ into qr/.../ form
-Test count: 1125. Parsing '/(a)(b)(c)(d)(e)\6/' => (qr/.../) => 
+Perl error: Test count: 1125. Parsing '/(a)(b)(c)(d)(e)\6/' => (qr/.../) => 
 1 Error str: 1125: Perl cannot convert /(a)(b)(c)(d)(e)\6/ into qr/.../ form
-Test count: 1126. Parsing '/(a)(b)(c)(d)(e)(f)\7/' => (qr/.../) => 
+Perl error: Test count: 1126. Parsing '/(a)(b)(c)(d)(e)(f)\7/' => (qr/.../) => 
 1 Error str: 1126: Perl cannot convert /(a)(b)(c)(d)(e)(f)\7/ into qr/.../ form
 Test count: 1127. Parsing '/(a)(b)(c)(d)(e)(f)(g)(h)(i)\10/' => (qr/.../) => '(?^u:/(a)(b)(c)(d)(e)(f)(g)(h)(i)\10/)'. 
 Root. Attributes: {text => "Root", uid => "0"}
