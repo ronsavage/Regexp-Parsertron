@@ -114,7 +114,7 @@ has verbose =>
 	required => 0,
 );
 
-our $VERSION = '0.52';
+our $VERSION = '2.07';
 
 # ------------------------------------------------
 
@@ -865,7 +865,21 @@ In short, Marpa will always report 'Parse exhausted', but I<this is not an error
 
 See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
 
+=head1 TODO
+
+Things to be aware of:
+
+=over 4
+
+=item o Regexps of the form: /.../aa
+
+=item o Pragmas for the form: use re '/aa'
+
+=back
+
 =head1 References
+
+L<http://www.pcre.org/>. PCRE - Perl Compatible Regular Expressions.
 
 L<http://perldoc.perl.org/perlre.html>. This is the definitive document.
 
@@ -884,6 +898,8 @@ L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>
 L<Graph::Regexp>
 
 L<Regexp::Assemble>
+
+L<Regexp::Debugger>
 
 L<Regexp::ERE>
 
@@ -917,6 +933,12 @@ Version numbers < 1.00 represent development versions. From 1.00 up, they are pr
 
 L<https://github.com/ronsavage/Regexp-Parsertron>
 
+=head1 References
+
+L<https://code.activestate.com/lists/perl5-porters/209610/>
+
+L<https://stackoverflow.com/questions/46200305/a-strict-regular-expression-for-matching-chemical-formulae>
+
 =head1 Support
 
 Email the author, or log a bug on RT:
@@ -944,6 +966,7 @@ Australian copyright (c) 2016, Ron Savage.
 
 __DATA__
 @@ V 5.20
+
 :default		::= action => [values]
 
 lexeme default	= latm => 1
