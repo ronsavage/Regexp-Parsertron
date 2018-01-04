@@ -796,6 +796,18 @@ Note: C<verbose> is a parameter to L</new([%opts])>.
 
 =head1 FAQ
 
+=head2 What is the purpose of this module?
+
+=over 4
+
+=item o To provide a stand-alone parser for regexps
+
+=item o To help me learn more about regexps
+
+=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
+
+=back
+
 =head2 What is the format of the nodes in the tree build by this module?
 
 Each node's C<meta> method returns a hashref with these (key => value) pairs:
@@ -818,18 +830,6 @@ object.
 
 See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
 
-=head2 What is the purpose of this module?
-
-=over 4
-
-=item o To provide a stand-alone parser for regexps
-
-=item o To help me learn more about regexps
-
-=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
-
-=back
-
 =head2 Does this module interpret regexps in any way?
 
 No. You have to run your own Perl code to do that. This module just parses them into a data
@@ -840,14 +840,14 @@ while debugging new code, you can't rely on that appearing in production version
 
 =head2 Does this module re-write regexps?
 
-Yes, on a small scale so far. See scripts/simple.pl for sample code. The source of this program
+Yes, on a small scale so far. See scripts/synopsis.pl for sample code. The source of this program
 and its output are given in the L</Synopsis>.
 
 =head2 Does this module handle both Perl5 and Perl6?
 
 Initially, it will only handle Perl5 syntax.
 
-=head2 Does this module handle various versions of regexps (i.e., of Perl5)?
+=head2 Does this module handle regexps for various versions of Perl5?
 
 Yes, version-dependent regexp syntax will be supported for recent versions of Perl. This is done by
 having tokens within the BNF which are replaced at start-up time with version-dependent details.
