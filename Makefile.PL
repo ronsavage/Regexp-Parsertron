@@ -30,18 +30,21 @@ my(%params) =
 	PREREQ_PM =>
 	{
 		'Data::Section::Simple'	=> 0.07,
-		'File::Slurper'			=> 0.008,
-		'Marpa::R2'				=> 3.000000,
-		'Moo'					=> 2.001001,
+		'File::Slurper'			=> 0.011,
+		'Marpa::R2'				=> 4.000000,
+		'Moo'					=> 2.003004,
 		'perl'					=> 5.20.2,
-		'Scalar::Does'			=> 0.202,
+		'Scalar::Does'			=> 0.203,
 		'strict'				=> 0,
-		'Test::More'			=> 1.001014,
-		'Test::Pod'				=> 1.48,
-		'Tree'					=> 1.07,
-		'Try::Tiny'				=> 0.24,
-		'Types::Standard'		=> 1.000005,
+		'Tree'					=> 1.10,
+		'Try::Tiny'				=> 0.30,
+		'Types::Standard'		=> 1.002001,
 		'warnings'				=> 0,
+	},
+	TEST_REQUIRES =>
+	{
+		'Test::More'	=> 1.001014,
+		'Test::Pod'		=> 1.48,
 	},
 	VERSION_FROM => 'lib/Regexp/Parsertron.pm',
 );
