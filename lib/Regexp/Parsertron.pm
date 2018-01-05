@@ -1020,7 +1020,6 @@ parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
 pattern						::=
 pattern						::= bracket_pattern
-								| parenthesis_pattern
 								| non_close_parenthesis_set
 
 bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket set_modifiers
