@@ -74,6 +74,11 @@ my(@test)	=
 	expected	=> '(?^:/ab+bc/)',
 	re			=> '/ab+bc/',
 },
+{
+	count		=> 14,
+	expected	=> '(?^:^)',
+	re			=> qr/a/,
+},
 );
 
 my($limit)	= shift || 0;

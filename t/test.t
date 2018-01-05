@@ -73,6 +73,16 @@ my(@test)	=
 	expected	=> '(?^i:Perl|JavaScript|C++)',
 	re			=> qr/Perl|JavaScript/i,
 },
+{
+	count		=> 13,
+	expected	=> '(?^:/ab+bc/)',
+	re			=> '/ab+bc/',
+},
+{
+	count		=> 14,
+	expected	=> '(?^:^)',
+	re			=> qr/^/,
+},
 );
 
 my($parser)	= Regexp::Parsertron -> new;

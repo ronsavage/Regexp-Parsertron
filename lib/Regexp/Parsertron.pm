@@ -1034,13 +1034,14 @@ character_in_set			::= escaped_close_bracket
 set_modifiers				::=
 set_modifiers				::= plus
 								| question_mark
-#								| TBA. E.g. {...}.
+#								| TODO. E.g. {...}.
 
 character_sequence			::= simple_character_sequence+
 
 simple_character_sequence	::= escaped_close_parenthesis
 								| escaped_open_parenthesis
 								| escaped_slash
+								| caret
 								| character_set
 
 optional_dollar				::=
