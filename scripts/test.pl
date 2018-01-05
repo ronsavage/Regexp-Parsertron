@@ -76,7 +76,7 @@ my(@test)	=
 },
 {
 	count		=> 14,
-	expected	=> '(?^:^)',
+	expected	=> '(?^:a)',
 	re			=> qr/a/,
 },
 {
@@ -88,10 +88,12 @@ my(@test)	=
 
 my($limit)	= shift || 0;
 my($parser)	= Regexp::Parsertron -> new(verbose => 2);
+my(%stats)	= (success => 0, total => 0);
 
 my($expected);
 my($got);
 my($result);
+my($success);
 
 for my $test (@test)
 {
@@ -99,8 +101,10 @@ for my $test (@test)
 
 	next if ( ($limit > 0) && ($$test{count} != $limit) );
 
-	$result = $parser -> parse(re => $$test{re});
+	$stats{total}++;
 
+	$result		= $parser -> parse(re => $$test{re});
+	$success	= 1;
 
 	if ($$test{count} == 12)
 	{
@@ -111,17 +115,24 @@ for my $test (@test)
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
+		$success	= 0 if ($got eq $expected);
 
-		print "$$test{count}: got: $got. expected: $expected. result: $result (0 is success). \n";
+		$stats{success}++ if ($success == 0);
+
+		print "$$test{count}: got: $got. expected: $expected. outcome: $success (0 is success). \n";
 	}
 	else
 	{
 		print "Test $$test{count} failed to return 0 from parse()\n";
 	}
 
-	# Reset for next test.
+	print '-' x 50, "\n";
 
-	print "\n";
+	# Reset for next test.
 
 	$parser -> reset;
 }
+
+print "Statistics: ";
+print "$_: $stats{$_}. " for (sort keys %stats);
+print "\n";
