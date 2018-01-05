@@ -202,13 +202,15 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- colon. Attributes: {text => ":", uid => "5"}
     |    |--- character_set. Attributes: {text => "abc$", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-Marpa error: Test count: 23. Parsing '^' => (qr/.../) => '(?^u:^)'. 
-2 Error str: Error: Parse failed. Error in SLIF parse: No lexeme found at line 1, column 7
-* String before error: (?^u:^
-* The error was at line 1, column 7, and at character 0x0029 ')', ...
-* here: )
-Marpa::R2 exception at lib/Regexp/Parsertron.pm line 360.
-
+Test count: 23. Parsing '^' => (qr/.../) => '(?^u:^)'. 
+Root. Attributes: {text => "Root", uid => "0"}
+    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+    |    |--- caret. Attributes: {text => "^", uid => "3"}
+    |    |--- flag_set. Attributes: {text => "u", uid => "4"}
+    |    |--- colon. Attributes: {text => ":", uid => "5"}
+    |    |--- caret. Attributes: {text => "^", uid => "6"}
+    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
 Test count: 24. Parsing '$' => (qr/.../) => '(?^u:$)'. 
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
@@ -643,7 +645,7 @@ Root. Attributes: {text => "Root", uid => "0"}
 Perl error: Test count: 75. Parsing 'a\' => (qr/.../) => 
 1 Error str: 75: Perl cannot convert a\ into qr/.../ form
 Test count: 76. Parsing 'a\(b' => (qr/.../) => '(?^u:a\(b)'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -656,7 +658,7 @@ Root. Attributes: {text => "Root", uid => "0"}
          |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
 1 Error str: Error: Parse failed
 Test count: 77. Parsing 'a\(*b' => (qr/.../) => '(?^u:a\(*b)'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -1758,7 +1760,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- character_set. Attributes: {text => "'a\'i", uid => "6"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
 Test count: 197. Parsing ''a\(b'i' => (qr/.../) => '(?^u:'a\(b'i)'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -1771,7 +1773,7 @@ Root. Attributes: {text => "Root", uid => "0"}
          |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
 1 Error str: Error: Parse failed
 Test count: 198. Parsing ''a\(*b'i' => (qr/.../) => '(?^u:'a\(*b'i)'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -3368,7 +3370,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- open_parenthesis. Attributes: {text => "(", uid => "6"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "?m", uid => "7"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
-    |    |--- character_set. Attributes: {text => "^", uid => "9"}
+    |    |--- caret. Attributes: {text => "^", uid => "9"}
     |    |--- open_parenthesis. Attributes: {text => "(", uid => "10"}
     |    |    |--- non_close_parenthesis. Attributes: {text => "b", uid => "11"}
     |    |--- close_parenthesis. Attributes: {text => ")", uid => "12"}
@@ -10903,7 +10905,7 @@ Root. Attributes: {text => "Root", uid => "0"}
     |    |--- flag_set. Attributes: {text => "i", uid => "9"}
     |--- close_parenthesis. Attributes: {text => ")", uid => "10"}
 Test count: 995. Parsing 'ab[(?{1]' => (qr/.../) => '(?^u:ab[(?{1])'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -10916,7 +10918,7 @@ Root. Attributes: {text => "Root", uid => "0"}
          |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
 1 Error str: Error: Parse failed
 Test count: 996. Parsing 'ab[(?{1\](?{2]' => (qr/.../) => '(?^u:ab[(?{1\](?{2])'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -10950,7 +10952,7 @@ Root. Attributes: {text => "Root", uid => "0"}
 Perl error: Test count: 1001. Parsing 'ab\\\[(??{1})c' => (qr/.../) => 
 1 Error str: 1001: Perl cannot convert ab\\\[(??{1})c into qr/.../ form
 Test count: 1002. Parsing 'ab[c\](??{"]d' => (qr/.../) => '(?^u:ab[c\](??{"]d)'. 
-Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
+Warning: Ambiguous parse. Status: No parse. Terminals expected: open_parenthesis, close_parenthesis, caret, open_bracket, escaped_close_parenthesis, escaped_open_parenthesis, escaped_slash, character_set, dollar
 Root. Attributes: {text => "Root", uid => "0"}
     |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
          |--- question_mark. Attributes: {text => "?", uid => "2"}

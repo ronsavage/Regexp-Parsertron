@@ -33,7 +33,7 @@ for my $line (@lines)
 }
 
 say ");\n";
-say "my(%marpa_failure)	=";
+say "my(%marpa_failure) =";
 say "(\t# For V 5.20.2.";
 
 for my $line (@lines)

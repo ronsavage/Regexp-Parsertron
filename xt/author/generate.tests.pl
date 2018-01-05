@@ -12,7 +12,7 @@ use Regexp::Parsertron;
 my($prefix)				= 'perl-5.21.11';
 my($input_file_name)	= "$prefix/re_tests";
 my(@lines)				= grep{! /#/ && ! /^\s*$/ && ! /^__END__/} read_lines($input_file_name);
-my(%perl_failure)		=
+my(%perl_failure) =
 (	# For V 5.20.2.
 	  41 => 1,
 	  42 => 1,
@@ -194,9 +194,9 @@ my(%perl_failure)		=
 	1125 => 1,
 	1126 => 1,
 );
-my(%marpa_failure)	=
+
+my(%marpa_failure) =
 (	# For V 5.20.2.
-	  23 => 1,
 	 645 => 1,
 	 646 => 1,
 	 647 => 1,
@@ -277,6 +277,6 @@ for my $re (@re)
 print 'Perl error count:  ', $parser -> perl_error_count, "\n";
 print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
 
-open(my $fh, '>', "t/$prefix.tests");
+open(my $fh, '>', "xt/author/$prefix.tests");
 print $fh map{"$_\n"} sort keys %seen;
 close $fh;
