@@ -13,7 +13,6 @@ use Data::Section::Simple;
 use File::Slurper;
 use Marpa::R2;
 use Moo;
-use perl;
 use Scalar::Does;
 use strict;
 use Tree;
@@ -31,7 +30,6 @@ my(@modules) = qw
 	File::Slurper
 	Marpa::R2
 	Moo
-	perl
 	Scalar::Does
 	strict
 	Tree

@@ -24,16 +24,16 @@ my(%params) =
 		COMPRESS => 'gzip',
 		SUFFIX   => 'gz'
 	},
-	DISTNAME  => 'Regexp-Parsertron',
-	NAME      => 'Regexp::Parsertron',
-	PL_FILES  => {},
-	PREREQ_PM =>
+	DISTNAME			=> 'Regexp-Parsertron',
+	MIN_PERL_VERSION	=> 5.20.2,
+	NAME				=> 'Regexp::Parsertron',
+	PL_FILES 			=> {},
+	PREREQ_PM			=>
 	{
 		'Data::Section::Simple'	=> 0.07,
 		'File::Slurper'			=> 0.011,
 		'Marpa::R2'				=> 4.000000,
 		'Moo'					=> 2.003004,
-		'perl'					=> 5.20.2,
 		'Scalar::Does'			=> 0.203,
 		'strict'				=> 0,
 		'Tree'					=> 1.10,
