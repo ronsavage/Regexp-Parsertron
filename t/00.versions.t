@@ -5,18 +5,20 @@ use warnings;
 
 # I tried 'require'-ing modules but that did not work.
 
-use SVG::Grid; # For the version #.
+use Regexp::Parsertron; # For the version #.
 
 use Test::More;
 
+use Data::Section::Simple;
 use File::Slurper;
-use Getopt::Long;
+use Marpa::R2;
 use Moo;
-use Pod::Usage;
+use perl;
+use Scalar::Does;
 use strict;
-use SVG;
+use Tree;
+use Try::Tiny;
 use Types::Standard;
-use utf8;
 use warnings;
 
 # ----------------------
@@ -25,18 +27,20 @@ pass('All external modules loaded');
 
 my(@modules) = qw
 /
+	Data::Section::Simple
 	File::Slurper
-	Getopt::Long
+	Marpa::R2
 	Moo
-	Pod::Usage
+	perl
+	Scalar::Does
 	strict
-	SVG
+	Tree
+	Try::Tiny
 	Types::Standard
-	utf8
 	warnings
 /;
 
-diag "Testing SVG::Grid V $SVG::Grid::VERSION";
+diag "Testing Regexp::Parsertron V $Regexp::Parsertron::VERSION";
 
 for my $module (@modules)
 {
