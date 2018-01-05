@@ -79,6 +79,11 @@ my(@test)	=
 	expected	=> '(?^:^)',
 	re			=> qr/a/,
 },
+{
+	count		=> 15,
+	expected	=> '(?^u:/(?:(?<n>foo)|(?<n>bar))\k<n>/)',
+	re			=> qr/(?:(?<n>foo)|(?<n>bar))\k<n>/,
+},
 );
 
 my($limit)	= shift || 0;
@@ -107,7 +112,7 @@ for my $test (@test)
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
 
-		print "$$test{count}: got: $got. expected: $expected. result: $result. \n";
+		print "$$test{count}: got: $got. expected: $expected. result: $result (0 is success). \n";
 	}
 	else
 	{
@@ -115,6 +120,8 @@ for my $test (@test)
 	}
 
 	# Reset for next test.
+
+	print "\n";
 
 	$parser -> reset;
 }

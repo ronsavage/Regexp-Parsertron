@@ -6,7 +6,7 @@ use warnings;
 # -----------
 
 my($s)	= 'a';
-my($re)	= qr/^/;
+my($re)	= qr/(?:(?<n>foo)|(?<n>bar))\k<n>/;
 
 print "String: $s. Regexp: $re. \n";
 

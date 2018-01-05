@@ -333,7 +333,7 @@ sub _process
 	my($raw_re)		= $self -> re;
 	my($test_count)	= $self -> test_count($self -> test_count + 1);
 
-	print "Test count: $test_count. Parsing '$raw_re' => (qr/.../) => " if ($self -> verbose);
+	print "Test count: $test_count. Parsing '$raw_re' which in qr/.../ form is " if ($self -> verbose);
 
 	my($string_re)	= $self -> _string2re($raw_re);
 
@@ -1020,6 +1020,7 @@ parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
 
 pattern						::=
 pattern						::= bracket_pattern
+								| parenthesis_pattern
 								| non_close_parenthesis_set
 
 bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket set_modifiers
