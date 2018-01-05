@@ -60,17 +60,17 @@ if ($ExtUtils::MakeMaker::VERSION ge '6.46')
 	{
 		'meta-spec' =>
 		{
-		'version' => 2,
+			version => 2,
 		},
-		resources   =>
+		resources =>
 		{
-		'bugtracker' => 'https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Parsertron',
-		'license' => 'http://opensource.org/licenses/Artistic-2.0',
-			repository =>
+			bugtracker	=> 'https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Parsertron',
+			license		=> 'http://opensource.org/licenses/Artistic-2.0',
+			repository	=>
 			{
-		'type' => 'git',
-		'url' => 'https://github.com/ronsavage/Regexp-Parsertron.git',
-		'web' => 'https://github.com/ronsavage/Regexp-Parsertron',
+				type	=> 'git',
+				url		=> 'https://github.com/ronsavage/Regexp-Parsertron.git',
+				web		=> 'https://github.com/ronsavage/Regexp-Parsertron',
 			},
 		},
 	};
