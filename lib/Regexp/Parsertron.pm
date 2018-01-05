@@ -983,7 +983,7 @@ entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_
 					| question_mark vertical_bar pattern_set
 					| question_mark equals pattern_set
 					| question_mark exclamation_mark pattern_set
-					| question_mark less_equals pattern_set
+					| question_mark less_or_equals pattern_set
 					| escaped_K
 					| question_mark less_exclamation_mark pattern_set
 					| question_mark named_capture_group pattern_set
@@ -1145,8 +1145,8 @@ greater_than				~ '>'
 :lexeme						~ hash					pause => before		event => hash
 hash						~ '#'
 
-:lexeme						~ less_equals			pause => before		event => less_equals
-less_equals					~ '<='
+:lexeme						~ less_or_equals		pause => before		event => less_or_equals
+less_or_equals				~ '<='
 
 :lexeme						~ less_exclamation_mark	pause => before		event => less_exclamation_mark
 less_exclamation_mark		~ '<!'
