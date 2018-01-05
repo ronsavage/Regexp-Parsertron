@@ -6,7 +6,7 @@ use File::Slurper 'read_lines';
 
 # -----------------------------
 
-my($input_file)	= '/home/ron/perl.modules/Regexp-Parsertron/t/generate.tests.log';
+my($input_file)	= './xt/author/generate.tests.log';
 my(@lines)		= read_lines($input_file);
 
 my($count);
