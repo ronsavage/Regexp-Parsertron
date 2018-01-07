@@ -20,47 +20,47 @@ my(@test)	=
 },
 {
 	count		=> 2,
-	expected	=> '(?^:(?))',
+	expected	=> '(?^u:(?))',
 	re			=> qr/(?)/,
 },
 {
 	count		=> 3,
-	expected	=> '(?^:(?a))',
+	expected	=> '(?^u:(?a))',
 	re			=> qr/(?a)/,
 },
 {
 	count		=> 4,
-	expected	=> '(?^:(?a-i))',
+	expected	=> '(?^u:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
 	count		=> 5,
-	expected	=> '(?^:(?^a))',
+	expected	=> '(?^u:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
 	count		=> 6,
-	expected	=> '(?^:(?a:))',
+	expected	=> '(?^u:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
 	count		=> 7,
-	expected	=> '(?^:(?a:b))',
+	expected	=> '(?^u:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
 {
 	count		=> 8,
-	expected	=> '(?^:(?:))',
+	expected	=> '(?^u:(?:))',
 	re			=> qr/(?:)/,
 },
 {
 	count		=> 9,
-	expected	=> '(?^:[yY][eE][sS])',
+	expected	=> '(?^u:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
 	count		=> 10,
-	expected	=> '(?^:(A|B))',
+	expected	=> '(?^u:(A|B))',
 	re			=> qr/(A|B)/,
 },
 {
@@ -75,12 +75,12 @@ my(@test)	=
 },
 {
 	count		=> 13,
-	expected	=> '(?^:/ab+bc/)',
+	expected	=> '(?^u:/ab+bc/)',
 	re			=> '/ab+bc/',
 },
 {
 	count		=> 14,
-	expected	=> '(?^:^)',
+	expected	=> '(?^u:^)',
 	re			=> qr/^/,
 },
 );
@@ -94,6 +94,8 @@ my($result);
 
 for my $test (@test)
 {
+	diag $$test{re} . "\n";
+
 	$result = $parser -> parse(re => $$test{re});
 
 	if ($$test{count} == 12)
@@ -112,7 +114,7 @@ for my $test (@test)
 	}
 	else
 	{
-		BAIL_OUT("Test $$test{count} failed to return 0 from process()");
+		BAIL_OUT("Test $$test{count} failed to return 0 from parse()");
 	}
 
 	# Reset for next test.

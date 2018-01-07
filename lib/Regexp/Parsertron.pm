@@ -975,22 +975,57 @@ lexeme default	= latm => 1
 
 # G1 stuff.
 
-regexp			::= open_parenthesis entire_pattern close_parenthesis
+regexp			::= open_parenthesis question_mark caret optional_u colon entire_pattern close_parenthesis
 
-entire_pattern	::= question_mark optional_caret positive_flags optional_pattern_set
-					| question_mark caret colon open_parenthesis comment close_parenthesis
-					| question_mark flag_sequence optional_pattern_set
-					| question_mark vertical_bar pattern_set
-					| question_mark equals pattern_set
-					| question_mark exclamation_mark pattern_set
-					| question_mark less_or_equals pattern_set
-					| escaped_K
-					| question_mark less_exclamation_mark pattern_set
-					| question_mark named_capture_group pattern_set
-					| named_backreference
-					| question_mark open_brace code close_brace
-					| question_mark question_mark open_brace code close_brace
-					| question_mark parameter_number
+optional_u		::=
+optional_u		::= u
+
+# Extended patterns from http://perldoc.perl.org/perlre.html:
+#  1: (?#text)
+#  2: (?adlupimnsx-imnsx)
+#   & (?^alupimnsx)
+#  3: (?:pattern)
+#   & (?adluimnsx-imnsx:pattern)
+#   & (?^aluimnsx:pattern)
+#  4: (?|pattern)
+#  5: (?=pattern)
+#  6: (?!pattern)
+#  7: (?<=pattern
+#   & \K
+#  8: (?<!pattern)
+#  9: (?<NAME>pattern)
+#   & (?'NAME'pattern)
+# 10: \k<NAME>
+#   & \k'NAME'
+# 11: (?{ code })
+# 12: (??{ code })
+# 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
+# 14: (?&NAME)
+# 15: (?(condition)yes-pattern|no-pattern)
+#   & (?(condition)yes-pattern)
+# 16: (?>pattern)
+# 17: (?[ ])
+
+entire_pattern				::= comment_pattern # 1
+								| question_mark optional_caret positive_flags optional_pattern_set # 2
+								| question_mark flag_sequence optional_pattern_set # 3
+								| question_mark vertical_bar pattern_set # 4
+								| question_mark equals pattern_set # 5
+								| question_mark exclamation_mark pattern_set # 6
+								| question_mark less_or_equals pattern_set # 7
+								| escaped_K # 7
+								| question_mark less_exclamation_mark pattern_set # 8
+								| question_mark named_capture_group pattern_set # 9
+								| named_backreference # 10
+								| question_mark open_brace code close_brace # 11
+								| question_mark question_mark open_brace code close_brace # 12
+								| question_mark parameter_number # 13
+
+comment_pattern				::= open_parenthesis question_mark hash comment close_parenthesis
+
+comment						::= non_close_parenthesis_set
+
+non_close_parenthesis_set	::= non_close_parenthesis*
 
 optional_caret				::=
 optional_caret				::= caret
@@ -1049,10 +1084,6 @@ optional_dollar				::= dollar
 
 optional_switches			::=
 optional_switches			::= flag_set
-
-comment						::= question_mark hash non_close_parenthesis_set
-
-non_close_parenthesis_set	::= non_close_parenthesis*
 
 flag_sequence				::= positive_flags negative_flag_set
 
@@ -1189,6 +1220,8 @@ single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
+
+u							~ 'u'
 
 :lexeme						~ vertical_bar			pause => before		event => vertical_bar
 vertical_bar				~ '|'

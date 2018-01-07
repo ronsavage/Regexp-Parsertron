@@ -1,14 +1,20 @@
 #!/usr/bin/env perl
 
+use v5.10;
 use strict;
 use warnings;
 
 # -----------
 
-my($s)	= 'foofoo';
-my($re)	= qr/(?:(?<n>foo)|(?<n>bar))\k<n>/;
+my($one)	= '(?)';
+my($re1)	= qr/$one/;
 
-print "String: $s. Regexp: $re. \n";
+say "one: $one. re1: $re1";
+
+my($s)	= 'foofoo';
+my($re)	= qr/(?#Comment)(?:(?<n>foo)|(?<n>bar))\k<n>/;
+
+say "String: $s. Regexp: $re. ";
 
 if ($s =~ $re)
 {
@@ -16,5 +22,5 @@ if ($s =~ $re)
 }
 else
 {
-	print "Does not match. \n";
+	say "Does not match. ";
 }
