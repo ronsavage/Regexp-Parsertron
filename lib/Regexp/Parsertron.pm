@@ -1,5 +1,6 @@
 package Regexp::Parsertron;
 
+use v5.10;
 use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
@@ -192,45 +193,6 @@ sub _add_daughter
 
 # ------------------------------------------------
 
-sub as_re
-{
-	my($self)	= @_;
-	my($string)	= $self -> as_string;
-	my($index)	= index($string, '/');
-
-	if ($index >= 0)
-	{
-		$string				= substr($string, $index);
-		substr($string, -1)	= '';
-	}
-
-	return $string;
-
-} # End of as_re.
-
-# ------------------------------------------------
-
-sub as_string
-{
-	my($self)	= @_;
-	my($string)	= '';
-
-	my($meta);
-
-	for my $node ($self -> tree -> traverse)
-	{
-		next if ($node -> is_root);
-
-		$meta	= $node -> meta;
-		$string .= $$meta{text};
-	}
-
-	return $string;
-
-} # End of as_string.
-
-# ------------------------------------------------
-
 sub cooked_tree
 {
 	my($self)	= @_;
@@ -251,6 +213,27 @@ sub cooked_tree
 	}
 
 } # End of cooked_tree.
+
+# ------------------------------------------------
+
+sub get
+{
+	my($self)	= @_;
+	my($string)	= '';
+
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$string .= $$meta{text};
+	}
+
+	return $string;
+
+} # End of get.
 
 # ------------------------------------------------
 
@@ -507,6 +490,7 @@ This is scripts/synopsis.pl:
 
 	#!/usr/bin/env perl
 
+	use v5.10;
 	use strict;
 	use warnings;
 
@@ -527,24 +511,22 @@ This is scripts/synopsis.pl:
 	$parser -> raw_tree;
 	$parser -> cooked_tree;
 
-	my($as_string)	= $parser -> as_string;
-	my($as_re)		= $parser -> as_re;
+	my($get) = $parser -> get;
 
 	print "Original:  $re. Result: $result. (0 is success)\n";
-	print "as_string: $as_string\n";
-	print "as_re:     $as_re\n";
+	print "Get:       $get\n";
 	print 'Perl error count:  ', $parser -> perl_error_count, "\n";
 	print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
 
 	my($target) = 'C++';
 
-	if ($target =~ $as_re)
+	if ($target eq $get)
 	{
-		print "Matches $target (without using \Q...\E)\n";
+		say "Matches $target. ";
 	}
 	else
 	{
-		print "Doesn't match $target\n";
+		say "Doesn't match $target. ";
 	}
 
 And its output:
@@ -577,8 +559,7 @@ And its output:
 	character_set           6  Perl|JavaScript|C++
 	close_parenthesis       7  )
 	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
-	as_string: (?^i:Perl|JavaScript|C++)
-	as_re:     (?^i:Perl|JavaScript|C++)
+	Get:       (?^i:Perl|JavaScript|C++)
 	Perl error count:  0
 	Marpa error count: 0
 	Matches C++ (without using \Q...\E)
@@ -673,14 +654,6 @@ See scripts/simple.pl for sample code.
 Note: Calling C<add()> never changes the uids of nodes, so repeated calling of C<add()> with the
 same C<uid> will apply more and more updates to the same node.
 
-=head2 as_re()
-
-Returns the parsed regexp as a string matching what Perl would return from qr/.../.
-
-=head2 as_string()
-
-Returns the parsed regexp as a string.
-
 =head2 cooked_tree()
 
 Prints, in a pretty format, the tree built from parsing.
@@ -713,6 +686,10 @@ in Perl of course).
 =back
 
 See also L</marpa_error_count()> and L<perl_error_count()>.
+
+=head2 get()
+
+Returns the parsed regexp as a string.
 
 =head2 marpa_error_count()
 

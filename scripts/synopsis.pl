@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use v5.10;
 use strict;
 use warnings;
 
@@ -20,22 +21,20 @@ $parser -> add(text => '|C++', uid => 6);
 $parser -> raw_tree;
 $parser -> cooked_tree;
 
-my($as_string)	= $parser -> as_string;
-my($as_re)		= $parser -> as_re;
+my($get) = $parser -> get;
 
 print "Original:  $re. Result: $result. (0 is success)\n";
-print "as_string: $as_string\n";
-print "as_re:     $as_re\n";
+print "Get:       $get\n";
 print 'Perl error count:  ', $parser -> perl_error_count, "\n";
 print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
 
 my($target) = 'C++';
 
-if ($target =~ $as_re)
+if ($target eq $get)
 {
-	print "Matches $target (without using \\Q...\\E)\n";
+	say "Matches $target. ";
 }
 else
 {
-	print "Doesn't match $target\n";
+	say "Doesn't match $target. ";
 }

@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use v5.10;
 use strict;
 use warnings;
 
@@ -119,14 +120,14 @@ for my $test (@test)
 
 		$stats{success}++ if ($success == 0);
 
-		print "$$test{count}: got: $got. expected: $expected. outcome: $success (0 is success). \n";
+		say "$$test{count}: got: $got. expected: $expected. outcome: $success (0 is success). ";
 	}
 	else
 	{
-		print "Test $$test{count} failed to return 0 from parse()\n";
+		say "Test $$test{count} failed to return 0 from parse(). ";
 	}
 
-	print '-' x 50, "\n";
+	say '-' x 50;
 
 	# Reset for next test.
 
@@ -135,4 +136,4 @@ for my $test (@test)
 
 print "Statistics: ";
 print "$_: $stats{$_}. " for (sort keys %stats);
-print "\n";
+say '';
