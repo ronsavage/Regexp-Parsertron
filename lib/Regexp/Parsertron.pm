@@ -975,16 +975,24 @@ lexeme default	= latm => 1
 
 # G1 stuff.
 
-regexp			::= open_parenthesis question_mark caret optional_u colon entire_pattern close_parenthesis
+regexp				::= open_parenthesis question_mark caret flag_sequence colon entire_pattern close_parenthesis
 
-optional_u		::=
-optional_u		::= u
+flag_sequence		::= positive_flags negative_flag_set
+
+positive_flags		::=
+positive_flags		::= flag_set
+
+negative_flag_set	::=
+negative_flag_set	::= minus negative_flags
+
+negative_flags		::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
+#	Rule							Sample
 #  1: (?#text)
 #  2: (?adlupimnsx-imnsx)
 #   & (?^alupimnsx)
-#  3: (?:pattern)
+#  3: (?:pattern)					(?:(?<n>foo)|(?<n>bar))\k<n>
 #   & (?adluimnsx-imnsx:pattern)
 #   & (?^aluimnsx:pattern)
 #  4: (?|pattern)
@@ -1006,21 +1014,21 @@ optional_u		::= u
 # 16: (?>pattern)
 # 17: (?[ ])
 
-entire_pattern				::= comment_thingy		# 1.
-								| flag_thingy		# 2.
-								| pattern_thingy	# 99.
-								| question_mark flag_sequence optional_pattern_set # 3
-								| question_mark vertical_bar pattern_set # 4
-								| question_mark equals pattern_set # 5
-								| question_mark exclamation_mark pattern_set # 6
-								| question_mark less_or_equals pattern_set # 7
+entire_pattern				::= comment_thingy		rank => 1	# 1.
+								| flag_thingy		rank => 2	# 2.
+								| colon_thingy		rank => 3	# 3
+								| pattern_thingy	rank => 99	# 99.
+								| question_mark vertical_bar pattern_set	rank => 4	# 4
+								| question_mark equals pattern_set			rank => 5 # 5
+								| question_mark exclamation_mark pattern_set	rank => 6 # 6
+								| question_mark less_or_equals pattern_set 		rank => 7 # 7
 								| escaped_K # 7
-								| question_mark less_exclamation_mark pattern_set # 8
-								| question_mark named_capture_group pattern_set # 9
+								| question_mark less_exclamation_mark pattern_set	rank => 8 # 8
+								| question_mark named_capture_group pattern_set		rank => 9 # 9
 								| named_backreference # 10
-								| question_mark open_brace code close_brace # 11
-								| question_mark question_mark open_brace code close_brace # 12
-								| question_mark parameter_number # 13
+								| question_mark open_brace code close_brace			rank => 11 # 11
+								| question_mark question_mark open_brace code close_brace	rank => 12 # 12
+								| question_mark parameter_number							rank => 13 # 13
 
 # 1.
 
@@ -1039,50 +1047,30 @@ flag_set_1					::= flag_sequence
 
 flag_set_2					::= flag_sequence
 
-flag_sequence				::= positive_flags negative_flag_set
+# 3.
 
-positive_flags				::=
-positive_flags				::= flag_set
+colon_thingy				::= open_parenthesis question_mark colon pattern_set close_parenthesis
 
-negative_flag_set			::=
-negative_flag_set			::= minus negative_flags
+pattern_set					::= bracket_pattern
+								| parenthesis_pattern
+								| slash_pattern
+								| character_sequence
 
-negative_flags				::= flag_set
+bracket_pattern				::= open_bracket characters_in_set close_bracket
+
+parenthesis_pattern			::= open_parenthesis pattern_set close_parenthesis
+
+slash_pattern				::= slash pattern_set slash
 
 # 99.
 
-pattern_thingy				::= pattern_set
-
-# 3.
-
-optional_pattern_set		::= colon slash_pattern
-								| colon slashless_pattern
-
-# TODO: Let's hope users always use /.../ and not something like m|...|!
-
-slash_pattern				::=
-slash_pattern				::= slash optional_caret pattern_set optional_dollar slash optional_switches
-
-optional_caret				::=
-optional_caret				::= caret
-
-slashless_pattern			::= optional_caret pattern_set optional_dollar
-
-pattern_set					::= pattern_sequence+
-
-pattern_sequence			::= parenthesis_pattern
-								| bracket_pattern
-								| character_sequence
-
-parenthesis_pattern			::= open_parenthesis pattern close_parenthesis
+pattern_thingy				::= pattern_set*
 
 # Perl accepts /()/.
 
-pattern						::=
-pattern						::= bracket_pattern
-								| non_close_parenthesis_set
-
-bracket_pattern				::= open_bracket optional_caret characters_in_set close_bracket set_modifiers
+#pattern						::=
+#pattern						::= bracket_pattern
+#								| non_close_parenthesis_set
 
 # Perl does not accept /[]/.
 
@@ -1091,11 +1079,6 @@ characters_in_set			::= character_in_set+
 character_in_set			::= escaped_close_bracket
 								| non_close_bracket
 
-set_modifiers				::=
-set_modifiers				::= plus
-								| question_mark
-#								| TODO. E.g. {...}.
-
 character_sequence			::= simple_character_sequence+
 
 simple_character_sequence	::= escaped_close_parenthesis
@@ -1103,12 +1086,6 @@ simple_character_sequence	::= escaped_close_parenthesis
 								| escaped_slash
 								| caret
 								| character_set
-
-optional_dollar				::=
-optional_dollar				::= dollar
-
-optional_switches			::=
-optional_switches			::= flag_set
 
 named_capture_group			::= single_quote capture_name single_quote
 								| less_than capture_name greater_than
@@ -1157,9 +1134,6 @@ colon						~ ':'
 
 :lexeme						~ digit_set				pause => before		event => digit_set
 digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
-
-:lexeme						~ dollar				pause => before		event => dollar
-dollar						~ '$'
 
 :lexeme						~ equals				pause => before		event => equals
 equals						~ '='
@@ -1238,8 +1212,6 @@ single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
-
-u							~ 'u'
 
 :lexeme						~ vertical_bar			pause => before		event => vertical_bar
 vertical_bar				~ '|'
