@@ -333,7 +333,7 @@ sub _process
 	my($raw_re)		= $self -> re;
 	my($test_count)	= $self -> test_count($self -> test_count + 1);
 
-	print "Test count: $test_count. Parsing '$raw_re' which in qr/.../ form is " if ($self -> verbose);
+	print "Test count: $test_count. Parsing (in qr/.../ form): " if ($self -> verbose);
 
 	my($string_re)	= $self -> _string2re($raw_re);
 
@@ -1006,8 +1006,9 @@ optional_u		::= u
 # 16: (?>pattern)
 # 17: (?[ ])
 
-entire_pattern				::= comment_pattern # 1
-								| question_mark optional_caret positive_flags optional_pattern_set # 2
+entire_pattern				::= comment_thingy		# 1.
+								| flag_thingy		# 2.
+								| pattern_thingy	# 99.
 								| question_mark flag_sequence optional_pattern_set # 3
 								| question_mark vertical_bar pattern_set # 4
 								| question_mark equals pattern_set # 5
@@ -1021,17 +1022,38 @@ entire_pattern				::= comment_pattern # 1
 								| question_mark question_mark open_brace code close_brace # 12
 								| question_mark parameter_number # 13
 
-comment_pattern				::= open_parenthesis question_mark hash comment close_parenthesis
+# 1.
+
+comment_thingy				::= open_parenthesis question_mark hash comment close_parenthesis
 
 comment						::= non_close_parenthesis_set
 
 non_close_parenthesis_set	::= non_close_parenthesis*
 
-optional_caret				::=
-optional_caret				::= caret
+# 2.
+
+flag_thingy					::= open_parenthesis question_mark flag_set_1
+								| open_parenthesis question_mark caret flag_set_2 close_parenthesis
+
+flag_set_1					::= flag_sequence
+
+flag_set_2					::= flag_sequence
+
+flag_sequence				::= positive_flags negative_flag_set
 
 positive_flags				::=
 positive_flags				::= flag_set
+
+negative_flag_set			::=
+negative_flag_set			::= minus negative_flags
+
+negative_flags				::= flag_set
+
+# 99.
+
+pattern_thingy				::= pattern_set
+
+# 3.
 
 optional_pattern_set		::= colon slash_pattern
 								| colon slashless_pattern
@@ -1040,6 +1062,9 @@ optional_pattern_set		::= colon slash_pattern
 
 slash_pattern				::=
 slash_pattern				::= slash optional_caret pattern_set optional_dollar slash optional_switches
+
+optional_caret				::=
+optional_caret				::= caret
 
 slashless_pattern			::= optional_caret pattern_set optional_dollar
 
@@ -1084,13 +1109,6 @@ optional_dollar				::= dollar
 
 optional_switches			::=
 optional_switches			::= flag_set
-
-flag_sequence				::= positive_flags negative_flag_set
-
-negative_flag_set			::=
-negative_flag_set			::= minus negative_flags
-
-negative_flags				::= flag_set
 
 named_capture_group			::= single_quote capture_name single_quote
 								| less_than capture_name greater_than

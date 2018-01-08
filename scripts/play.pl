@@ -6,7 +6,7 @@ use warnings;
 
 # -----------
 
-my($one)	= '(?)';
+my($one)	= '[yY][eE][sS]';
 my($re1)	= qr/$one/;
 
 say "one: $one. re1: $re1";
