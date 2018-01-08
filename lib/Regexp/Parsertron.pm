@@ -988,13 +988,57 @@ negative_flag_set	::= minus negative_flags
 negative_flags		::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
-#	Rule							Sample
-#  1: (?#text)
-#  2: (?adlupimnsx-imnsx)
-#   & (?^alupimnsx)
-#  3: (?:pattern)					(?:(?<n>foo)|(?<n>bar))\k<n>
-#   & (?adluimnsx-imnsx:pattern)
-#   & (?^aluimnsx:pattern)
+
+entire_pattern				::= comment_thingy		rank => 1	# 1.
+								| flag_thingy		rank => 2	# 2.
+								| colon_thingy		rank => 3	# 3
+								| pattern_thingy	rank => 99	# 99.
+								| question_mark vertical_bar pattern_set	rank => 4	# 4
+								| question_mark equals pattern_set			rank => 5 # 5
+								| question_mark exclamation_mark pattern_set	rank => 6 # 6
+								| question_mark less_or_equals pattern_set 		rank => 7 # 7
+								| escaped_K # 7
+								| question_mark less_exclamation_mark pattern_set	rank => 8 # 8
+								| question_mark named_capture_group pattern_set		rank => 9 # 9
+								| named_backreference # 10
+								| question_mark open_brace code close_brace			rank => 11 # 11
+								| question_mark question_mark open_brace code close_brace	rank => 12 # 12
+								| question_mark parameter_number							rank => 13 # 13
+
+# 1: (?#text)
+
+comment_thingy				::= open_parenthesis question_mark hash comment close_parenthesis
+
+comment						::= non_close_parenthesis*
+
+# 2: (?adlupimnsx-imnsx)
+#  & (?^alupimnsx)
+
+flag_thingy					::= open_parenthesis question_mark flag_set_1
+								| open_parenthesis question_mark caret flag_set_2 close_parenthesis
+
+flag_set_1					::= flag_sequence
+
+flag_set_2					::= flag_sequence
+
+# 3: (?:pattern)	Eg: (?:(?<n>foo)|(?<n>bar))\k<n>
+#  & (?adluimnsx-imnsx:pattern)
+#  & (?^aluimnsx:pattern)
+
+colon_thingy				::= open_parenthesis question_mark colon pattern_set close_parenthesis
+
+pattern_set					::= bracket_pattern
+								| parenthesis_pattern
+								| slash_pattern
+								| character_sequence
+
+bracket_pattern				::= open_bracket characters_in_set close_bracket
+
+parenthesis_pattern			::= open_parenthesis pattern_set close_parenthesis
+
+slash_pattern				::= slash pattern_set slash
+
+# 99.
 #  4: (?|pattern)
 #  5: (?=pattern)
 #  6: (?!pattern)
@@ -1014,64 +1058,9 @@ negative_flags		::= flag_set
 # 16: (?>pattern)
 # 17: (?[ ])
 
-entire_pattern				::= comment_thingy		rank => 1	# 1.
-								| flag_thingy		rank => 2	# 2.
-								| colon_thingy		rank => 3	# 3
-								| pattern_thingy	rank => 99	# 99.
-								| question_mark vertical_bar pattern_set	rank => 4	# 4
-								| question_mark equals pattern_set			rank => 5 # 5
-								| question_mark exclamation_mark pattern_set	rank => 6 # 6
-								| question_mark less_or_equals pattern_set 		rank => 7 # 7
-								| escaped_K # 7
-								| question_mark less_exclamation_mark pattern_set	rank => 8 # 8
-								| question_mark named_capture_group pattern_set		rank => 9 # 9
-								| named_backreference # 10
-								| question_mark open_brace code close_brace			rank => 11 # 11
-								| question_mark question_mark open_brace code close_brace	rank => 12 # 12
-								| question_mark parameter_number							rank => 13 # 13
-
-# 1.
-
-comment_thingy				::= open_parenthesis question_mark hash comment close_parenthesis
-
-comment						::= non_close_parenthesis_set
-
-non_close_parenthesis_set	::= non_close_parenthesis*
-
-# 2.
-
-flag_thingy					::= open_parenthesis question_mark flag_set_1
-								| open_parenthesis question_mark caret flag_set_2 close_parenthesis
-
-flag_set_1					::= flag_sequence
-
-flag_set_2					::= flag_sequence
-
-# 3.
-
-colon_thingy				::= open_parenthesis question_mark colon pattern_set close_parenthesis
-
-pattern_set					::= bracket_pattern
-								| parenthesis_pattern
-								| slash_pattern
-								| character_sequence
-
-bracket_pattern				::= open_bracket characters_in_set close_bracket
-
-parenthesis_pattern			::= open_parenthesis pattern_set close_parenthesis
-
-slash_pattern				::= slash pattern_set slash
-
-# 99.
-
 pattern_thingy				::= pattern_set*
 
 # Perl accepts /()/.
-
-#pattern						::=
-#pattern						::= bracket_pattern
-#								| non_close_parenthesis_set
-
 # Perl does not accept /[]/.
 
 characters_in_set			::= character_in_set+
@@ -1184,7 +1173,7 @@ minus						~ '-'
 non_close_bracket			~ [^\]]+
 
 :lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
-non_close_parenthesis		~ [^)]*
+non_close_parenthesis		~ [^)]
 
 :lexeme						~ non_zero_digit		pause => before		event => non_zero_digit
 non_zero_digit				~ [1-9]
