@@ -12,7 +12,7 @@ my($re1)	= qr/$one/;
 say "one: $one. re1: $re1";
 
 my($s)	= 'foofoo';
-my($re)	= qr/(?#Comment)(?:(?<n>foo)|(?<n>bar))\k<n>/;
+my($re)	= qr/(?:(?<n>foo)|(?<n>bar))\k<n>/;
 
 say "String: $s. Regexp: $re. ";
 

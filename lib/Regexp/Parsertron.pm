@@ -989,21 +989,21 @@ negative_flags		::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_pattern				::= comment_thingy		rank => 1	# 1.
-								| flag_thingy		rank => 2	# 2.
-								| colon_thingy		rank => 3	# 3
-								| pattern_thingy	rank => 99	# 99.
-								| question_mark vertical_bar pattern_set	rank => 4	# 4
-								| question_mark equals pattern_set			rank => 5 # 5
-								| question_mark exclamation_mark pattern_set	rank => 6 # 6
-								| question_mark less_or_equals pattern_set 		rank => 7 # 7
+entire_pattern				::= comment_thingy	# 1.
+								| flag_thingy	# 2.
+								| colon_thingy	# 3
+								| pattern_thingy	# 99.
+								| question_mark vertical_bar pattern_set	# 4
+								| question_mark equals pattern_set	# 5
+								| question_mark exclamation_mark pattern_set	# 6
+								| question_mark less_or_equals pattern_set	# 7
 								| escaped_K # 7
-								| question_mark less_exclamation_mark pattern_set	rank => 8 # 8
-								| question_mark named_capture_group pattern_set		rank => 9 # 9
+								| question_mark less_exclamation_mark pattern_set	# 8
+								| question_mark named_capture_group pattern_set	# 9
 								| named_backreference # 10
-								| question_mark open_brace code close_brace			rank => 11 # 11
-								| question_mark question_mark open_brace code close_brace	rank => 12 # 12
-								| question_mark parameter_number							rank => 13 # 13
+								| question_mark open_brace code close_brace	# 11
+								| question_mark question_mark open_brace code close_brace	# 12
+								| question_mark parameter_number	# 13
 
 # 1: (?#text)
 
@@ -1025,18 +1025,23 @@ flag_set_2					::= flag_sequence
 #  & (?adluimnsx-imnsx:pattern)
 #  & (?^aluimnsx:pattern)
 
-colon_thingy				::= open_parenthesis question_mark colon pattern_set close_parenthesis
+colon_thingy				::= open_parenthesis question_mark colon pattern_sequence close_parenthesis
 
-pattern_set					::= bracket_pattern
+pattern_sequence			::= pattern_set*
+
+pattern_set					::= pattern_item
+								| pattern_item '|'
+
+pattern_item				::= bracket_pattern
 								| parenthesis_pattern
 								| slash_pattern
 								| character_sequence
 
 bracket_pattern				::= open_bracket characters_in_set close_bracket
 
-parenthesis_pattern			::= open_parenthesis pattern_set close_parenthesis
+parenthesis_pattern			::= open_parenthesis pattern_sequence close_parenthesis
 
-slash_pattern				::= slash pattern_set slash
+slash_pattern				::= slash pattern_sequence slash
 
 # 99.
 #  4: (?|pattern)
