@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use v5.10;
 use strict;
 use warnings;
 
@@ -274,9 +275,9 @@ for my $re (@re)
 	$parser -> reset;
 }
 
-print 'Perl error count:  ', $parser -> perl_error_count, "\n";
-print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
+say 'Perl error count:  ', $parser -> perl_error_count;
+say 'Marpa error count: ', $parser -> marpa_error_count;
 
 open(my $fh, '>', "xt/author/$prefix.tests");
-print $fh map{"$_\n"} sort keys %seen;
+say $fh map{$_} sort keys %seen;
 close $fh;

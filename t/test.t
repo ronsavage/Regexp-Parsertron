@@ -94,8 +94,6 @@ my($result);
 
 for my $test (@test)
 {
-	diag $$test{re} . "\n";
-
 	$result = $parser -> parse(re => $$test{re});
 
 	if ($$test{count} == 12)

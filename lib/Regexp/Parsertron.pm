@@ -175,7 +175,7 @@ sub _add_daughter
 
 	$node -> meta($attributes);
 
-	print "Adding $event_name to tree. \n" if ($self -> verbose > 1);
+	say "Adding $event_name to tree. " if ($self -> verbose > 1);
 
 	if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
 	{
@@ -266,7 +266,7 @@ sub parse
 
 			$self -> error_str('Error: Parse failed') if (! $self -> error_str);
 
-			print '1 Error str: ', $self -> error_str, "\n" if ($self -> verbose && $self -> error_str);
+			say '1 Error str: ', $self -> error_str if ($self -> verbose && $self -> error_str);
 		}
 	}
 	catch
@@ -276,7 +276,7 @@ sub parse
 		$self -> marpa_error_count($self -> marpa_error_count + 1);
 		$self -> error_str("Error: Parse failed. $_");
 
-		print '2 Error str: ', $self -> error_str, "\n" if ($self -> verbose && $self -> error_str);
+		say '2 Error str: ', $self -> error_str if ($self -> verbose && $self -> error_str);
 	};
 
 	# Return 0 for success and 1 for failure.
@@ -293,18 +293,20 @@ sub _process
 	my($raw_re)		= $self -> re;
 	my($test_count)	= $self -> test_count($self -> test_count + 1);
 
+	# This line is 'print', not 'say'!
+
 	print "Test count: $test_count. Parsing (in qr/.../ form): " if ($self -> verbose);
 
 	my($string_re)	= $self -> _string2re($raw_re);
 
 	if ($string_re eq '')
 	{
-		print "\n" if ($self -> verbose);
+		say '' if ($self -> verbose);
 
 		return undef;
 	}
 
-	print "'$string_re'. \n" if ($self -> verbose);
+	say "'$string_re'. " if ($self -> verbose);
 
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
@@ -337,7 +339,7 @@ sub _process
 
 		die "lexeme_read($event_name) rejected lexeme |$lexeme|\n" if (! defined $pos);
 
-		print "event_name: $event_name. lexeme: $lexeme. \n" if ($self -> verbose > 1);
+		say "event_name: $event_name. lexeme: $lexeme. " if ($self -> verbose > 1);
 
 		$self -> _add_daughter($event_name, {text => $lexeme});
    }
@@ -350,8 +352,6 @@ sub _process
 		# for why this code is exhaustion-loving.
 
 		$message = 'Parse exhausted';
-
-		#print "Warning: $message\n";
 	}
 	elsif (my $status = $self -> recce -> ambiguous)
 	{
@@ -359,7 +359,7 @@ sub _process
 		$terminals		= ['(None)'] if ($#$terminals < 0);
 		$message		= "Ambiguous parse. Status: $status. Terminals expected: " . join(', ', @$terminals);
 
-		print "Warning: $message\n";
+		say "Warning: $message";
 	}
 
 	$self -> print_raw_tree if ($self -> verbose);
@@ -375,10 +375,10 @@ sub _process
 sub print_cooked_tree
 {
 	my($self)	= @_;
-	my($format)	= "%-30s  %3s  %s\n";
+	my($format)	= '%-30s  %3s  %s';
 
-	print sprintf($format, 'Name', 'Uid', 'Text');
-	print sprintf($format, '----', '---', '----');
+	say sprintf($format, 'Name', 'Uid', 'Text');
+	say sprintf($format, '----', '---', '----');
 
 	my($meta);
 
@@ -388,7 +388,7 @@ sub print_cooked_tree
 
 		$meta = $node -> meta;
 
-		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
+		say sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
 	}
 
 } # End of print_cooked_tree.
@@ -399,7 +399,7 @@ sub print_raw_tree
 {
 	my($self) = @_;
 
-	print map("$_\n", @{$self -> tree -> tree2string});
+	say map($_, @{$self -> tree -> tree2string});
 
 } # End of print_raw_tree.
 
@@ -466,7 +466,7 @@ sub _validate_event
 	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
 	$message           = "$message. Events: $event_count. Names: ";
 
-	print $message, join(', ', @event_name), "\n" if ($self -> verbose > 1);
+	say $message, join(', ', @event_name) if ($self -> verbose > 1);
 
 	return ($event_name, $span, $pos);
 
@@ -505,7 +505,7 @@ This is scripts/synopsis.pl:
 
 	my($result) = $parser -> parse(re => $re);
 
-	print "Calling add(text => '|C++', uid => 6)\n";
+	say "Calling add(text => '|C++', uid => 6)";
 
 	$parser -> add(text => '|C++', uid => 6);
 	$parser -> print_raw_tree;
@@ -513,10 +513,10 @@ This is scripts/synopsis.pl:
 
 	my($as_string) = $parser -> as_string;
 
-	print "Original:  $re. Result: $result. (0 is success)\n";
-	print "as_string: $as_string\n";
-	print 'Perl error count:  ', $parser -> perl_error_count, "\n";
-	print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
+	say "Original:  $re. Result: $result. (0 is success)";
+	say "as_string: $as_string";
+	say 'Perl error count:  ', $parser -> perl_error_count;
+	say 'Marpa error count: ', $parser -> marpa_error_count;
 
 And its output:
 
