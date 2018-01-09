@@ -1,5 +1,6 @@
 #!/usr/bin/env perl
 
+use v5.10;
 use strict;
 use warnings;
 
@@ -10,6 +11,8 @@ use Regexp::Parsertron;
 # Warning: Can't use Test2 or Test::Stream because of the '#' in the regexps.
 
 use Test::More;
+
+use Try::Tiny;
 
 # ------------------------------------------------
 
@@ -29,20 +32,28 @@ for my $test (@lines)
 {
 	$count++;
 
-	$re		= qr/$test/;
-	$result	= $parser -> parse(re => $re);
-
-	if ($result == 0)
+	try
 	{
-		$got		= $parser -> as_string;
-		$message	= "$count: re: $re. got: $got";
+		$re		= qr/$test/;
+		$result	= $parser -> parse(re => $re);
 
-		is_deeply($got, "$re", $message);
+		if ($result == 0)
+		{
+			$got		= $parser -> as_string;
+			$message	= "$count: re: $re. got: $got";
+
+			is_deeply($got, "$re", $message);
+		}
+		else
+		{
+			#BAIL_OUT("Test $count failed to return 0 from process()");
+		}
+
 	}
-	else
+	catch
 	{
-		BAIL_OUT("Test $count failed to return 0 from process()");
-	}
+		print "Error: $_" if (defined);
+	};
 
 	# Reset for next test.
 

@@ -6,22 +6,14 @@ use warnings;
 
 use Regexp::Parsertron;
 
+use Try::Tiny;
+
 # -----------
-
-my($one)	= '(?:(?<n>foo)|(?<n>bar))\k<n>';
-my($re1)	= qr/$one/;
-
-say "one: $one. re1: $re1";
-
-my($two)	= '/foofoo/';
-my($re2)	= qr/$two/;
-
-say "two: $two. re2: $re2";
 
 my($s)	= 'foofoo';
 my($re)	= qr/(?:(?<n>foo)|(?<n>bar))\k<n>/;
 
-say "String: $s. Regexp: $re. ";
+print "String: $s. Regexp: $re. ";
 
 if ($s =~ $re)
 {
@@ -32,8 +24,55 @@ else
 	say "Does not match. ";
 }
 
-my($parser)		= Regexp::Parsertron -> new(verbose => 2);
-my($result)		= $parser -> parse(re => $two);
-my($as_string)	= $parser -> as_string;
+say '-' x 50;
 
-say "result: $result (0 is success). as_string: $as_string";
+my($parser)	= Regexp::Parsertron -> new(verbose => 0);
+my(%input)	=
+(
+	 1 => '(?:(?<n>foo)|(?<n>bar))\k<n>',
+	 2 => '/foofoo/',
+	 3 => "'(*)b'i",
+	 4 => '(?|(a))',
+);
+
+my($as_string);
+my($error_str);
+my($result, %re);
+
+for my $key (sort keys %input)
+{
+	$error_str	= '';
+	$s			= $input{$key};
+
+	try
+	{
+		$re	= qr/$s/;
+	}
+	catch
+	{
+		$error_str = "Perl error for $s: $_"; # Do it this way because continue and next don't work inside try.
+
+		print $error_str;
+	};
+
+	next if ($error_str);
+
+	$result		= $parser -> parse(re => $s);
+	$error_str	= $parser -> error_str;
+
+	if ($error_str)
+	{
+		say "Marpa error: $error_str";
+	}
+	else
+	{
+		$as_string	= $parser -> as_string;
+		$re{$key}	= $as_string;
+
+		say "$key: result: $result (0 is success). as_string: $as_string";
+	}
+
+	$parser -> reset;
+}
+
+say '-' x 50;

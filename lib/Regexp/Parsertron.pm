@@ -264,9 +264,12 @@ sub parse
 		{
 			$result = 1;
 
-			$self -> error_str('Error: Parse failed') if (! $self -> error_str);
+			if (! $self -> error_str)
+			{
+				$self -> error_str('Marpa error: Parse failed');
 
-			say '1 Error str: ', $self -> error_str if ($self -> verbose && $self -> error_str);
+				say $self -> error_str if ($self -> verbose);
+			}
 		}
 	}
 	catch
@@ -274,9 +277,9 @@ sub parse
 		$result = 1;
 
 		$self -> marpa_error_count($self -> marpa_error_count + 1);
-		$self -> error_str("Error: Parse failed. $_");
+		$self -> error_str("Marpa error: Parse failed. $_");
 
-		say '2 Error str: ', $self -> error_str if ($self -> verbose && $self -> error_str);
+		say $self -> error_str if ($self -> verbose);
 	};
 
 	# Return 0 for success and 1 for failure.
@@ -337,7 +340,7 @@ sub _process
 		$lexeme	= $self -> recce -> literal($start, $span);
 		$pos	= $self -> recce -> lexeme_read($event_name);
 
-		die "lexeme_read($event_name) rejected lexeme |$lexeme|\n" if (! defined $pos);
+		die "Marpa lexeme_read($event_name) rejected lexeme |$lexeme|\n" if (! defined $pos);
 
 		say "event_name: $event_name. lexeme: $lexeme. " if ($self -> verbose > 1);
 
@@ -351,15 +354,15 @@ sub _process
 		# See https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion
 		# for why this code is exhaustion-loving.
 
-		$message = 'Parse exhausted';
+		$message = 'Marpa parse exhausted';
 	}
 	elsif (my $status = $self -> recce -> ambiguous)
 	{
 		my($terminals)	= $self -> recce -> terminals_expected;
 		$terminals		= ['(None)'] if ($#$terminals < 0);
-		$message		= "Ambiguous parse. Status: $status. Terminals expected: " . join(', ', @$terminals);
+		$message		= "Marpa warning. Parse ambiguous. Status: $status. Terminals expected: " . join(', ', @$terminals);
 
-		say "Warning: $message";
+		say $message;
 	}
 
 	$self -> print_raw_tree if ($self -> verbose);
@@ -412,6 +415,7 @@ sub reset
 	$self -> tree(Tree -> new('Root') );
 	$self -> tree -> meta({text => 'Root', uid => 0});
 	$self -> current_node($self -> tree);
+	$self -> error_str('');
 	$self -> marpa_error_count(0);
 	$self -> perl_error_count(0);
 	$self -> uid(0);
@@ -665,7 +669,6 @@ checks it using qr/$re/.
 These arise when the BNF within the module is such that the string form of the regexp cannot be
 parsed by Marpa.
 
-
 If you can use the regexp in Perl code, then you should never get this error. In other words, if
 Perl accepts the regexp and the module does not, then the BNF in this module is wrong (barring bugs
 in Perl of course).
@@ -832,7 +835,7 @@ urls in question.
 
 Exhaustion-loving.
 
-In short, Marpa will always report 'Parse exhausted', but I<this is not an error>.
+In short, Marpa will always report 'Marpa parse exhausted', but I<this is not an error>.
 
 See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
 
