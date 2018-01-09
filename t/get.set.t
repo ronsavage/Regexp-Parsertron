@@ -39,8 +39,15 @@ for my $uid (sort keys %text)
 	$text = $parser -> get($uid);
 
 	ok($text{$uid} eq $text, "Check text of uid $uid => $text"); $count++;
-
 }
+
+my($new_text) = 'Algol Lives!';
+
+$parser -> set(text => $new_text, uid => 6);
+
+$text = $parser -> get(6);
+
+ok($new_text eq $text, "Check new text of uid 6 => $text"); $count++;
 
 print "# Internal test count: $count\n";
 
