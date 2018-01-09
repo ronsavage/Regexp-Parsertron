@@ -34,6 +34,10 @@ my($stdout, $stderr);
 
 for my $test (@lines)
 {
+	# Count all tests, not just successful ones.
+	# This makes it easier to work on the scripts when it's in xt/authors/,
+	# since then the prints and says below can be activated.
+
 	$count++;
 
 	$stderr = '';
