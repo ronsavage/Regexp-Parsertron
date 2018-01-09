@@ -34,7 +34,6 @@ else
 
 my($parser)		= Regexp::Parsertron -> new(verbose => 2);
 my($result)		= $parser -> parse(re => $two);
-my($as_re)		= $parser -> as_re;
 my($as_string)	= $parser -> as_string;
 
-say "result: $result. as_re: $as_re. as_string: $as_string";
+say "result: $result (0 is success). as_string: $as_string";

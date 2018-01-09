@@ -193,6 +193,27 @@ sub _add_daughter
 
 # ------------------------------------------------
 
+sub as_string
+{
+	my($self)	= @_;
+	my($string)	= '';
+
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$string .= $$meta{text};
+	}
+
+	return $string;
+
+} # End of as_string.
+
+# ------------------------------------------------
+
 sub cooked_tree
 {
 	my($self)	= @_;
@@ -213,27 +234,6 @@ sub cooked_tree
 	}
 
 } # End of cooked_tree.
-
-# ------------------------------------------------
-
-sub get
-{
-	my($self)	= @_;
-	my($string)	= '';
-
-	my($meta);
-
-	for my $node ($self -> tree -> traverse)
-	{
-		next if ($node -> is_root);
-
-		$meta	= $node -> meta;
-		$string .= $$meta{text};
-	}
-
-	return $string;
-
-} # End of get.
 
 # ------------------------------------------------
 
@@ -511,23 +511,12 @@ This is scripts/synopsis.pl:
 	$parser -> raw_tree;
 	$parser -> cooked_tree;
 
-	my($get) = $parser -> get;
+	my($as_string) = $parser -> as_string;
 
 	print "Original:  $re. Result: $result. (0 is success)\n";
-	print "Get:       $get\n";
+	print "as_string: $as_string\n";
 	print 'Perl error count:  ', $parser -> perl_error_count, "\n";
 	print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
-
-	my($target) = 'C++';
-
-	if ($target eq $get)
-	{
-		say "Matches $target. ";
-	}
-	else
-	{
-		say "Doesn't match $target. ";
-	}
 
 And its output:
 
@@ -654,6 +643,10 @@ See scripts/simple.pl for sample code.
 Note: Calling C<add()> never changes the uids of nodes, so repeated calling of C<add()> with the
 same C<uid> will apply more and more updates to the same node.
 
+=head2 as_string()
+
+Returns the parsed, and possibly exited, regexp as a string.
+
 =head2 cooked_tree()
 
 Prints, in a pretty format, the tree built from parsing.
@@ -686,10 +679,6 @@ in Perl of course).
 =back
 
 See also L</marpa_error_count()> and L<perl_error_count()>.
-
-=head2 get()
-
-Returns the parsed regexp as a string.
 
 =head2 marpa_error_count()
 

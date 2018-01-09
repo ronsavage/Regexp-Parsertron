@@ -21,20 +21,9 @@ $parser -> add(text => '|C++', uid => 6);
 $parser -> raw_tree;
 $parser -> cooked_tree;
 
-my($get) = $parser -> get;
+my($as_string) = $parser -> as_string;
 
 print "Original:  $re. Result: $result. (0 is success)\n";
-print "Get:       $get\n";
+print "as_string: $as_string\n";
 print 'Perl error count:  ', $parser -> perl_error_count, "\n";
 print 'Marpa error count: ', $parser -> marpa_error_count, "\n";
-
-my($target) = 'C++';
-
-if ($target eq $get)
-{
-	say "Matches $target. ";
-}
-else
-{
-	say "Doesn't match $target. ";
-}
