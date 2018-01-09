@@ -222,6 +222,38 @@ sub as_string
 
 # ------------------------------------------------
 
+sub get
+{
+	my($self, $uid) = @_;
+
+	if (! defined($uid) || ($uid < 1) || ($uid > $self -> uid) )
+	{
+		die "Method add() takes a hash with these keys: text, uid\n";
+	}
+
+	my($meta);
+	my($text);
+	my($uid);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$uid	= $$meta{uid};
+
+		if ($opts{uid} == $uid)
+		{
+			$text = $opts{text};
+		}
+	}
+
+	$return $text;
+
+} # End of get.
+
+# ------------------------------------------------
+
 sub _next_few_chars
 {
 	my($self, $stringref, $offset) = @_;
@@ -436,6 +468,35 @@ sub reset
 
 # ------------------------------------------------
 
+sub set
+{
+	my($self, %opts) = @_;
+
+	for my $param (qw/text uid/)
+	{
+		die "Method add() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
+	}
+
+	my($meta);
+	my($uid);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$uid	= $$meta{uid};
+
+		if ($opts{uid} == $uid)
+		{
+			$$meta{text} = $opts{text};
+		}
+	}
+
+} # End of set.
+
+# ------------------------------------------------
+
 sub _string2re
 {
 	my($self, $candidate) = @_;
@@ -568,6 +629,10 @@ And its output:
 	Perl error count:  0
 	Marpa error count: 0
 
+Note: The 1st tree is printed due to verbose => 1 in the call to L</new([%opts])>, while the 2nd
+is due to the call to L</print_raw_tree()>. The columnar output is due to the call to
+L</print_cooked_tree()>.
+
 =head1 Description
 
 Parses a regexp into a tree object managed by the L<Tree> module, and provides various methods for
@@ -658,9 +723,12 @@ See scripts/synopsis.pl for sample code.
 Note: Calling C<add()> never changes the uids of nodes, so repeated calling of C<add()> with the
 same C<uid> will apply more and more updates to the same node.
 
+See also L</get(%opts)> and L</set(%opts)>.
+
 =head2 as_string()
 
-Returns the parsed, and possibly exited, regexp as a string.
+Returns the parsed regexp as a string. The string contains all edits applied with methods such as
+L</add(%opts)>.
 
 =head2 error_str()
 
@@ -687,6 +755,14 @@ in Perl of course).
 =back
 
 See also L</marpa_error_count()>, L</perl_error_count()> and L</warning_str()>.
+
+=head2 get($uid)
+
+Get the text of the node whose uid is $uid.
+
+Returns undef if the given $uid is not found.
+
+See also L</add(%opts)> and L</set(%opts)>.
 
 =head2 marpa_error_count()
 
@@ -725,11 +801,15 @@ Used basically for debugging.
 
 Prints, in a pretty format, the tree built from parsing.
 
+See the </Synopsis> for sample output.
+
 See also L</print_raw_tree>.
 
 =head2 print_raw_tree()
 
 Prints, in a simple format, the tree built from parsing.
+
+See the </Synopsis> for sample output.
 
 See also L</print_cooked_tree>.
 
@@ -746,6 +826,26 @@ Note: C<re> is a parameter to L</new([%opts])>.
 Resets various internal thingys, except test_count.
 
 Used basically for debugging.
+
+=head2 set(%opts)
+
+Set the text of a node to $opt{text}.
+
+%opts is a hash with these (key => value) pairs:
+
+=over 4
+
+=item o text => $string
+
+The text to use to overwrite the text of the node.
+
+=item o uid => $uid
+
+The uid of the node to update.
+
+=back
+
+See also L</add(%opts)> and L</get(%opts)>.
 
 =head2 tree()
 
@@ -830,12 +930,11 @@ while debugging new code, you can't rely on that appearing in production version
 
 =head2 Does this module re-write regexps?
 
-Yes, on a small scale so far. See scripts/synopsis.pl for sample code. The source of this program
-and its output are given in the L</Synopsis>.
+No, unless you call one of the node-editing methods, such as L</add(%opts)>.
 
 =head2 Does this module handle both Perl 5 and Perl 6?
 
-No. Initially, it will only handle Perl5 syntax.
+No. It will only handle Perl 5 syntax.
 
 =head2 Does this module handle regexps for various versions of Perl5?
 
@@ -858,6 +957,8 @@ See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhausti
 
 =head1 Scripts
 
+This diagram indicates the flow of logic from script to script:
+
 	xt/author/re_tests
 	|
 	V
@@ -869,7 +970,7 @@ See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhausti
 	V
 	perl -Ilib t/perl-5.21.11.t > xt/author/perl-5.21.11.log 2>&1
 
-So if xt/author/perl-5.21.11.log oonly contains lines starting with 'ok', then all Perl and Marpa
+If xt/author/perl-5.21.11.log only contains lines starting with 'ok', then all Perl and Marpa
 errors have been hidden, so t/perl-5.21.11.t is ready to live in t/. Before that time it lives in
 xt/author/.
 
