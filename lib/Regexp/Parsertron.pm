@@ -224,9 +224,9 @@ sub as_string
 
 sub get
 {
-	my($self, $uid) = @_;
+	my($self, $wanted_uid) = @_;
 
-	if (! defined($uid) || ($uid < 1) || ($uid > $self -> uid) )
+	if (! defined($wanted_uid) || ($wanted_uid < 1) || ($wanted_uid > $self -> uid) )
 	{
 		die "Method add() takes a hash with these keys: text, uid\n";
 	}
@@ -242,13 +242,13 @@ sub get
 		$meta	= $node -> meta;
 		$uid	= $$meta{uid};
 
-		if ($opts{uid} == $uid)
+		if ($wanted_uid == $uid)
 		{
-			$text = $opts{text};
+			$text = $$meta{text};
 		}
 	}
 
-	$return $text;
+	return $text;
 
 } # End of get.
 
