@@ -653,7 +653,7 @@ The uid of the node to update.
 
 =back
 
-See scripts/simple.pl for sample code.
+See scripts/synopsis.pl for sample code.
 
 Note: Calling C<add()> never changes the uids of nodes, so repeated calling of C<add()> with the
 same C<uid> will apply more and more updates to the same node.
