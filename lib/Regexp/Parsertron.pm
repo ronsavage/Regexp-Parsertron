@@ -827,7 +827,7 @@ See also L</error_str()> , L</marpa_error_count()> and L</warning_str()>.
 
 Used basically for debugging.
 
-=head2 preend(%opts)
+=head2 prepend(%opts)
 
 Prepend to the text of a node.
 
