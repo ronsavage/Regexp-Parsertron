@@ -87,6 +87,7 @@ my(@test)	=
 
 my($parser)	= Regexp::Parsertron -> new;
 
+my($count);
 my($expected);
 my($got);
 my($message);
@@ -94,9 +95,10 @@ my($result);
 
 for my $test (@test)
 {
+	$count	= $$test{count}; # Used after the loop.
 	$result = $parser -> parse(re => $$test{re});
 
-	if ($$test{count} == 12)
+	if ($count == 12)
 	{
 		$parser -> add(text => '|C++', uid => 6);
 	}
@@ -119,5 +121,7 @@ for my $test (@test)
 
 	$parser -> reset;
 }
+
+print "# Internal test count: $count\n";
 
 done_testing;

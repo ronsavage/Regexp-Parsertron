@@ -1,6 +1,6 @@
 # This stops me getting screenfulls of syntax errors every time I accidentally
 # run this file via a shell glob.  The full format of this file is given
-# in regexp.t
+# in regexp.txt.
 # Prior to the implementation of autoloading of \N{}, tests that used \N{name}
 # could not go in this file, and were farmed out to other .t's, where they
 # remain

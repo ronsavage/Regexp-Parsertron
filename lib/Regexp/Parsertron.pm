@@ -115,6 +115,14 @@ has verbose =>
 	required => 0,
 );
 
+has warning_str =>
+(
+	default  => sub {return ''},
+	is       => 'rw',
+	isa      => Str,
+	required => 0,
+);
+
 our $VERSION = '0.52';
 
 # ------------------------------------------------
@@ -237,6 +245,7 @@ sub parse
 	$self -> error_str('');
 	$self -> re($opts{re})				if (defined $opts{re});
 	$self -> verbose($opts{verbose})	if (defined $opts{verbose});
+	$self -> warning_str('');
 
 	$self -> recce
 	(
@@ -362,7 +371,9 @@ sub _process
 		$terminals		= ['(None)'] if ($#$terminals < 0);
 		$message		= "Marpa warning. Parse ambiguous. Status: $status. Terminals expected: " . join(', ', @$terminals);
 
-		say $message;
+		$self -> warning_str($message);
+
+		say $message if ($self -> verbose);
 	}
 
 	$self -> print_raw_tree if ($self -> verbose);
@@ -419,6 +430,7 @@ sub reset
 	$self -> marpa_error_count(0);
 	$self -> perl_error_count(0);
 	$self -> uid(0);
+	$self -> warning_str('');
 
 } # End of reset.
 
@@ -575,7 +587,7 @@ for help on unpacking and installing distros.
 
 =head1 Installation
 
-Install L<Regexp::Parsertron> as you would any C<Perl> module:
+Install C<Regexp::Parsertron> as you would any C<Perl> module:
 
 Run:
 
@@ -675,13 +687,13 @@ in Perl of course).
 
 =back
 
-See also L</marpa_error_count()> and L<perl_error_count()>.
+See also L</marpa_error_count()>, L</perl_error_count()> and L</warning_str()>.
 
 =head2 marpa_error_count()
 
 Returns an integer count of errors detected by Marpa. This value should always be 0.
 
-See also L</error_str()>.
+See also L</error_str()>, L</perl_error_count()> and L</warning_str()>.
 
 Used basically for debugging.
 
@@ -706,7 +718,7 @@ See L</Constructor and Initialization> for details.
 
 Returns an integer count of errors detected by perl. This value should always be 0.
 
-See also L</error_str()>.
+See also L</error_str()> , L</marpa_error_count()> and L</warning_str()>.
 
 Used basically for debugging.
 
@@ -762,6 +774,12 @@ reports.
 Used basically for debugging.
 
 Note: C<verbose> is a parameter to L</new([%opts])>.
+
+=head2 warning_str()
+
+Returns the last Marpa warning, as a string.
+
+See also L</error_str()>, L</perl_error_count()> and L</marpa_error_count()>.
 
 =head1 FAQ
 
@@ -933,7 +951,7 @@ L<Regexp::Parsertron> was written by Ron Savage I<E<lt>ron@savage.net.auE<gt>> i
 
 Marpa's homepage: L<http://savage.net.au/Marpa.html>.
 
-My homepage: L<http://savage.net.au/>.
+L<My homepage|http://savage.net.au/>.
 
 =head1 Copyright
 
