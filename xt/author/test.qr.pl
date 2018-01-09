@@ -4,8 +4,6 @@ use v5.10;
 use strict;
 use warnings;
 
-use Capture::Tiny ':all';
-
 use File::Slurper 'read_lines';
 
 use Try::Tiny;
