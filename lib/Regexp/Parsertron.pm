@@ -564,7 +564,7 @@ And its output:
 	character_set           6  Perl|JavaScript|C++
 	close_parenthesis       7  )
 	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
-	Get:       (?^i:Perl|JavaScript|C++)
+	as_string: (?^i:Perl|JavaScript|C++)
 	Perl error count:  0
 	Marpa error count: 0
 	Matches C++ (without using \Q...\E)
