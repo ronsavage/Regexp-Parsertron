@@ -100,7 +100,7 @@ for my $test (@test)
 
 	if ($count == 12)
 	{
-		$parser -> add(text => '|C++', uid => 6);
+		$parser -> append(text => '|C++', uid => 6);
 	}
 
 	if ($result == 0)
@@ -108,7 +108,7 @@ for my $test (@test)
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
 		$message	= "$$test{count}: re: $$test{re}. got: $got";
-		$message	.= ' (After calling add(...) )' if ($$test{count} == 12);
+		$message	.= ' (After calling append(...) )' if ($$test{count} == 12);
 
 		is_deeply("$got", $expected, $message);
 	}

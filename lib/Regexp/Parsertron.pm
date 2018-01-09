@@ -146,13 +146,13 @@ sub BUILD
 
 # ------------------------------------------------
 
-sub add
+sub append
 {
 	my($self, %opts) = @_;
 
 	for my $param (qw/text uid/)
 	{
-		die "Method add() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
+		die "Method append() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
 	}
 
 	my($meta);
@@ -171,7 +171,7 @@ sub add
 		}
 	}
 
-} # End of add.
+} # End of append.
 
 # ------------------------------------------------
 
@@ -224,11 +224,12 @@ sub as_string
 
 sub get
 {
-	my($self, $wanted_uid) = @_;
+	my($self, $wanted_uid)	= @_;
+	my($max_uid)			= $self -> uid;
 
 	if (! defined($wanted_uid) || ($wanted_uid < 1) || ($wanted_uid > $self -> uid) )
 	{
-		die "Method add() takes a hash with these keys: text, uid\n";
+		die "Method get() takes a uid parameter in the range 1 .. $max_uid \n";
 	}
 
 	my($meta);
@@ -328,6 +329,35 @@ sub parse
 	return $result;
 
 } # End of parse.
+
+# ------------------------------------------------
+
+sub prepend
+{
+	my($self, %opts) = @_;
+
+	for my $param (qw/text uid/)
+	{
+		die "Method append() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
+	}
+
+	my($meta);
+	my($uid);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta	= $node -> meta;
+		$uid	= $$meta{uid};
+
+		if ($opts{uid} == $uid)
+		{
+			$$meta{text} = "$opts{text}$$meta{text}";
+		}
+	}
+
+} # End of prepend.
 
 # ------------------------------------------------
 
@@ -474,7 +504,7 @@ sub set
 
 	for my $param (qw/text uid/)
 	{
-		die "Method add() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
+		die "Method set() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
 	}
 
 	my($meta);
@@ -582,9 +612,9 @@ This is scripts/synopsis.pl:
 
 	my($result) = $parser -> parse(re => $re);
 
-	say "Calling add(text => '|C++', uid => 6)";
+	say "Calling append(text => '|C++', uid => 6)";
 
-	$parser -> add(text => '|C++', uid => 6);
+	$parser -> append(text => '|C++', uid => 6);
 	$parser -> print_raw_tree;
 	$parser -> print_cooked_tree;
 
@@ -606,7 +636,7 @@ And its output:
 	    |    |--- colon. Attributes: {text => ":", uid => "5"}
 	    |    |--- character_set. Attributes: {text => "Perl|JavaScript", uid => "6"}
 	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-	Calling add(text => '|C++', uid => 6)
+	Calling append(text => '|C++', uid => 6)
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
 	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -700,9 +730,9 @@ Default: 0 (print nothing).
 
 =head1 Methods
 
-=head2 add(%opts)
+=head2 append(%opts)
 
-Add a string to the text of a node.
+Append to the text of a node.
 
 %opts is a hash with these (key => value) pairs:
 
@@ -710,7 +740,7 @@ Add a string to the text of a node.
 
 =item o text => $string
 
-The text to add.
+The text to append.
 
 =item o uid => $uid
 
@@ -720,15 +750,15 @@ The uid of the node to update.
 
 See scripts/synopsis.pl for sample code.
 
-Note: Calling C<add()> never changes the uids of nodes, so repeated calling of C<add()> with the
-same C<uid> will apply more and more updates to the same node.
+Note: Calling C<append()> never changes the uids of nodes, so repeated calling of C<append()> with
+the same C<uid> will apply more and more updates to the same node.
 
-See also L</get(%opts)> and L</set(%opts)>.
+See also L</get(%opts)>, L</prepend(%opts)>, L</set(%opts)> and t/get.set.t.
 
 =head2 as_string()
 
 Returns the parsed regexp as a string. The string contains all edits applied with methods such as
-L</add(%opts)>.
+L</append(%opts)>.
 
 =head2 error_str()
 
@@ -762,7 +792,7 @@ Get the text of the node whose uid is $uid.
 
 Returns undef if the given $uid is not found.
 
-See also L</add(%opts)> and L</set(%opts)>.
+See also L</append(%opts)>, L</prepend(%opts)> and L</set(%opts)>.
 
 =head2 marpa_error_count()
 
@@ -796,6 +826,29 @@ Returns an integer count of errors detected by perl. This value should always be
 See also L</error_str()> , L</marpa_error_count()> and L</warning_str()>.
 
 Used basically for debugging.
+
+=head2 preend(%opts)
+
+Prepend to the text of a node.
+
+%opts is a hash with these (key => value) pairs:
+
+=over 4
+
+=item o text => $string
+
+The text to prepend.
+
+=item o uid => $uid
+
+The uid of the node to update.
+
+=back
+
+Note: Calling C<prepend()> never changes the uids of nodes, so repeated calling of C<prepend()> with
+the same C<uid> will apply more and more updates to the same node.
+
+See also L</append(%opts)>, L</get(%opts)> and L</set(%opts)> and t/get.set.t.
 
 =head2 print_cooked_tree()
 
@@ -845,7 +898,7 @@ The uid of the node to update.
 
 =back
 
-See also L</add(%opts)> and L</get(%opts)>.
+See also L</append(%opts)>, L</prepend(%opts)> and L</get(%opts)>.
 
 =head2 tree()
 
@@ -861,7 +914,7 @@ use this object.
 
 Returns the last-used uid.
 
-Each node in the tree is given a uid, which allows methods like L</add(%opts)> to work.
+Each node in the tree is given a uid, which allows methods like L</append(%opts)> to work.
 
 =head2 verbose([$integer])
 
@@ -930,7 +983,7 @@ while debugging new code, you can't rely on that appearing in production version
 
 =head2 Does this module re-write regexps?
 
-No, unless you call one of the node-editing methods, such as L</add(%opts)>.
+No, unless you call one of the node-editing methods, such as L</append(%opts)>.
 
 =head2 Does this module handle both Perl 5 and Perl 6?
 

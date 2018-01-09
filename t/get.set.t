@@ -16,9 +16,10 @@ my($parser)	= Regexp::Parsertron -> new(re => $re);
 
 # Return 0 for success and 1 for failure.
 
-my($result) = $parser -> parse(re => $re);
+my($result)		= $parser -> parse(re => $re);
+my($node_uid)	= 6;
 
-$parser -> add(text => '|C++', uid => 6);
+$parser -> append(text => '|C++', uid => $node_uid);
 
 my($count) = 0;
 
@@ -41,13 +42,31 @@ for my $uid (sort keys %text)
 	ok($text{$uid} eq $text, "Check text of uid $uid => $text"); $count++;
 }
 
-my($new_text) = 'Algol Lives!';
+my($new_text) = 'Flub|'; # First Language Under Basic.
 
-$parser -> set(text => $new_text, uid => 6);
+$parser -> prepend(text => $new_text, uid => $node_uid);
 
-$text = $parser -> get(6);
+$text			= $parser -> get($node_uid);
+my($expected)	= "${new_text}Perl|JavaScript|C++";
 
-ok($new_text eq $text, "Check new text of uid 6 => $text"); $count++;
+ok($expected eq $text, "Check text of uid $node_uid => $text"); $count++;
+
+my($new_text) = 'BCPL|'; # Basic Combined Programming Language.
+
+$parser -> prepend(text => $new_text, uid => $node_uid);
+
+$text			= $parser -> get($node_uid);
+my($expected)	= "${new_text}Flub|Perl|JavaScript|C++";
+
+ok($expected eq $text, "Check text of uid $node_uid => $text"); $count++;
+
+$new_text = 'Algol Lives!';
+
+$parser -> set(text => $new_text, uid => $node_uid);
+
+$text = $parser -> get($node_uid);
+
+ok($new_text eq $text, "Check new text of uid $node_uid => $text"); $count++;
 
 print "# Internal test count: $count\n";
 

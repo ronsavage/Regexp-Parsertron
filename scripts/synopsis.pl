@@ -15,9 +15,9 @@ my($parser)	= Regexp::Parsertron -> new(verbose => 1);
 
 my($result) = $parser -> parse(re => $re);
 
-say "Calling add(text => '|C++', uid => 6)";
+say "Calling append(text => '|C++', uid => 6)";
 
-$parser -> add(text => '|C++', uid => 6);
+$parser -> append(text => '|C++', uid => 6);
 $parser -> print_raw_tree;
 $parser -> print_cooked_tree;
 
