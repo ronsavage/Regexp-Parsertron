@@ -29,10 +29,11 @@ say '-' x 50;
 my($parser)	= Regexp::Parsertron -> new(verbose => 0);
 my(%input)	=
 (
-	 1 => '(?:(?<n>foo)|(?<n>bar))\k<n>',
-	 2 => '/foofoo/',
-	 3 => "'(*)b'i",
-	 4 => '(?|(a))',
+	 1 => q!(?:(?<n>foo)|(?<n>bar))\k<n>!,
+	 2 => q!/foofoo/!,
+	 3 => q!'(*)b'i!,
+	 4 => q!(?|(a))!,
+	 5 => q!(?^u:'()ef'i)!,
 );
 
 my($as_string);
