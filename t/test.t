@@ -20,47 +20,47 @@ my(@test)	=
 },
 {
 	count		=> 2,
-	expected	=> '(?^u:(?))',
+	expected	=> '(?^:(?))',
 	re			=> qr/(?)/,
 },
 {
 	count		=> 3,
-	expected	=> '(?^u:(?a))',
+	expected	=> '(?^:(?a))',
 	re			=> qr/(?a)/,
 },
 {
 	count		=> 4,
-	expected	=> '(?^u:(?a-i))',
+	expected	=> '(?^:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
 	count		=> 5,
-	expected	=> '(?^u:(?^a))',
+	expected	=> '(?^:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
 	count		=> 6,
-	expected	=> '(?^u:(?a:))',
+	expected	=> '(?^:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
 	count		=> 7,
-	expected	=> '(?^u:(?a:b))',
+	expected	=> '(?^:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
 {
 	count		=> 8,
-	expected	=> '(?^u:(?:))',
+	expected	=> '(?^:(?:))',
 	re			=> qr/(?:)/,
 },
 {
 	count		=> 9,
-	expected	=> '(?^u:[yY][eE][sS])',
+	expected	=> '(?^:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
 	count		=> 10,
-	expected	=> '(?^u:(A|B))',
+	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
 {
@@ -75,12 +75,12 @@ my(@test)	=
 },
 {
 	count		=> 13,
-	expected	=> '(?^u:/ab+bc/)',
+	expected	=> '(?^:/ab+bc/)',
 	re			=> '/ab+bc/',
 },
 {
 	count		=> 14,
-	expected	=> '(?^u:^)',
+	expected	=> '(?^:^)',
 	re			=> qr/^/,
 },
 );
