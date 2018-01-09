@@ -399,7 +399,7 @@ sub print_raw_tree
 {
 	my($self) = @_;
 
-	say map($_, @{$self -> tree -> tree2string});
+	say map("$_\n", @{$self -> tree -> tree2string});
 
 } # End of print_raw_tree.
 
