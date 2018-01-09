@@ -567,7 +567,6 @@ And its output:
 	as_string: (?^i:Perl|JavaScript|C++)
 	Perl error count:  0
 	Marpa error count: 0
-	Matches C++ (without using \Q...\E)
 
 =head1 Description
 
