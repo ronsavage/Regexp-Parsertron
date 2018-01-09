@@ -857,6 +857,23 @@ In short, Marpa will always report 'Marpa parse exhausted', but I<this is not an
 
 See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
 
+=head1 Scripts
+
+	xt/author/re_tests
+	|
+	V
+	xt/author/generate.tests.pl
+	|
+	V
+	xt/authors/perl-5.21.11.tests
+	|
+	V
+	perl -Ilib t/perl-5.21.11.t > xt/author/perl-5.21.11.log 2>&1
+
+So if xt/author/perl-5.21.11.log oonly contains lines starting with 'ok', then all Perl and Marpa
+errors have been hidden, so t/perl-5.21.11.t is ready to live in t/. Before that time it lives in
+xt/author/.
+
 =head1 TODO
 
 =over 4
