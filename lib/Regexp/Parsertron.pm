@@ -214,29 +214,6 @@ sub as_string
 
 # ------------------------------------------------
 
-sub cooked_tree
-{
-	my($self)	= @_;
-	my($format)	= "%-30s  %3s  %s\n";
-
-	print sprintf($format, 'Name', 'Uid', 'Text');
-	print sprintf($format, '----', '---', '----');
-
-	my($meta);
-
-	for my $node ($self -> tree -> traverse)
-	{
-		next if ($node -> is_root);
-
-		$meta = $node -> meta;
-
-		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
-	}
-
-} # End of cooked_tree.
-
-# ------------------------------------------------
-
 sub _next_few_chars
 {
 	my($self, $stringref, $offset) = @_;
@@ -281,7 +258,7 @@ sub parse
 	{
 		if (defined (my $value = $self -> _process) )
 		{
-			$self -> cooked_tree if ($self -> verbose > 1);
+			$self -> print_cooked_tree if ($self -> verbose > 1);
 		}
 		else
 		{
@@ -385,7 +362,7 @@ sub _process
 		print "Warning: $message\n";
 	}
 
-	$self -> raw_tree if ($self -> verbose);
+	$self -> print_raw_tree if ($self -> verbose);
 
 	# Return a defined value for success and undef for failure.
 
@@ -395,13 +372,36 @@ sub _process
 
 # ------------------------------------------------
 
-sub raw_tree
+sub print_cooked_tree
+{
+	my($self)	= @_;
+	my($format)	= "%-30s  %3s  %s\n";
+
+	print sprintf($format, 'Name', 'Uid', 'Text');
+	print sprintf($format, '----', '---', '----');
+
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta = $node -> meta;
+
+		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
+	}
+
+} # End of print_cooked_tree.
+
+# ------------------------------------------------
+
+sub print_raw_tree
 {
 	my($self) = @_;
 
 	print map("$_\n", @{$self -> tree -> tree2string});
 
-} # End of raw_tree.
+} # End of print_raw_tree.
 
 # ------------------------------------------------
 
@@ -508,8 +508,8 @@ This is scripts/synopsis.pl:
 	print "Calling add(text => '|C++', uid => 6)\n";
 
 	$parser -> add(text => '|C++', uid => 6);
-	$parser -> raw_tree;
-	$parser -> cooked_tree;
+	$parser -> print_raw_tree;
+	$parser -> print_cooked_tree;
 
 	my($as_string) = $parser -> as_string;
 
@@ -520,7 +520,7 @@ This is scripts/synopsis.pl:
 
 And its output:
 
-	Test count: 1. Parsing '(?^i:Perl|JavaScript)' => (qr/.../) => '(?^i:Perl|JavaScript)'.
+	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
 	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
@@ -647,12 +647,6 @@ same C<uid> will apply more and more updates to the same node.
 
 Returns the parsed, and possibly exited, regexp as a string.
 
-=head2 cooked_tree()
-
-Prints, in a pretty format, the tree built from parsing.
-
-See also L</raw_tree>.
-
 =head2 error_str()
 
 Returns the last error, as a string.
@@ -713,11 +707,17 @@ See also L</error_str()>.
 
 Used basically for debugging.
 
-=head2 raw_tree()
+=head2 print_cooked_tree()
+
+Prints, in a pretty format, the tree built from parsing.
+
+See also L</print_raw_tree>.
+
+=head2 print_raw_tree()
 
 Prints, in a simple format, the tree built from parsing.
 
-See also L</cooked_tree>.
+See also L</print_cooked_tree>.
 
 =head2 re([$regexp])
 
@@ -740,8 +740,8 @@ Returns an object of type L<Tree>. Ignore the root node.
 Each node's C<meta> method returns a hashref of information about the node. See the L</FAQ> for
 details.
 
-See also the source code for L</cooked_tree()> and L</raw_tree()> for ideas on how to use this
-object.
+See also the source code for L</print_cooked_tree()> and L</print_raw_tree()> for ideas on how to
+use this object.
 
 =head2 uid()
 
@@ -776,23 +776,27 @@ Note: C<verbose> is a parameter to L</new([%opts])>.
 
 =head2 What is the format of the nodes in the tree build by this module?
 
+Each node's C<name> is the name of the Marpa-style event which was triggered by detection of
+some C<text> within the regexp.
+
 Each node's C<meta> method returns a hashref with these (key => value) pairs:
 
 =over 4
-
-=item o name => $string
-
-This is the name of the Marpa-style event which was triggered by detection of some C<text> within
-the regexp.
 
 =item o text => $string
 
 This is the text within the regexp which triggered the event just mentioned.
 
+=item o uid => $integer
+
+This is the unqiue id of the 'current' node.
+
+This <uid> is often used by you to specify which node to work on.
+
 =back
 
-See also the source code for L</cooked_tree()> and L</raw_tree()> for ideas on how to use this
-object.
+See also the source code for L</print_cooked_tree()> and L</print_raw_tree()> for ideas on how to
+use this object.
 
 See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
 
@@ -809,21 +813,22 @@ while debugging new code, you can't rely on that appearing in production version
 Yes, on a small scale so far. See scripts/synopsis.pl for sample code. The source of this program
 and its output are given in the L</Synopsis>.
 
-=head2 Does this module handle both Perl5 and Perl6?
+=head2 Does this module handle both Perl 5 and Perl 6?
 
-Initially, it will only handle Perl5 syntax.
+No. Initially, it will only handle Perl5 syntax.
 
 =head2 Does this module handle regexps for various versions of Perl5?
 
-Yes, version-dependent regexp syntax will be supported for recent versions of Perl. This is done by
-having tokens within the BNF which are replaced at start-up time with version-dependent details.
+Not yet. Version-dependent regexp syntax will be supported for recent versions of Perl. This is
+done by having tokens within the BNF which are replaced at start-up time with version-dependent
+details.
 
 There are no such tokens at the moment.
 
 All debugging is done assuming the regexp syntax as documented online. See L</References> for the
 urls in question.
 
-=head2 Is this an exhaustion-hating or exhaustion-loving app?
+=head2 Is this a (Marpa) exhaustion-hating or exhaustion-loving app?
 
 Exhaustion-loving.
 
@@ -833,13 +838,21 @@ See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhausti
 
 =head1 TODO
 
-Things to be aware of:
+=over 4
+
+=item o Things to be aware of:
 
 =over 4
 
 =item o Regexps of the form: /.../aa
 
-=item o Pragmas for the form: use re '/aa'
+=item o Pragmas for the form: use re '/aa'; ...
+
+=back
+
+=item o I could traverse the tree and store a pointer to each node in an array
+
+This would mean fast access to nodes in random order.
 
 =back
 

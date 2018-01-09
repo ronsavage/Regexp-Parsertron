@@ -18,8 +18,8 @@ my($result) = $parser -> parse(re => $re);
 print "Calling add(text => '|C++', uid => 6)\n";
 
 $parser -> add(text => '|C++', uid => 6);
-$parser -> raw_tree;
-$parser -> cooked_tree;
+$parser -> print_raw_tree;
+$parser -> print_cooked_tree;
 
 my($as_string) = $parser -> as_string;
 
