@@ -123,7 +123,7 @@ has warning_str =>
 	required => 0,
 );
 
-our $VERSION = '0.52';
+our $VERSION = '0.80';
 
 # ------------------------------------------------
 
