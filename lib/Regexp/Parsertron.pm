@@ -1031,6 +1031,8 @@ xt/author/.
 
 =over 4
 
+=item o How to best define 'code' in the BNF.
+
 =item o Things to be aware of:
 
 =over 4
@@ -1169,10 +1171,10 @@ entire_pattern					::= comment_thingy					#  1.
 									| less_exclamation_mark_thingy	#  8.
 									| named_capture_group_thingy	#  9.
 									| named_backreference_thingy	# 10.
+									| single_code_thingy			# 11.
+									| double_code_thingy			# 12.
+									| recursive_subpattern_thingy	# 13.
 									| pattern_thingy				# 99.
-									| question_mark open_brace code close_brace	# 11
-									| question_mark question_mark open_brace code close_brace	# 12
-									| question_mark parameter_number	# 13
 
 # 1: (?#text)
 
@@ -1252,10 +1254,32 @@ named_backreference_thingy		::= named_backreference
 named_backreference				::= escaped_k single_quote capture_name single_quote
 									| escaped_k less_than capture_name greater_than
 
-# 99.
 # 11: (?{ code })
+
+single_code_thingy				::= open_parenthesis question_mark open_brace code close_brace close_parenthesis
+
+code							::= [[:print:]] # TODO: ATM.
+
 # 12: (??{ code })
+
+double_code_thingy				::= open_parenthesis question_mark question_mark open_brace code close_brace close_parenthesis
+
 # 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
+
+recursive_subpattern_thingy		::= open_parenthesis question_mark parameter_number close_parenthesis
+
+parameter_number				::= positive_integer
+									| minus positive_integer
+									| plus positive_integer
+									| R
+									| zero
+
+positive_integer				::= non_zero_digit digit_sequence
+									| minus positive_integer
+
+digit_sequence					::= digit_set*
+
+# 99.
 # 14: (?&NAME)
 # 15: (?(condition)yes-pattern|no-pattern)
 #   & (?(condition)yes-pattern)
@@ -1279,19 +1303,6 @@ simple_character_sequence	::= escaped_close_parenthesis
 								| escaped_slash
 								| caret
 								| character_set
-
-code						::= [[:print:]]
-
-positive_integer			::= non_zero_digit digit_sequence
-								| minus positive_integer
-
-digit_sequence				::= digit_set*
-
-parameter_number			::= positive_integer
-								| plus positive_integer
-								| minus positive_integer
-								| R
-								| zero
 
 # L0 stuff, in alphabetical order.
 #
