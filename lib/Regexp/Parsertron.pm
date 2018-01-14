@@ -685,9 +685,7 @@ The edit methods are exercised in t/get.set.t, as well as scripts/synopsis.pl (a
 Parses a regexp into a tree object managed by the L<Tree> module, and provides various methods for
 updating and retrieving that tree's contents.
 
-Warning: Development version. See L</Version Numbers> for details.
-
-This module uses L<Moo>.
+This module uses L<Marpa::R2> and L<Moo>.
 
 =head1 Distributions
 
@@ -952,6 +950,79 @@ See also L</error_str()>, L</perl_error_count()> and L</marpa_error_count()>.
 
 =head1 FAQ
 
+=head2 How do I use this module?
+
+Herewith a brief tutorial.
+
+=over 4
+
+=item o Start with a simple program and a simple regexp
+
+This code, scripts/tutorial.pl, is a cut-down version of scripts/synopsis.pl:
+
+	#!/usr/bin/env perl
+
+	use v5.10;
+	use strict;
+	use warnings;
+
+	use Regexp::Parsertron;
+
+	# ---------------------
+
+	my($re)		= qr/Perl|JavaScript/i;
+	my($parser)	= Regexp::Parsertron -> new(verbose => 1);
+
+	# Return 0 for success and 1 for failure.
+
+	my($result) = $parser -> parse(re => $re);
+
+	say "Original:  $re. Result: $result. (0 is success)";
+
+Running it outputs:
+
+	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- caret. Attributes: {text => "^", uid => "3"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
+	    |    |--- colon. Attributes: {text => ":", uid => "5"}
+	    |    |--- character_set. Attributes: {text => "Perl|JavaScript", uid => "6"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
+
+	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
+
+=item o Examine the tree and determine which nodes you wish to edit
+
+The nodes are uniquely identified by their uids.
+
+=item o Proceed as does scripts/synopsis.pl
+
+Add these lines to the end of the tutorial code, and re-run:
+
+	$parser -> append(text => '|C++', uid => 6);
+	$parser -> print_raw_tree;
+
+The extra output, showing node uid == 6, is:
+
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- caret. Attributes: {text => "^", uid => "3"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
+	    |    |--- colon. Attributes: {text => ":", uid => "5"}
+	    |    |--- character_set. Attributes: {text => "Perl|JavaScript|C++", uid => "6"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
+
+=item o Test also with L</prepend(%opts)> and L</set(%opts)>
+
+See t/get.set.t for sample code.
+
+=item o Since everything works, make a cup of tea
+
+=back
+
 =head2 What is the purpose of this module?
 
 =over 4
@@ -1000,7 +1071,7 @@ while debugging new code, you can't rely on that appearing in production version
 
 =head2 Does this module re-write regexps?
 
-No, unless you call one of the node-editing methods, such as L</append(%opts)>.
+No, unless you call one of L</The Edit Methods>.
 
 =head2 Does this module handle both Perl 5 and Perl 6?
 
@@ -1017,6 +1088,11 @@ There are no such tokens at the moment.
 All debugging is done assuming the regexp syntax as documented online. See L</References> for the
 urls in question.
 
+=head2 So which version of Perl is supported?
+
+I'm (2018-01-14) using Perl V 5.20.2 and making the BNF match the Perl regexp docs listed in
+</References> below.
+
 =head2 Is this a (Marpa) exhaustion-hating or exhaustion-loving app?
 
 Exhaustion-loving.
@@ -1024,6 +1100,10 @@ Exhaustion-loving.
 In short, Marpa will always report 'Marpa parse exhausted', but I<this is not an error>.
 
 See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
+
+=head2 Will this code be modified to run under L<Marpa::R3> when the latter is stable?
+
+Yes.
 
 =head1 Scripts
 
