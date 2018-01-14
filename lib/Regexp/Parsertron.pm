@@ -1308,8 +1308,14 @@ recurse_thingy					::= open_parenthesis question_mark ampersand capture_name clo
 conditional_thingy				::= open_parenthesis question_mark condition close_parenthesis
 condition						::= open_parenthesis natural_number close_parenthesis
 									| open_parenthesis named_capture_group close_parenthesis
+									| equals_thingy
+									| exclamation_mark_thingy
+									| less_or_equals_thingy # Includes \K.
+									| less_exclamation_mark_thingy
 									| single_code_thingy
 									| an_R_sequence
+									| an_R_name
+									| DEFINE
 
 an_R_sequence					::= a_single_R
 									| open_parenthesis R_pattern close_parenthesis
@@ -1319,6 +1325,8 @@ a_single_R						::= open_parenthesis R close_parenthesis
 R_pattern						::= R R_suffix
 
 R_suffix						::= natural_number
+
+an_R_name						::= open_parenthesis R ampersand capture_name close_parenthesis
 
 # 99.
 # 16: (?>pattern)
@@ -1368,6 +1376,9 @@ close_parenthesis			~ ')'
 
 :lexeme						~ colon					pause => before		event => colon
 colon						~ ':'
+
+:lexeme						~ DEFINE				pause => before		event => DEFINE
+DEFINE						~ 'DEFINE'
 
 :lexeme						~ digit_set				pause => before		event => digit_set
 digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
