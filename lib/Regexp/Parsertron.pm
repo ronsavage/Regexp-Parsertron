@@ -226,6 +226,8 @@ sub find
 {
 	my($self, $target) = @_;
 
+	die "Method find() takes a defined value as the parameter\n" if (! defined $target);
+
 	my(@found);
 	my($meta);
 
@@ -788,6 +790,8 @@ The uid of the node to update.
 
 =back
 
+The code calls C<die()> if %opts does not have these 2 keys, or if either value is undef.
+
 See scripts/synopsis.pl for sample code.
 
 Note: Calling C<append()> never changes the uids of nodes, so repeated calling of C<append()> with
@@ -830,6 +834,8 @@ See also L</marpa_error_count()>, L</perl_error_count()> and L</warning_str()>.
 
 Returns an arrayref of node uids whose text contains the given string.
 
+The code calls C<die()> if $target is undef.
+
 If the arrayref is empty, there were no matches.
 
 This method uses the Perl C<index()> function to test if $string is a substring of the text of each
@@ -842,6 +848,9 @@ See also L</get($uid)>.
 =head2 get($uid)
 
 Get the text of the node with the given $uid.
+
+The code calls C<die()> if $uid is undef, or outside the range 1 .. $self -> uid. The latter value
+is the highest uid so far assigned to any node.
 
 Returns undef if the given $uid is not found.
 
@@ -898,6 +907,8 @@ The uid of the node to update.
 
 =back
 
+The code calls C<die()> if %opts does not have these 2 keys, or if either value is undef.
+
 Note: Calling C<prepend()> never changes the uids of nodes, so repeated calling of C<prepend()> with
 the same C<uid> will apply more and more updates to the same node.
 
@@ -950,6 +961,8 @@ The text to use to overwrite the text of the node.
 The uid of the node to update.
 
 =back
+
+The code calls C<die()> if %opts does not have these 2 keys, or if either value is undef.
 
 See also L</append(%opts)> and L</prepend(%opts)>.
 
