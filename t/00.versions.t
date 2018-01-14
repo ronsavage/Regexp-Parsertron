@@ -9,6 +9,7 @@ use Regexp::Parsertron; # For the version #.
 
 use Test::More;
 
+use Capture::Tiny;
 use Data::Section::Simple;
 use File::Slurper;
 use Marpa::R2;
@@ -26,6 +27,7 @@ pass('All external modules loaded');
 
 my(@modules) = qw
 /
+	Capture::Tiny
 	Data::Section::Simple
 	File::Slurper
 	Marpa::R2
