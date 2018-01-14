@@ -663,6 +663,23 @@ Note: The 1st tree is printed due to verbose => 1 in the call to L</new([%opts])
 is due to the call to L</print_raw_tree()>. The columnar output is due to the call to
 L</print_cooked_tree()>.
 
+=head2 The Edit Methods
+
+The I<edit methods> simply means any one or more of these methods, which can all change the text of
+a node:
+
+=over 4
+
+=item o L</append(%opts)>
+
+=item o L</prepend(%opts)>
+
+=item o L</set(%opts)>
+
+=back
+
+The edit methods are exercised in t/get.set.t, as well as scripts/synopsis.pl (above).
+
 =head1 Description
 
 Parses a regexp into a tree object managed by the L<Tree> module, and provides various methods for
@@ -732,7 +749,7 @@ Default: 0 (print nothing).
 
 =head2 append(%opts)
 
-Append to the text of a node.
+Append some text to the text of a node.
 
 %opts is a hash with these (key => value) pairs:
 
@@ -829,7 +846,7 @@ Used basically for debugging.
 
 =head2 prepend(%opts)
 
-Prepend to the text of a node.
+Prepend some text to the text of a node.
 
 %opts is a hash with these (key => value) pairs:
 
@@ -876,7 +893,7 @@ Note: C<re> is a parameter to L</new([%opts])>.
 
 =head2 reset()
 
-Resets various internal thingys, except test_count.
+Resets various internal things, except test_count.
 
 Used basically for debugging.
 
@@ -1174,6 +1191,7 @@ entire_pattern					::= comment_thingy					#  1.
 									| single_code_thingy			# 11.
 									| double_code_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
+									| recurse_thingy				# 14.
 									| pattern_thingy				# 99.
 
 # 1: (?#text)
@@ -1279,8 +1297,11 @@ positive_integer				::= non_zero_digit digit_sequence
 
 digit_sequence					::= digit_set*
 
-# 99.
 # 14: (?&NAME)
+
+recurse_thingy					::= open_parenthesis question_mark ampersand capture_name close_parenthesis
+
+# 99.
 # 15: (?(condition)yes-pattern|no-pattern)
 #   & (?(condition)yes-pattern)
 # 16: (?>pattern)
@@ -1309,6 +1330,9 @@ simple_character_sequence	::= escaped_close_parenthesis
 # Policy: Event names are always the same as the name of the corresponding lexeme.
 #
 # Note:   Tokens of the form '_xxx_', if any, are replaced with version-dependent values.
+
+:lexeme						~ ampersand				pause => before		event => ampersand
+ampersand					~ '^'
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
