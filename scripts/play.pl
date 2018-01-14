@@ -39,10 +39,13 @@ my(%input)	=
 
 my($as_string);
 my($error_str);
+my($found);
 my($result, %re);
 
 for my $key (sort keys %input)
 {
+	say "Case $key: ";
+
 	$error_str	= '';
 	$s			= $input{$key};
 
@@ -68,10 +71,19 @@ for my $key (sort keys %input)
 	}
 	else
 	{
+		$parser -> print_raw_tree;
+
 		$as_string	= $parser -> as_string;
 		$re{$key}	= $as_string;
 
-		say "$key: result: $result (0 is success). as_string: $as_string";
+		say "result: $result (0 is success). as_string: $as_string";
+
+		for my $target ('foo', '?')
+		{
+			$found = $parser -> find($target);
+
+			say "uids of nodes whose text matches $target: ", join(', ', @$found);
+		}
 	}
 
 	$parser -> reset;

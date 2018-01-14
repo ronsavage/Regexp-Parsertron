@@ -222,6 +222,31 @@ sub as_string
 
 # ------------------------------------------------
 
+sub find
+{
+	my($self, $target) = @_;
+
+	my(@found);
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta = $node -> meta;
+
+		if (index($$meta{text}, $target) >= 0)
+		{
+			push @found, $$meta{uid};
+		}
+	}
+
+	return [@found];
+
+} # End of find.
+
+# ------------------------------------------------
+
 sub get
 {
 	my($self, $wanted_uid)	= @_;
@@ -529,20 +554,20 @@ sub set
 
 sub _string2re
 {
-	my($self, $candidate) = @_;
+	my($self, $raw_re) = @_;
 
 	my($re);
 
 	try
 	{
-		$re = does($candidate, 'Regexp') ? $candidate : qr/$candidate/;
+		$re = does($raw_re, 'Regexp') ? $raw_re : qr/$raw_re/;
 	}
 	catch
 	{
 		$re = '';
 
 		$self -> perl_error_count($self -> perl_error_count + 1);
-		$self -> error_str($self -> test_count . ": Perl cannot convert $candidate into qr/.../ form");
+		$self -> error_str($self -> test_count . ": Perl cannot convert $raw_re into qr/.../ form");
 	};
 
 	return $re;
@@ -768,7 +793,7 @@ See scripts/synopsis.pl for sample code.
 Note: Calling C<append()> never changes the uids of nodes, so repeated calling of C<append()> with
 the same C<uid> will apply more and more updates to the same node.
 
-See also L</get(%opts)>, L</prepend(%opts)>, L</set(%opts)> and t/get.set.t.
+See also L</prepend(%opts)>, L</set(%opts)> and t/get.set.t.
 
 =head2 as_string()
 
@@ -801,13 +826,26 @@ in Perl of course).
 
 See also L</marpa_error_count()>, L</perl_error_count()> and L</warning_str()>.
 
+=head2 find($string)
+
+Returns an arrayref of node uids whose text contains the given string.
+
+If the arrayref is empty, there were no matches.
+
+This method uses the Perl C<index()> function to test if $string is a substring of the text of each
+node. Regexps are not used by this method.
+
+See scripts/play.pl and t/get.set.t for sample usage of C<find()>.
+
+See also L</get($uid)>.
+
 =head2 get($uid)
 
-Get the text of the node whose uid is $uid.
+Get the text of the node with the given $uid.
 
 Returns undef if the given $uid is not found.
 
-See also L</append(%opts)>, L</prepend(%opts)> and L</set(%opts)>.
+See also L</find($string)>.
 
 =head2 marpa_error_count()
 
@@ -863,7 +901,7 @@ The uid of the node to update.
 Note: Calling C<prepend()> never changes the uids of nodes, so repeated calling of C<prepend()> with
 the same C<uid> will apply more and more updates to the same node.
 
-See also L</append(%opts)>, L</get(%opts)> and L</set(%opts)> and t/get.set.t.
+See also L</append(%opts), L</set(%opts)>, and t/get.set.t.
 
 =head2 print_cooked_tree()
 
@@ -913,7 +951,7 @@ The uid of the node to update.
 
 =back
 
-See also L</append(%opts)>, L</prepend(%opts)> and L</get(%opts)>.
+See also L</append(%opts)> and L</prepend(%opts)>.
 
 =head2 tree()
 
@@ -1060,6 +1098,10 @@ See also the source code for L</print_cooked_tree()> and L</print_raw_tree()> fo
 use this object.
 
 See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
+
+=head2 Does the root node in the tree ever hold useful information?
+
+No. Always ignore it.
 
 =head2 Does this module interpret regexps in any way?
 

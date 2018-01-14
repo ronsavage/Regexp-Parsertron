@@ -39,7 +39,7 @@ for my $uid (sort keys %text)
 {
 	$text = $parser -> get($uid);
 
-	ok($text{$uid} eq $text, "Check text of uid $uid => $text"); $count++;
+	ok($text{$uid} eq $text, "Check text of uid $uid => '$text'"); $count++;
 }
 
 my($new_text) = 'Flub|'; # First Language Under Basic.
@@ -49,7 +49,7 @@ $parser -> prepend(text => $new_text, uid => $node_uid);
 $text			= $parser -> get($node_uid);
 my($expected)	= "${new_text}Perl|JavaScript|C++";
 
-ok($expected eq $text, "Check text of uid $node_uid => $text"); $count++;
+ok($expected eq $text, "Check text of uid $node_uid => '$text'"); $count++;
 
 $new_text = 'BCPL|'; # Basic Combined Programming Language.
 
@@ -58,7 +58,7 @@ $parser -> prepend(text => $new_text, uid => $node_uid);
 $text		= $parser -> get($node_uid);
 $expected	= "${new_text}Flub|Perl|JavaScript|C++";
 
-ok($expected eq $text, "Check text of uid $node_uid => $text"); $count++;
+ok($expected eq $text, "Check text of uid $node_uid => '$text'"); $count++;
 
 $new_text = 'Algol Lives!';
 
@@ -66,7 +66,12 @@ $parser -> set(text => $new_text, uid => $node_uid);
 
 $text = $parser -> get($node_uid);
 
-ok($new_text eq $text, "Check new text of uid $node_uid => $text"); $count++;
+ok($new_text eq $text, "Check new text of uid $node_uid => '$text'"); $count++;
+
+my($target)	= 'Algol';
+my($found)	= $parser -> find($target);
+
+ok($#$found == 0, "Check that we can find('$target') in some node"); $count++;
 
 print "# Internal test count: $count\n";
 
