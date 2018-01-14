@@ -1137,102 +1137,122 @@ Australian copyright (c) 2016, Ron Savage.
 __DATA__
 @@ V 5.20
 
-:default		::= action => [values]
+:default						::= action => [values]
 
-lexeme default	= latm => 1
+lexeme default					= latm => 1
 
-:start			::= regexp
+:start							::= regexp
 
 # G1 stuff.
 
-regexp				::= open_parenthesis question_mark caret flag_sequence colon entire_pattern close_parenthesis
+regexp							::= open_parenthesis question_mark caret flag_sequence colon entire_pattern close_parenthesis
 
-flag_sequence		::= positive_flags negative_flag_set
+flag_sequence					::= positive_flags negative_flag_set
 
-positive_flags		::=
-positive_flags		::= flag_set
+positive_flags					::=
+positive_flags					::= flag_set
 
-negative_flag_set	::=
-negative_flag_set	::= minus negative_flags
+negative_flag_set				::=
+negative_flag_set				::= minus negative_flags
 
-negative_flags		::= flag_set
+negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_pattern				::= comment_thingy				# 1.
-								| flag_thingy				# 2.
-								| colon_thingy				# 3.
-								| vertical_bar_thingy		# 4.
-								| equals_thingy				# 5.
-								| exclamation_mark_thingy	# 6.
-								| pattern_thingy			# 99.
-								| question_mark less_or_equals pattern_set	# 7
-								| escaped_K # 7
-								| question_mark less_exclamation_mark pattern_set	# 8
-								| question_mark named_capture_group pattern_set	# 9
-								| named_backreference # 10
-								| question_mark open_brace code close_brace	# 11
-								| question_mark question_mark open_brace code close_brace	# 12
-								| question_mark parameter_number	# 13
+entire_pattern					::= comment_thingy					#  1.
+									| flag_thingy					#  2.
+									| colon_thingy					#  3.
+									| vertical_bar_thingy			#  4.
+									| equals_thingy					#  5.
+									| exclamation_mark_thingy		#  6.
+									| less_or_equals_thingy			#  7.
+									| less_exclamation_mark_thingy	#  8.
+									| named_capture_group_thingy	#  9.
+									| named_backreference_thingy	# 10.
+									| pattern_thingy				# 99.
+									| question_mark open_brace code close_brace	# 11
+									| question_mark question_mark open_brace code close_brace	# 12
+									| question_mark parameter_number	# 13
 
 # 1: (?#text)
 
-comment_thingy				::= open_parenthesis question_mark hash comment close_parenthesis
+comment_thingy					::= open_parenthesis question_mark hash comment close_parenthesis
 
-comment						::= non_close_parenthesis*
+comment							::= non_close_parenthesis*
 
 # 2: (?adlupimnsx-imnsx)
 #  & (?^alupimnsx)
 
-flag_thingy					::= open_parenthesis question_mark flag_set_1
-								| open_parenthesis question_mark caret flag_set_2 close_parenthesis
+flag_thingy						::= open_parenthesis question_mark flag_set_1
+									| open_parenthesis question_mark caret flag_set_2 close_parenthesis
 
-flag_set_1					::= flag_sequence
+flag_set_1						::= flag_sequence
 
-flag_set_2					::= flag_sequence
+flag_set_2						::= flag_sequence
 
 # 3: (?:pattern)	Eg: (?:(?<n>foo)|(?<n>bar))\k<n>
 #  & (?adluimnsx-imnsx:pattern)
 #  & (?^aluimnsx:pattern)
 
-colon_thingy				::= open_parenthesis question_mark colon pattern_sequence close_parenthesis
+colon_thingy					::= open_parenthesis question_mark colon pattern_sequence close_parenthesis
 
-pattern_sequence			::= pattern_set*
+pattern_sequence				::= pattern_set*
 
-pattern_set					::= pattern_item
-								| pattern_item '|'
+pattern_set						::= pattern_item
+									| pattern_item '|'
 
-pattern_item				::= bracket_pattern
-								| parenthesis_pattern
-								| slash_pattern
-								| character_sequence
+pattern_item					::= bracket_pattern
+									| parenthesis_pattern
+									| slash_pattern
+									| character_sequence
 
-bracket_pattern				::= open_bracket characters_in_set close_bracket
+bracket_pattern					::= open_bracket characters_in_set close_bracket
 
-parenthesis_pattern			::= open_parenthesis pattern_sequence close_parenthesis
+parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
 
-slash_pattern				::= slash pattern_sequence slash
+slash_pattern					::= slash pattern_sequence slash
 
 # 4: (?|pattern)
 
-vertical_bar_thingy			::= open_parenthesis question_mark vertical_bar pattern_sequence close_parenthesis
+vertical_bar_thingy				::= open_parenthesis question_mark vertical_bar pattern_sequence close_parenthesis
 
 # 5: (?=pattern)
 
-equals_thingy				::= open_parenthesis question_mark equals pattern_sequence close_parenthesis
+equals_thingy					::= open_parenthesis question_mark equals pattern_sequence close_parenthesis
 
 # 6: (?!pattern)
 
-exclamation_mark_thingy		::= open_parenthesis question_mark exclamation_mark pattern_sequence close_parenthesis
+exclamation_mark_thingy			::= open_parenthesis question_mark exclamation_mark pattern_sequence close_parenthesis
+
+# 7: (?<=pattern
+#  & \K
+
+less_or_equals_thingy			::= open_parenthesis question_mark less_or_equals close_parenthesis
+less_or_equals_thingy			::= escaped_K
+
+# 8: (?<!pattern)
+
+less_exclamation_mark_thingy	::= open_parenthesis question_mark less_exclamation_mark close_parenthesis
+
+# 9: (?<NAME>pattern)
+#  & (?'NAME'pattern)
+
+named_capture_group_thingy		::= open_parenthesis question_mark named_capture_group close_parenthesis
+
+named_capture_group				::= single_quote capture_name single_quote
+									| less_than capture_name greater_than
+
+capture_name					::= word
+
+# 10: \k<NAME>
+#  & \k'NAME'
+
+named_backreference_thingy		::= named_backreference
+
+named_backreference				::= escaped_k single_quote capture_name single_quote
+									| escaped_k less_than capture_name greater_than
 
 # 99.
-#  7: (?<=pattern
-#   & \K
-#  8: (?<!pattern)
-#  9: (?<NAME>pattern)
-#   & (?'NAME'pattern)
-# 10: \k<NAME>
-#   & \k'NAME'
 # 11: (?{ code })
 # 12: (??{ code })
 # 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
@@ -1259,14 +1279,6 @@ simple_character_sequence	::= escaped_close_parenthesis
 								| escaped_slash
 								| caret
 								| character_set
-
-named_capture_group			::= single_quote capture_name single_quote
-								| less_than capture_name greater_than
-
-capture_name				::= word
-
-named_backreference			::= escaped_k single_quote capture_name single_quote
-								| escaped_k less_than capture_name greater_than
 
 code						::= [[:print:]]
 
