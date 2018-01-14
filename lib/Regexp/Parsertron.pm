@@ -1072,6 +1072,8 @@ L<http://www.pcre.org/>. PCRE - Perl Compatible Regular Expressions.
 
 L<http://perldoc.perl.org/perlre.html>. This is the definitive document.
 
+L<http://perldoc.perl.org/perlrecharclass.html#Extended-Bracketed-Character-Classes>.
+
 L<http://perldoc.perl.org/perlretut.html>. Samples with commentary.
 
 L<http://perldoc.perl.org/perlop.html#Regexp-Quote-Like-Operators>
@@ -1193,6 +1195,8 @@ entire_pattern					::= comment_thingy					#  1.
 									| recursive_subpattern_thingy	# 13.
 									| recurse_thingy				# 14.
 									| conditional_thingy			# 15.
+									| greater_than_thingy			# 16.
+									| extended_bracketed_thingy		# 17.
 									| pattern_thingy				# 99.
 
 # 1: (?#text)
@@ -1228,6 +1232,22 @@ pattern_item					::= bracket_pattern
 									| character_sequence
 
 bracket_pattern					::= open_bracket characters_in_set close_bracket
+
+# Perl accepts /()/.
+# Perl does not accept /[]/.
+
+characters_in_set				::= character_in_set+
+
+character_in_set				::= escaped_close_bracket
+									| non_close_bracket
+
+character_sequence				::= simple_character_sequence+
+
+simple_character_sequence		::= escaped_close_parenthesis
+									| escaped_open_parenthesis
+									| escaped_slash
+									| caret
+									| character_set
 
 parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
 
@@ -1328,27 +1348,19 @@ R_suffix						::= natural_number
 
 an_R_name						::= open_parenthesis R ampersand capture_name close_parenthesis
 
-# 99.
 # 16: (?>pattern)
+
+greater_than_thingy				::= open_parenthesis question_mark greater_than close_parenthesis
+
 # 17: (?[ ])
 
-pattern_thingy				::= pattern_set*
+extended_bracketed_thingy		::= open_parenthesis question_mark open_bracket character_classes close_bracket close_parenthesis
 
-# Perl accepts /()/.
-# Perl does not accept /[]/.
+character_classes				::= [[:print:]]
 
-characters_in_set			::= character_in_set+
+# 99.
 
-character_in_set			::= escaped_close_bracket
-								| non_close_bracket
-
-character_sequence			::= simple_character_sequence+
-
-simple_character_sequence	::= escaped_close_parenthesis
-								| escaped_open_parenthesis
-								| escaped_slash
-								| caret
-								| character_set
+pattern_thingy					::= pattern_set*
 
 # L0 stuff, in alphabetical order.
 #
