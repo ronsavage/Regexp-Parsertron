@@ -51,12 +51,12 @@ my($expected)	= "${new_text}Perl|JavaScript|C++";
 
 ok($expected eq $text, "Check text of uid $node_uid => $text"); $count++;
 
-my($new_text) = 'BCPL|'; # Basic Combined Programming Language.
+$new_text = 'BCPL|'; # Basic Combined Programming Language.
 
 $parser -> prepend(text => $new_text, uid => $node_uid);
 
-$text			= $parser -> get($node_uid);
-my($expected)	= "${new_text}Flub|Perl|JavaScript|C++";
+$text		= $parser -> get($node_uid);
+$expected	= "${new_text}Flub|Perl|JavaScript|C++";
 
 ok($expected eq $text, "Check text of uid $node_uid => $text"); $count++;
 

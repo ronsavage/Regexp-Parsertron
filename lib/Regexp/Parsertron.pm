@@ -1159,13 +1159,13 @@ negative_flags		::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_pattern				::= comment_thingy	# 1.
-								| flag_thingy	# 2.
-								| colon_thingy	# 3
-								| pattern_thingy	# 99.
-								| question_mark vertical_bar pattern_set	# 4
-								| question_mark equals pattern_set	# 5
-								| question_mark exclamation_mark pattern_set	# 6
+entire_pattern				::= comment_thingy				# 1.
+								| flag_thingy				# 2.
+								| colon_thingy				# 3.
+								| vertical_bar_thingy		# 4.
+								| equals_thingy				# 5.
+								| exclamation_mark_thingy	# 6.
+								| pattern_thingy			# 99.
 								| question_mark less_or_equals pattern_set	# 7
 								| escaped_K # 7
 								| question_mark less_exclamation_mark pattern_set	# 8
@@ -1213,10 +1213,19 @@ parenthesis_pattern			::= open_parenthesis pattern_sequence close_parenthesis
 
 slash_pattern				::= slash pattern_sequence slash
 
+# 4: (?|pattern)
+
+vertical_bar_thingy			::= open_parenthesis question_mark vertical_bar pattern_sequence close_parenthesis
+
+# 5: (?=pattern)
+
+equals_thingy				::= open_parenthesis question_mark equals pattern_sequence close_parenthesis
+
+# 6: (?!pattern)
+
+exclamation_mark_thingy		::= open_parenthesis question_mark exclamation_mark pattern_sequence close_parenthesis
+
 # 99.
-#  4: (?|pattern)
-#  5: (?=pattern)
-#  6: (?!pattern)
 #  7: (?<=pattern
 #   & \K
 #  8: (?<!pattern)
