@@ -1,5 +1,8 @@
 Revision history for Perl extension Regexp::Parserton.
 
+0.81  2018-01-15T10:08:00
+	- Add, document and test the new find($string) function.
+
 0.80  2018-01-14T15:08:00
 	- Expand the BNF to cover all the major items in http://perldoc.perl.org/perlre.html.
 	- Add a brief tutorial to the FAQ.
