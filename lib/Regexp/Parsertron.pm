@@ -1192,6 +1192,7 @@ entire_pattern					::= comment_thingy					#  1.
 									| double_code_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
 									| recurse_thingy				# 14.
+									| conditional_thingy			# 15.
 									| pattern_thingy				# 99.
 
 # 1: (?#text)
@@ -1248,7 +1249,7 @@ exclamation_mark_thingy			::= open_parenthesis question_mark exclamation_mark pa
 #  & \K
 
 less_or_equals_thingy			::= open_parenthesis question_mark less_or_equals close_parenthesis
-less_or_equals_thingy			::= escaped_K
+									| escaped_K
 
 # 8: (?<!pattern)
 
@@ -1286,24 +1287,40 @@ double_code_thingy				::= open_parenthesis question_mark question_mark open_brac
 
 recursive_subpattern_thingy		::= open_parenthesis question_mark parameter_number close_parenthesis
 
-parameter_number				::= positive_integer
-									| minus positive_integer
-									| plus positive_integer
+parameter_number				::= natural_number # 1, 2, ...
+									| minus natural_number
+									| plus natural_number
 									| R
 									| zero
 
-positive_integer				::= non_zero_digit digit_sequence
-									| minus positive_integer
+natural_number					::= non_zero_digit digit_sequence
 
 digit_sequence					::= digit_set*
 
 # 14: (?&NAME)
 
 recurse_thingy					::= open_parenthesis question_mark ampersand capture_name close_parenthesis
+									| open_parenthesis question_mark P greater_than capture_name close_parenthesis
+
+# 15: (?(condition)yes-pattern|no-pattern)
+#  & (?(condition)yes-pattern)
+
+conditional_thingy				::= open_parenthesis question_mark condition close_parenthesis
+condition						::= open_parenthesis natural_number close_parenthesis
+									| open_parenthesis named_capture_group close_parenthesis
+									| single_code_thingy
+									| an_R_sequence
+
+an_R_sequence					::= a_single_R
+									| open_parenthesis R_pattern close_parenthesis
+
+a_single_R						::= open_parenthesis R close_parenthesis
+
+R_pattern						::= R R_suffix
+
+R_suffix						::= natural_number
 
 # 99.
-# 15: (?(condition)yes-pattern|no-pattern)
-#   & (?(condition)yes-pattern)
 # 16: (?>pattern)
 # 17: (?[ ])
 
@@ -1418,6 +1435,9 @@ open_bracket				~ '['
 :lexeme						~ open_parenthesis		pause => before		event => open_parenthesis
 open_parenthesis			~ '('
 
+:lexeme						~ P						pause => before		event => P
+P							~ 'P'
+
 :lexeme						~ plus					pause => before		event => plus
 plus						~ '+'
 
@@ -1425,7 +1445,7 @@ plus						~ '+'
 question_mark				~ '?'
 
 :lexeme						~ R						pause => before		event => R
-R							~ '-'
+R							~ 'R'
 
 :lexeme						~ single_quote			pause => before		event => single_quote
 single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
@@ -1440,4 +1460,4 @@ vertical_bar				~ '|'
 word						~ [\w]+
 
 :lexeme						~ zero					pause => before		event => zero
-zero						~ '-'
+zero						~ '0'
