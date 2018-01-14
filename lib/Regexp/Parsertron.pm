@@ -901,7 +901,7 @@ The uid of the node to update.
 Note: Calling C<prepend()> never changes the uids of nodes, so repeated calling of C<prepend()> with
 the same C<uid> will apply more and more updates to the same node.
 
-See also L</append(%opts), L</set(%opts)>, and t/get.set.t.
+See also L</append(%opts)>, L</set(%opts)>, and t/get.set.t.
 
 =head2 print_cooked_tree()
 
@@ -1061,24 +1061,16 @@ See t/get.set.t for sample code.
 
 =back
 
-=head2 What is the purpose of this module?
+=head2 Does this module ever use \Q...\E to quote regexp metacharacters?
 
-=over 4
-
-=item o To provide a stand-alone parser for regexps
-
-=item o To help me learn more about regexps
-
-=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
-
-=back
+No.
 
 =head2 What is the format of the nodes in the tree build by this module?
 
 Each node's C<name> is the name of the Marpa-style event which was triggered by detection of
 some C<text> within the regexp.
 
-Each node's C<meta> method returns a hashref with these (key => value) pairs:
+Each node's C<meta()> method returns a hashref with these (key => value) pairs:
 
 =over 4
 
@@ -1090,12 +1082,12 @@ This is the text within the regexp which triggered the event just mentioned.
 
 This is the unqiue id of the 'current' node.
 
-This <uid> is often used by you to specify which node to work on.
+This C<uid> is often used by you to specify which node to work on.
 
 =back
 
 See also the source code for L</print_cooked_tree()> and L</print_raw_tree()> for ideas on how to
-use this object.
+use the tree.
 
 See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
 
@@ -1133,7 +1125,7 @@ urls in question.
 =head2 So which version of Perl is supported?
 
 I'm (2018-01-14) using Perl V 5.20.2 and making the BNF match the Perl regexp docs listed in
-</References> below.
+L</References> below.
 
 =head2 Is this a (Marpa) exhaustion-hating or exhaustion-loving app?
 
@@ -1146,6 +1138,18 @@ See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhausti
 =head2 Will this code be modified to run under L<Marpa::R3> when the latter is stable?
 
 Yes.
+
+=head2 What is the purpose of this module?
+
+=over 4
+
+=item o To provide a stand-alone parser for regexps
+
+=item o To help me learn more about regexps
+
+=item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
+
+=back
 
 =head1 Scripts
 
@@ -1206,6 +1210,10 @@ L<http://perldoc.perl.org/perlrebackslash.html>
 
 L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>
 
+L<https://code.activestate.com/lists/perl5-porters/209610/>
+
+L<https://stackoverflow.com/questions/46200305/a-strict-regular-expression-for-matching-chemical-formulae>
+
 =head1 See Also
 
 L<Graph::Regexp>
@@ -1245,12 +1253,6 @@ Version numbers < 1.00 represent development versions. From 1.00 up, they are pr
 =head1 Repository
 
 L<https://github.com/ronsavage/Regexp-Parsertron>
-
-=head1 References
-
-L<https://code.activestate.com/lists/perl5-porters/209610/>
-
-L<https://stackoverflow.com/questions/46200305/a-strict-regular-expression-for-matching-chemical-formulae>
 
 =head1 Support
 
