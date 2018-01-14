@@ -30,6 +30,7 @@ my(%params) =
 	PL_FILES 			=> {},
 	PREREQ_PM			=>
 	{
+		'Capture::Tiny'			=> 0.46,
 		'Data::Section::Simple'	=> 0.07,
 		'File::Slurper'			=> 0.011,
 		'Marpa::R2'				=> 4.000000,
