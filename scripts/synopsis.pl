@@ -25,5 +25,5 @@ my($as_string) = $parser -> as_string;
 
 say "Original:  $re. Result: $result. (0 is success)";
 say "as_string: $as_string";
-say 'Perl error count:  ', $parser -> perl_error_count;
-say 'Marpa error count: ', $parser -> marpa_error_count;
+
+say 'Warning: ', $parser -> warning_str;

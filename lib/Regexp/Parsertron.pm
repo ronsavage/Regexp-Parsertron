@@ -35,35 +35,11 @@ has current_node =>
 	required => 0,
 );
 
-has error_str =>
-(
-	default  => sub {return ''},
-	is       => 'rw',
-	isa      => Str,
-	required => 0,
-);
-
 has grammar =>
 (
 	default  => sub {return ''},
 	is       => 'rw',
 	isa      => Any,
-	required => 0,
-);
-
-has marpa_error_count =>
-(
-	default  => sub{return 0},
-	is       => 'rw',
-	isa      => Int,
-	required => 0,
-);
-
-has perl_error_count =>
-(
-	default  => sub{return 0},
-	is       => 'rw',
-	isa      => Int,
 	required => 0,
 );
 
@@ -256,7 +232,7 @@ sub get
 
 	if (! defined($wanted_uid) || ($wanted_uid < 1) || ($wanted_uid > $self -> uid) )
 	{
-		die "Method get() takes a uid parameter in the range 1 .. $max_uid \n";
+		die "Method get() takes a uid parameter in the range 1 .. $max_uid\n";
 	}
 
 	my($meta);
@@ -302,7 +278,6 @@ sub parse
 
 	# Emulate parts of new(), which makes things a bit earier for the caller.
 
-	$self -> error_str('');
 	$self -> re($opts{re})				if (defined $opts{re});
 	$self -> verbose($opts{verbose})	if (defined $opts{verbose});
 	$self -> warning_str('');
@@ -333,22 +308,20 @@ sub parse
 		{
 			$result = 1;
 
-			if (! $self -> error_str)
-			{
-				$self -> error_str('Marpa error: Parse failed');
+			my($message) = "Error: Marpa parse failed. ";
 
-				say $self -> error_str if ($self -> verbose);
-			}
+			say $message if ($self -> verbose);
+
+			die $message;
 		}
 	}
 	catch
 	{
-		$result = 1;
+		my($message) = "Error: Marpa parse failed. $_";
 
-		$self -> marpa_error_count($self -> marpa_error_count + 1);
-		$self -> error_str("Marpa error: Parse failed. $_");
+		say $message if ($self -> verbose);
 
-		say $self -> error_str if ($self -> verbose);
+		die $message;
 	};
 
 	# Return 0 for success and 1 for failure.
@@ -438,7 +411,7 @@ sub _process
 		$lexeme	= $self -> recce -> literal($start, $span);
 		$pos	= $self -> recce -> lexeme_read($event_name);
 
-		die "Marpa lexeme_read($event_name) rejected lexeme |$lexeme|\n" if (! defined $pos);
+		die "Marpa lexeme_read($event_name) rejected lexeme '$lexeme'\n" if (! defined $pos);
 
 		say "event_name: $event_name. lexeme: $lexeme. " if ($self -> verbose > 1);
 
@@ -447,19 +420,22 @@ sub _process
 
 	my($message);
 
-	if ($self -> recce -> exhausted)
+	if (my $status = $self -> recce -> ambiguous)
+	{
+		my($terminals)	= $self -> recce -> terminals_expected;
+		$terminals		= ['(None)'] if ($#$terminals < 0);
+		$message		= "Marpa warning. Parse ambiguous. Status: $status. Terminals expected: " . join(', ', @$terminals);
+	}
+	elsif ($self -> recce -> exhausted)
 	{
 		# See https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion
 		# for why this code is exhaustion-loving.
 
 		$message = 'Marpa parse exhausted';
 	}
-	elsif (my $status = $self -> recce -> ambiguous)
-	{
-		my($terminals)	= $self -> recce -> terminals_expected;
-		$terminals		= ['(None)'] if ($#$terminals < 0);
-		$message		= "Marpa warning. Parse ambiguous. Status: $status. Terminals expected: " . join(', ', @$terminals);
 
+	if ($message)
+	{
 		$self -> warning_str($message);
 
 		say $message if ($self -> verbose);
@@ -515,9 +491,6 @@ sub reset
 	$self -> tree(Tree -> new('Root') );
 	$self -> tree -> meta({text => 'Root', uid => 0});
 	$self -> current_node($self -> tree);
-	$self -> error_str('');
-	$self -> marpa_error_count(0);
-	$self -> perl_error_count(0);
 	$self -> uid(0);
 	$self -> warning_str('');
 
@@ -566,10 +539,11 @@ sub _string2re
 	}
 	catch
 	{
-		$re = '';
+		my($message) = "Error: Perl cannot convert $raw_re into qr/.../ form";
 
-		$self -> perl_error_count($self -> perl_error_count + 1);
-		$self -> error_str($self -> test_count . ": Perl cannot convert $raw_re into qr/.../ form");
+		say $message if ($self -> verbose);
+
+		die $message;
 	};
 
 	return $re;
@@ -649,8 +623,6 @@ This is scripts/synopsis.pl:
 
 	say "Original:  $re. Result: $result. (0 is success)";
 	say "as_string: $as_string";
-	say 'Perl error count:  ', $parser -> perl_error_count;
-	say 'Marpa error count: ', $parser -> marpa_error_count;
 
 And its output:
 
@@ -683,8 +655,6 @@ And its output:
 	close_parenthesis       7  )
 	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
 	as_string: (?^i:Perl|JavaScript|C++)
-	Perl error count:  0
-	Marpa error count: 0
 
 Note: The 1st tree is printed due to verbose => 1 in the call to L</new([%opts])>, while the 2nd
 is due to the call to L</print_raw_tree()>. The columnar output is due to the call to
@@ -804,32 +774,6 @@ See also L</prepend(%opts)>, L</set(%opts)> and t/get.set.t.
 Returns the parsed regexp as a string. The string contains all edits applied with methods such as
 L</append(%opts)>.
 
-=head2 error_str()
-
-Returns the last error, as a string.
-
-Errors will be in 1 of 2 categories:
-
-=over 4
-
-=item o Perl errors
-
-These arise when Perl cannot interpret the string form of the regexp supplied by you, when the code
-checks it using qr/$re/.
-
-=item o Marpa errors
-
-These arise when the BNF within the module is such that the string form of the regexp cannot be
-parsed by Marpa.
-
-If you can use the regexp in Perl code, then you should never get this error. In other words, if
-Perl accepts the regexp and the module does not, then the BNF in this module is wrong (barring bugs
-in Perl of course).
-
-=back
-
-See also L</marpa_error_count()>, L</perl_error_count()> and L</warning_str()>.
-
 =head2 find($string)
 
 Returns an arrayref of node uids whose text contains the given string.
@@ -856,14 +800,6 @@ Returns undef if the given $uid is not found.
 
 See also L</find($string)>.
 
-=head2 marpa_error_count()
-
-Returns an integer count of errors detected by Marpa. This value should always be 0.
-
-See also L</error_str()>, L</perl_error_count()> and L</warning_str()>.
-
-Used basically for debugging.
-
 =head2 new([%opts])
 
 Here, '[]' indicate an optional parameter.
@@ -880,14 +816,6 @@ L</re($regexp)>, or in the call to C<< parse(re => $regexp) >> itself. The latte
 The hash C<%opts> takes the same (key => value) pairs as L</new()> does.
 
 See L</Constructor and Initialization> for details.
-
-=head2 perl_error_count()
-
-Returns an integer count of errors detected by perl. This value should always be 0.
-
-See also L</error_str()> , L</marpa_error_count()> and L</warning_str()>.
-
-Used basically for debugging.
 
 =head2 prepend(%opts)
 
@@ -995,9 +923,13 @@ Note: C<verbose> is a parameter to L</new([%opts])>.
 
 =head2 warning_str()
 
-Returns the last Marpa warning, as a string.
+Returns the last Marpa warning.
 
-See also L</error_str()>, L</perl_error_count()> and L</marpa_error_count()>.
+In short, Marpa will always report 'Marpa parse exhausted' in warning_str() if the parse is not
+ambiguous, but do not worry - I<this is not an error>.
+
+See L<After calling parse(), warning_str() contains the string '... Parse ambiguous ...'|/FAQ> and
+L<Is this a (Marpa) exhaustion-hating or exhaustion-loving app?|/FAQ>.
 
 =head1 FAQ
 
@@ -1140,11 +1072,17 @@ urls in question.
 I'm (2018-01-14) using Perl V 5.20.2 and making the BNF match the Perl regexp docs listed in
 L</References> below.
 
+=head2 After calling parse(), warning_str() contains the string '... Parse ambiguous ...'
+
+This is almost certainly a error with the BNF, although of course it may be an error will an
+exceptionally-badly formed regexp.
+
+Report it via L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Parsertron>, and please
+ include the regexp in the report. Thanx!
+
 =head2 Is this a (Marpa) exhaustion-hating or exhaustion-loving app?
 
 Exhaustion-loving.
-
-In short, Marpa will always report 'Marpa parse exhausted', but I<this is not an error>.
 
 See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
 
