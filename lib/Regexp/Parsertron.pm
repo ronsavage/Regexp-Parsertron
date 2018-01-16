@@ -498,6 +498,35 @@ sub reset
 
 # ------------------------------------------------
 
+sub search
+{
+	my($self, $raw_re) = @_;
+
+	die "Method search() takes a defined value as the parameter\n" if (! defined $raw_re);
+
+	my($re) = $self -> _string2re($raw_re);
+
+	my(@found);
+	my($meta);
+
+	for my $node ($self -> tree -> traverse)
+	{
+		next if ($node -> is_root);
+
+		$meta = $node -> meta;
+
+		if ($$meta{text} =~ $re)
+		{
+			push @found, $$meta{uid};
+		}
+	}
+
+	return [@found];
+
+} # End of search.
+
+# ------------------------------------------------
+
 sub set
 {
 	my($self, %opts) = @_;
@@ -1319,7 +1348,7 @@ flag_set_2						::= flag_sequence
 #  & (?adluimnsx-imnsx:pattern)
 #  & (?^aluimnsx:pattern)
 
-colon_thingy					::= open_parenthesis question_mark colon pattern_sequence close_parenthesis
+colon_thingy					::= open_parenthesis question_mark_colon pattern_sequence close_parenthesis
 
 pattern_sequence				::= pattern_set*
 
@@ -1355,7 +1384,7 @@ slash_pattern					::= slash pattern_sequence slash
 
 # 4: (?|pattern)
 
-vertical_bar_thingy				::= open_parenthesis question_mark vertical_bar pattern_sequence close_parenthesis
+vertical_bar_thingy				::= open_parenthesis question_mark_vertical_bar pattern_sequence close_parenthesis
 
 # 5: (?=pattern)
 
@@ -1567,6 +1596,12 @@ plus						~ '+'
 :lexeme						~ question_mark			pause => before		event => question_mark
 question_mark				~ '?'
 
+:lexeme						~ question_mark_colon	pause => before		event => question_mark_colon	priority => 1
+question_mark_colon			~ '?:'
+
+:lexeme						~ question_mark_vertical_bar	pause => before		event => question_mark_vertical_bar	priority => 1
+question_mark_vertical_bar	~ '?|'
+
 :lexeme						~ R						pause => before		event => R
 R							~ 'R'
 
@@ -1575,9 +1610,6 @@ single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
-
-:lexeme						~ vertical_bar			pause => before		event => vertical_bar
-vertical_bar				~ '|'
 
 :lexeme						~ word					pause => before		event => word
 word						~ [\w]+

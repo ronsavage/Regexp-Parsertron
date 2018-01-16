@@ -29,3 +29,15 @@ say "as_string(): $as_string";
 $result = $parser -> validate;
 
 say "validate():  Result: $result (0 is success)";
+
+# Return 0 for success and 1 for failure.
+
+say 'Add complexity to the regexp';
+
+$parser -> reset;
+$parser -> verbose(0);
+
+$re		= qr/Perl|JavaScript|(?:Flub|BCPL)/i;
+$result	= $parser -> parse(re => $re);
+
+$parser -> print_raw_tree;

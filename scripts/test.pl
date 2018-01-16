@@ -85,6 +85,11 @@ my(@test)	=
 	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar))\k<n>)',
 	re			=> qr/(?:(?<n>foo)|(?<n>bar))\k<n>/,
 },
+{
+	count		=> 16,
+	expected	=> '(?^i:Perl|JavaScript|(?:Flub|BCPL))',
+	re			=> qr/Perl|JavaScript|(?:Flub|BCPL)/i,
+},
 );
 
 my($limit)	= shift || 0;

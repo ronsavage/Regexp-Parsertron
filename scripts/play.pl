@@ -10,37 +10,18 @@ use Try::Tiny;
 
 # -----------
 
-my($s)	= 'foofoo';
-my($re)	= qr/(?:(?<n>foo)|(?<n>bar))\k<n>/;
-
-print "String: $s. Regexp: $re. ";
-
-if ($s =~ $re)
-{
-	say "Match. ";
-}
-else
-{
-	say "Does not match. ";
-}
-
-say '-' x 50;
-
-my($parser)	= Regexp::Parsertron -> new(verbose => 0);
+my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 my(%input)	=
 (
-	 1 => q!(?:(?<n>foo)|(?<n>bar))\k<n>!,
-	 2 => q!/foofoo/!,
-	 3 => q!'(*)b'i!,
-	 4 => q!(?|(a))!,
-	 5 => q!(?^u:'()ef'i)!,
-	 6 => q!(?^u:'(.*)c(.*)'i)!,
+	1 => q!(?|(.{2,4}))!,
+	2 => q!Perl|JavaScript|(?:Flub|BCPL)!,
 );
 
 my($as_string);
 my($error_str);
 my($found);
-my($result, %re);
+my($re, $result, %re);
+my($s);
 
 for my $key (sort keys %input)
 {
@@ -64,16 +45,13 @@ for my $key (sort keys %input)
 
 	try
 	{
-		$result = $parser -> parse(re => $s);
-
-		$parser -> print_raw_tree;
-
+		$result		= $parser -> parse(re => $s);
 		$as_string	= $parser -> as_string;
 		$re{$key}	= $as_string;
 
 		say "result: $result (0 is success). as_string: $as_string";
 
-		for my $target ('foo', '?')
+		for my $target ('?')
 		{
 			$found = $parser -> find($target);
 
