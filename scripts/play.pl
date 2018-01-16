@@ -14,7 +14,8 @@ my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 my(%input)	=
 (
 	1 => q!(?|(.{2,4}))!,
-	2 => q!Perl|JavaScript|(?:Flub|BCPL)!,
+	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
+	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
 );
 
 my($as_string);

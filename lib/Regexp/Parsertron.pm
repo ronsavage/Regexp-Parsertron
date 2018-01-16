@@ -683,7 +683,7 @@ And its output:
 	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- query. Attributes: {text => "?", uid => "2"}
 	    |    |--- caret. Attributes: {text => "^", uid => "3"}
 	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
 	    |    |--- colon. Attributes: {text => ":", uid => "5"}
@@ -692,7 +692,7 @@ And its output:
 	Calling append(text => '|C++', uid => 6)
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- query. Attributes: {text => "?", uid => "2"}
 	    |    |--- caret. Attributes: {text => "^", uid => "3"}
 	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
 	    |    |--- colon. Attributes: {text => ":", uid => "5"}
@@ -701,7 +701,7 @@ And its output:
 	Name                  Uid  Text
 	----                  ---  ----
 	open_parenthesis        1  (
-	question_mark           2  ?
+	query           2  ?
 	caret                   3  ^
 	flag_set                4  i
 	colon                   5  :
@@ -1021,7 +1021,7 @@ Running it outputs:
 	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- query. Attributes: {text => "?", uid => "2"}
 	    |    |--- caret. Attributes: {text => "^", uid => "3"}
 	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
 	    |    |--- colon. Attributes: {text => ":", uid => "5"}
@@ -1045,7 +1045,7 @@ The extra output, showing node uid == 6, is:
 
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- question_mark. Attributes: {text => "?", uid => "2"}
+	    |    |--- query. Attributes: {text => "?", uid => "2"}
 	    |    |--- caret. Attributes: {text => "^", uid => "3"}
 	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
 	    |    |--- colon. Attributes: {text => ":", uid => "5"}
@@ -1295,7 +1295,7 @@ lexeme default					= latm => 1
 
 # G1 stuff.
 
-regexp							::= open_parenthesis question_mark caret flag_sequence colon entire_pattern close_parenthesis
+regexp							::= open_parenthesis query_caret flag_sequence colon entire_sequence close_parenthesis
 
 flag_sequence					::= positive_flags negative_flag_set
 
@@ -1330,15 +1330,15 @@ entire_pattern					::= comment_thingy					#  1.
 
 # 1: (?#text)
 
-comment_thingy					::= open_parenthesis question_mark hash comment close_parenthesis
+comment_thingy					::= open_parenthesis query_hash comment close_parenthesis
 
 comment							::= non_close_parenthesis*
 
 # 2: (?adlupimnsx-imnsx)
 #  & (?^alupimnsx)
 
-flag_thingy						::= open_parenthesis question_mark flag_set_1
-									| open_parenthesis question_mark caret flag_set_2 close_parenthesis
+flag_thingy						::= open_parenthesis query flag_set_1
+									| open_parenthesis query_caret flag_set_2 close_parenthesis
 
 flag_set_1						::= flag_sequence
 
@@ -1348,7 +1348,7 @@ flag_set_2						::= flag_sequence
 #  & (?adluimnsx-imnsx:pattern)
 #  & (?^aluimnsx:pattern)
 
-colon_thingy					::= open_parenthesis question_mark_colon pattern_sequence close_parenthesis
+colon_thingy					::= open_parenthesis query_colon pattern_sequence close_parenthesis
 
 pattern_sequence				::= pattern_set*
 
@@ -1384,30 +1384,30 @@ slash_pattern					::= slash pattern_sequence slash
 
 # 4: (?|pattern)
 
-vertical_bar_thingy				::= open_parenthesis question_mark_vertical_bar pattern_sequence close_parenthesis
+vertical_bar_thingy				::= open_parenthesis query_vertical_bar pattern_sequence close_parenthesis
 
 # 5: (?=pattern)
 
-equals_thingy					::= open_parenthesis question_mark equals pattern_sequence close_parenthesis
+equals_thingy					::= open_parenthesis query_equals pattern_sequence close_parenthesis
 
 # 6: (?!pattern)
 
-exclamation_mark_thingy			::= open_parenthesis question_mark exclamation_mark pattern_sequence close_parenthesis
+exclamation_mark_thingy			::= open_parenthesis query exclamation_mark pattern_sequence close_parenthesis
 
 # 7: (?<=pattern
 #  & \K
 
-less_or_equals_thingy			::= open_parenthesis question_mark less_or_equals close_parenthesis
+less_or_equals_thingy			::= open_parenthesis query less_or_equals close_parenthesis
 									| escaped_K
 
 # 8: (?<!pattern)
 
-less_exclamation_mark_thingy	::= open_parenthesis question_mark less_exclamation_mark close_parenthesis
+less_exclamation_mark_thingy	::= open_parenthesis query less_exclamation_mark close_parenthesis
 
 # 9: (?<NAME>pattern)
 #  & (?'NAME'pattern)
 
-named_capture_group_thingy		::= open_parenthesis question_mark named_capture_group close_parenthesis
+named_capture_group_thingy		::= open_parenthesis query named_capture_group close_parenthesis
 
 named_capture_group				::= single_quote capture_name single_quote
 									| less_than capture_name greater_than
@@ -1417,24 +1417,22 @@ capture_name					::= word
 # 10: \k<NAME>
 #  & \k'NAME'
 
-named_backreference_thingy		::= named_backreference
-
-named_backreference				::= escaped_k single_quote capture_name single_quote
-									| escaped_k less_than capture_name greater_than
+named_backreference_thingy		::= escaped_k less_than capture_name greater_than
+									| escaped_k single_quote capture_name single_quote
 
 # 11: (?{ code })
 
-single_code_thingy				::= open_parenthesis question_mark open_brace code close_brace close_parenthesis
+single_code_thingy				::= open_parenthesis query open_brace code close_brace close_parenthesis
 
 code							::= [[:print:]] # TODO: ATM.
 
 # 12: (??{ code })
 
-double_code_thingy				::= open_parenthesis question_mark question_mark open_brace code close_brace close_parenthesis
+double_code_thingy				::= open_parenthesis query query open_brace code close_brace close_parenthesis
 
 # 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
 
-recursive_subpattern_thingy		::= open_parenthesis question_mark parameter_number close_parenthesis
+recursive_subpattern_thingy		::= open_parenthesis query parameter_number close_parenthesis
 
 parameter_number				::= natural_number # 1, 2, ...
 									| minus natural_number
@@ -1448,13 +1446,13 @@ digit_sequence					::= digit_set*
 
 # 14: (?&NAME)
 
-recurse_thingy					::= open_parenthesis question_mark ampersand capture_name close_parenthesis
-									| open_parenthesis question_mark P greater_than capture_name close_parenthesis
+recurse_thingy					::= open_parenthesis query ampersand capture_name close_parenthesis
+									| open_parenthesis query P greater_than capture_name close_parenthesis
 
 # 15: (?(condition)yes-pattern|no-pattern)
 #  & (?(condition)yes-pattern)
 
-conditional_thingy				::= open_parenthesis question_mark condition close_parenthesis
+conditional_thingy				::= open_parenthesis query condition close_parenthesis
 condition						::= open_parenthesis natural_number close_parenthesis
 									| open_parenthesis named_capture_group close_parenthesis
 									| equals_thingy
@@ -1479,11 +1477,11 @@ an_R_name						::= open_parenthesis R ampersand capture_name close_parenthesis
 
 # 16: (?>pattern)
 
-greater_than_thingy				::= open_parenthesis question_mark greater_than close_parenthesis
+greater_than_thingy				::= open_parenthesis query greater_than close_parenthesis
 
 # 17: (?[ ])
 
-extended_bracketed_thingy		::= open_parenthesis question_mark open_bracket character_classes close_bracket close_parenthesis
+extended_bracketed_thingy		::= open_parenthesis query open_bracket character_classes close_bracket close_parenthesis
 
 character_classes				::= [[:print:]]
 
@@ -1524,9 +1522,6 @@ DEFINE						~ 'DEFINE'
 :lexeme						~ digit_set				pause => before		event => digit_set
 digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
 
-:lexeme						~ equals				pause => before		event => equals
-equals						~ '='
-
 :lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
 escaped_close_bracket		~ '\\' ']'
 
@@ -1553,9 +1548,6 @@ flag_set					~ [a-z]+
 
 :lexeme						~ greater_than			pause => before		event => greater_than
 greater_than				~ '>'
-
-:lexeme						~ hash					pause => before		event => hash
-hash						~ '#'
 
 :lexeme						~ less_or_equals		pause => before		event => less_or_equals
 less_or_equals				~ '<='
@@ -1593,14 +1585,23 @@ P							~ 'P'
 :lexeme						~ plus					pause => before		event => plus
 plus						~ '+'
 
-:lexeme						~ question_mark			pause => before		event => question_mark
-question_mark				~ '?'
+:lexeme						~ query					pause => before		event => query
+query						~ '?'
 
-:lexeme						~ question_mark_colon	pause => before		event => question_mark_colon	priority => 1
-question_mark_colon			~ '?:'
+:lexeme						~ query_caret			pause => before		event => query_caret		priority => 1
+query_caret					~ '?^'
 
-:lexeme						~ question_mark_vertical_bar	pause => before		event => question_mark_vertical_bar	priority => 1
-question_mark_vertical_bar	~ '?|'
+:lexeme						~ query_colon			pause => before		event => query_colon		priority => 1
+query_colon					~ '?:'
+
+:lexeme						~ query_equals			pause => before		event => query_equals		priority => 1
+query_equals				~ '?='
+
+:lexeme						~ query_hash			pause => before		event => query_hash			priority => 1
+query_hash					~ '?#'
+
+:lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar	priority => 1
+query_vertical_bar			~ '?|'
 
 :lexeme						~ R						pause => before		event => R
 R							~ 'R'
