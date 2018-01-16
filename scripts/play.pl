@@ -62,15 +62,10 @@ for my $key (sort keys %input)
 
 	next if ($error_str);
 
-	$result		= $parser -> parse(re => $s);
-	$error_str	= $parser -> error_str;
+	try
+	{
+		$result = $parser -> parse(re => $s);
 
-	if ($error_str)
-	{
-		say "Marpa error: $error_str";
-	}
-	else
-	{
 		$parser -> print_raw_tree;
 
 		$as_string	= $parser -> as_string;
@@ -84,7 +79,15 @@ for my $key (sort keys %input)
 
 			say "uids of nodes whose text matches $target: ", join(', ', @$found);
 		}
+
+		$result = $parser -> validate;
+
+		say "Result of calling validate() on $s: $result (0 is success)";
 	}
+	catch
+	{
+		say "Marpa error: $error_str";
+	};
 
 	$parser -> reset;
 }

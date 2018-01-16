@@ -23,7 +23,9 @@ $parser -> print_cooked_tree;
 
 my($as_string) = $parser -> as_string;
 
-say "Original:  $re. Result: $result. (0 is success)";
-say "as_string: $as_string";
+say "Original:    $re. Result: $result (0 is success)";
+say "as_string(): $as_string";
 
-say 'Warning: ', $parser -> warning_str;
+$result = $parser -> validate;
+
+say "validate():  Result: $result (0 is success)";

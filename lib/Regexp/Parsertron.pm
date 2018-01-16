@@ -552,6 +552,30 @@ sub _string2re
 
 # ------------------------------------------------
 
+sub validate
+{
+	my($self)	= @_;
+	my($re)		= $self -> as_string;
+
+	my($result);
+
+	try
+	{
+		$result = ('x' =~ $re) ? 0 : 0; # Use any test to force Perl to process the Regexp.
+	}
+	catch
+	{
+		$result = 1; # Failure.
+	};
+
+	# Return 0 for success and 1 for failure.
+
+	return $result;
+
+} # End of validate.
+
+# ------------------------------------------------
+
 sub _validate_event
 {
 	my($self, $stringref, $start, $span, $pos) = @_;
@@ -623,6 +647,7 @@ This is scripts/synopsis.pl:
 
 	say "Original:  $re. Result: $result. (0 is success)";
 	say "as_string: $as_string";
+	validate():  Result: 0 (0 is success)
 
 And its output:
 
