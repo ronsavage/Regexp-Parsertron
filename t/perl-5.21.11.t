@@ -26,7 +26,7 @@ my(@lines)		= read_lines($input_file);
 my($parser)		= Regexp::Parsertron -> new;
 my($count)		= 0;
 
-my($expected);
+my($expectation);
 my(@fields);
 my($got);
 my($message);
@@ -42,14 +42,18 @@ for my $line (@lines)
 
 	next if ( ($line eq '') || ($line =~ /^#/) || ($line =~ /^__END__/) );
 
-	@fields = split(/\t/, $line);
-	$test	= $fields[0];
+	@fields 		= split(/\t/, $line);
+	$test			= $fields[0];
+	$expectation	= $fields[2]; # See xt/author/regexp.txt.
+
+	if ($expectation !~ /[yn]/)
+	{
+		ok(1, "Error expected. Skipping $test");
+	}
 
 	# Count all tests, not just successful ones.
 	# This makes it easier to work on the scripts when it's in xt/authors/,
 	# since then the prints and says below can be activated.
-
-	$count++;
 
 	$stderr = '';
 
@@ -85,6 +89,8 @@ for my $line (@lines)
 
 		if ($result == 0)
 		{
+			$count++;
+
 			$got		= $parser -> as_string;
 			$message	= "Count: $count: re: $re. got: $got";
 
