@@ -17,6 +17,7 @@ my(%input)	=
 	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
 	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
 	4 => q!!,
+	5 => q|(?a:b)|,
 );
 
 my($as_string);
@@ -62,7 +63,7 @@ for my $key (sort keys %input)
 
 		$result = $parser -> validate;
 
-		say "Result of calling validate() on $s: $result (0 is success)";
+		say "Calling validate() on $s: $result (0 is success)";
 	}
 	catch
 	{

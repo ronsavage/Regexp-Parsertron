@@ -1060,6 +1060,10 @@ See t/get.set.t for sample code.
 
 =back
 
+=head2 Can I add a subtree to the tree?
+
+Not yet.
+
 =head2 Does this module ever use \Q...\E to quote regexp metacharacters?
 
 No.
