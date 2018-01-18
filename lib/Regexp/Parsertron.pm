@@ -1450,8 +1450,8 @@ digit_sequence					::= digit_set*
 
 # 14: (?&NAME)
 
-recurse_thingy					::= open_parenthesis query ampersand capture_name close_parenthesis
-									| open_parenthesis query P greater_than capture_name close_parenthesis
+recurse_thingy					::= open_parenthesis query_ampersand capture_name close_parenthesis
+									| open_parenthesis query_P greater_than capture_name close_parenthesis
 
 # 15: (?(condition)yes-pattern|no-pattern)
 #  & (?(condition)yes-pattern)
@@ -1477,15 +1477,15 @@ R_pattern						::= R R_suffix
 
 R_suffix						::= natural_number
 
-an_R_name						::= open_parenthesis R ampersand capture_name close_parenthesis
+an_R_name						::= open_parenthesis R_ampersand capture_name close_parenthesis
 
 # 16: (?>pattern)
 
-greater_than_thingy				::= open_parenthesis query greater_than close_parenthesis
+greater_than_thingy				::= open_parenthesis query_greater_than close_parenthesis
 
 # 17: (?[ ])
 
-extended_bracketed_thingy		::= open_parenthesis query open_bracket character_classes close_bracket close_parenthesis
+extended_bracketed_thingy		::= open_parenthesis query_open_bracket character_classes close_bracket close_parenthesis
 
 character_classes				::= [[:print:]]
 
@@ -1498,9 +1498,6 @@ pattern_thingy					::= pattern_set*
 # Policy: Event names are always the same as the name of the corresponding lexeme.
 #
 # Note:   Tokens of the form '_xxx_', if any, are replaced with version-dependent values.
-
-:lexeme						~ ampersand				pause => before		event => ampersand
-ampersand					~ '^'
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
@@ -1571,14 +1568,14 @@ open_bracket				~ '['
 :lexeme						~ open_parenthesis		pause => before		event => open_parenthesis
 open_parenthesis			~ '('
 
-:lexeme						~ P						pause => before		event => P
-P							~ 'P'
-
 :lexeme						~ plus					pause => before		event => plus
 plus						~ '+'
 
 :lexeme						~ query					pause => before		event => query
 query						~ '?'
+
+:lexeme						~ query_ampersand		pause => before		event => query_ampersand	priority => 1
+query_ampersand				~ '?&'
 
 :lexeme						~ query_caret			pause => before		event => query_caret		priority => 1
 query_caret					~ '?^'
@@ -1592,26 +1589,38 @@ query_equals				~ '?='
 :lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark	priority => 1
 query_exclamation_mark		~ '?='
 
-:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals	priority => 1
-query_less_or_equals		~ '?<='
-
-:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark	priority => 1
-query_less_exclamation_mark	~ '?<='
+:lexeme						~ query_greater_than	pause => before		event => query_greater_than	priority => 1
+query_greater_than			~ '?>'
 
 :lexeme						~ query_hash			pause => before		event => query_hash			priority => 1
 query_hash					~ '?#'
 
-:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace	priority => 1
-query_query_open_brace		~ '?{{'
+:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark	priority => 1
+query_less_exclamation_mark	~ '?<='
+
+:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals	priority => 1
+query_less_or_equals		~ '?<='
 
 :lexeme						~ query_open_brace		pause => before		event => query_open_brace	priority => 1
 query_open_brace			~ '?{'
+
+:lexeme						~ query_open_bracket	pause => before		event => query_open_bracket	priority => 1
+query_open_bracket			~ '?['
+
+:lexeme						~ query_P				pause => before		event => query_P			priority => 1
+query_P						~ '?P'
+
+:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace	priority => 1
+query_query_open_brace		~ '?{{'
 
 :lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar	priority => 1
 query_vertical_bar			~ '?|'
 
 :lexeme						~ R						pause => before		event => R
-R							~ 'R'
+R							~ 'R&'
+
+:lexeme						~ R_ampersand			pause => before		event => R_ampersand
+R_ampersand					~ 'R&'
 
 :lexeme						~ single_quote			pause => before		event => single_quote
 single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
