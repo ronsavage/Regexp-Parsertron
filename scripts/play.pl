@@ -17,7 +17,8 @@ my(%input)	=
 	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
 	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
 	4 => q!!,
-	5 => q|(?a:b)|,
+	5 => q!(?a:b)!,
+	6 => q!(?:(?<n>foo)|(?<n>bar))|!
 );
 
 my($as_string);

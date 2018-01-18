@@ -1411,10 +1411,10 @@ less_exclamation_mark_thingy	::= open_parenthesis query_less_exclamation_mark cl
 # 9: (?<NAME>pattern)
 #  & (?'NAME'pattern)
 
-named_capture_group_thingy		::= open_parenthesis query named_capture_group close_parenthesis
+named_capture_group_thingy		::= open_parenthesis named_capture_group close_parenthesis
 
-named_capture_group				::= single_quote capture_name single_quote
-									| less_than capture_name greater_than
+named_capture_group				::= query_single_quote capture_name single_quote
+									| query_less_than capture_name greater_than
 
 capture_name					::= word
 
@@ -1574,56 +1574,62 @@ plus						~ '+'
 :lexeme						~ query					pause => before		event => query
 query						~ '?'
 
-:lexeme						~ query_ampersand		pause => before		event => query_ampersand	priority => 1
+:lexeme						~ query_ampersand		pause => before		event => query_ampersand
 query_ampersand				~ '?&'
 
-:lexeme						~ query_caret			pause => before		event => query_caret		priority => 1
+:lexeme						~ query_caret			pause => before		event => query_caret
 query_caret					~ '?^'
 
-:lexeme						~ query_colon			pause => before		event => query_colon		priority => 1
+:lexeme						~ query_colon			pause => before		event => query_colon
 query_colon					~ '?:'
 
-:lexeme						~ query_equals			pause => before		event => query_equals		priority => 1
+:lexeme						~ query_equals			pause => before		event => query_equals
 query_equals				~ '?='
 
-:lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark	priority => 1
+:lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark
 query_exclamation_mark		~ '?='
 
-:lexeme						~ query_greater_than	pause => before		event => query_greater_than	priority => 1
+:lexeme						~ query_greater_than	pause => before		event => query_greater_than
 query_greater_than			~ '?>'
 
-:lexeme						~ query_hash			pause => before		event => query_hash			priority => 1
+:lexeme						~ query_hash			pause => before		event => query_hash
 query_hash					~ '?#'
 
-:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark	priority => 1
+:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark
 query_less_exclamation_mark	~ '?<='
 
-:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals	priority => 1
+:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals
 query_less_or_equals		~ '?<='
 
-:lexeme						~ query_open_brace		pause => before		event => query_open_brace	priority => 1
+:lexeme						~ query_less_than		pause => before		event => query_less_than
+query_less_than				~ '?<'
+
+:lexeme						~ query_open_brace		pause => before		event => query_open_brace
 query_open_brace			~ '?{'
 
-:lexeme						~ query_open_bracket	pause => before		event => query_open_bracket	priority => 1
+:lexeme						~ query_open_bracket	pause => before		event => query_open_bracket
 query_open_bracket			~ '?['
 
-:lexeme						~ query_P				pause => before		event => query_P			priority => 1
+:lexeme						~ query_P				pause => before		event => query_P
 query_P						~ '?P'
 
-:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace	priority => 1
+:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace
 query_query_open_brace		~ '?{{'
 
-:lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar	priority => 1
+:lexeme						~ query_single_quote	pause => before		event => query_single_quote
+query_single_quote			~ "?'"
+
+:lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar
 query_vertical_bar			~ '?|'
 
 :lexeme						~ R						pause => before		event => R
-R							~ 'R&'
+R							~ 'R'
 
 :lexeme						~ R_ampersand			pause => before		event => R_ampersand
 R_ampersand					~ 'R&'
 
 :lexeme						~ single_quote			pause => before		event => single_quote
-single_quote				~ [\'] # The '\' is for UltraEdit's syntax hiliter.
+single_quote				~ "'"
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
