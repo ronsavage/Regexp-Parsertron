@@ -16,6 +16,7 @@ my(%input)	=
 	1 => q!(?|(.{2,4}))!,
 	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
 	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
+	4 => q!!,
 );
 
 my($as_string);
@@ -67,6 +68,8 @@ for my $key (sort keys %input)
 	{
 		say "Marpa error: $error_str";
 	};
+
+	say '';
 
 	$parser -> reset;
 }

@@ -1309,7 +1309,7 @@ negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_pattern					::= comment_thingy					#  1.
+entire_sequence					::= comment_thingy					#  1.
 									| flag_thingy					#  2.
 									| colon_thingy					#  3.
 									| vertical_bar_thingy			#  4.
@@ -1318,7 +1318,7 @@ entire_pattern					::= comment_thingy					#  1.
 									| less_or_equals_thingy			#  7.
 									| less_exclamation_mark_thingy	#  8.
 									| named_capture_group_thingy	#  9.
-									| named_backreference_thingy	# 10.
+#									| named_backreference_thingy	# 10.
 									| single_code_thingy			# 11.
 									| double_code_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
@@ -1392,7 +1392,7 @@ equals_thingy					::= open_parenthesis query_equals pattern_sequence close_paren
 
 # 6: (?!pattern)
 
-exclamation_mark_thingy			::= open_parenthesis query exclamation_mark pattern_sequence close_parenthesis
+exclamation_mark_thingy			::= open_parenthesis query_exclamation_mark pattern_sequence close_parenthesis
 
 # 7: (?<=pattern
 #  & \K
@@ -1417,8 +1417,8 @@ capture_name					::= word
 # 10: \k<NAME>
 #  & \k'NAME'
 
-named_backreference_thingy		::= escaped_k less_than capture_name greater_than
-									| escaped_k single_quote capture_name single_quote
+#named_backreference_thingy		::= escaped_k less_than capture_name greater_than
+#									| escaped_k single_quote capture_name single_quote
 
 # 11: (?{ code })
 
@@ -1528,8 +1528,8 @@ escaped_close_bracket		~ '\\' ']'
 :lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
 escaped_close_parenthesis	~ '\\)'
 
-:lexeme						~ escaped_k				pause => before		event => escaped_k
-escaped_k					~ '\\k'
+#:lexeme						~ escaped_k				pause => before		event => escaped_k
+#escaped_k					~ '\\k'
 
 :lexeme						~ escaped_K				pause => before		event => escaped_K
 escaped_K					~ '\\K'
@@ -1539,9 +1539,6 @@ escaped_open_parenthesis	~ '\\)'
 
 :lexeme						~ escaped_slash			pause => before		event => escaped_slash
 escaped_slash				~ '\\\\'
-
-:lexeme						~ exclamation_mark		pause => before		event => exclamation_mark
-exclamation_mark			~ '!'
 
 :lexeme						~ flag_set				pause => before		event => flag_set
 flag_set					~ [a-z]+
@@ -1596,6 +1593,10 @@ query_colon					~ '?:'
 
 :lexeme						~ query_equals			pause => before		event => query_equals		priority => 1
 query_equals				~ '?='
+
+:lexeme						~ query_exclamation_mark	pause => before		event => query_exclamation_mark	priority => 1
+query_exclamation_mark		~ '?='
+
 
 :lexeme						~ query_hash			pause => before		event => query_hash			priority => 1
 query_hash					~ '?#'

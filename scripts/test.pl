@@ -82,8 +82,10 @@ my(@test)	=
 },
 {
 	count		=> 15,
-	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar))\k<n>)',
-	re			=> qr/(?:(?<n>foo)|(?<n>bar))\k<n>/,
+#	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar))\k<n>)',
+#	re			=> qr/(?:(?<n>foo)|(?<n>bar))\k<n>/,
+	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar)))',
+	re			=> qr/(?:(?<n>foo)|(?<n>bar))/,
 },
 {
 	count		=> 16,
@@ -114,7 +116,7 @@ for my $test (@test)
 
 	if ($$test{count} == 12)
 	{
-		$parser -> append(text => '|C++', uid => 6);
+		$parser -> append(text => '|C++', uid => 5);
 	}
 
 	if ($result == 0)
@@ -132,7 +134,7 @@ for my $test (@test)
 		say "Test $$test{count} failed to return 0 from parse(). ";
 	}
 
-	say '-' x 50;
+	say '';
 
 	# Reset for next test.
 
