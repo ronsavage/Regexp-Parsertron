@@ -100,7 +100,7 @@ for my $test (@test)
 
 	if ($count == 12)
 	{
-		$parser -> append(text => '|C++', uid => 6);
+		$parser -> append(text => '|C++', uid => 5);
 	}
 
 	if ($result == 0)
