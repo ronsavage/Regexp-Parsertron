@@ -1397,12 +1397,12 @@ exclamation_mark_thingy			::= open_parenthesis query_exclamation_mark pattern_se
 # 7: (?<=pattern
 #  & \K
 
-less_or_equals_thingy			::= open_parenthesis query less_or_equals close_parenthesis
+less_or_equals_thingy			::= open_parenthesis query_less_or_equals close_parenthesis
 									| escaped_K
 
 # 8: (?<!pattern)
 
-less_exclamation_mark_thingy	::= open_parenthesis query less_exclamation_mark close_parenthesis
+less_exclamation_mark_thingy	::= open_parenthesis query_less_exclamation_mark close_parenthesis
 
 # 9: (?<NAME>pattern)
 #  & (?'NAME'pattern)
@@ -1422,13 +1422,13 @@ capture_name					::= word
 
 # 11: (?{ code })
 
-single_code_thingy				::= open_parenthesis query open_brace code close_brace close_parenthesis
+single_code_thingy				::= open_parenthesis query_open_brace code close_brace close_parenthesis
 
 code							::= [[:print:]] # TODO: ATM.
 
 # 12: (??{ code })
 
-double_code_thingy				::= open_parenthesis query query open_brace code close_brace close_parenthesis
+double_code_thingy				::= open_parenthesis query_query_open_brace code close_brace close_parenthesis
 
 # 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
 
@@ -1546,12 +1546,6 @@ flag_set					~ [a-z]+
 :lexeme						~ greater_than			pause => before		event => greater_than
 greater_than				~ '>'
 
-:lexeme						~ less_or_equals		pause => before		event => less_or_equals
-less_or_equals				~ '<='
-
-:lexeme						~ less_exclamation_mark	pause => before		event => less_exclamation_mark
-less_exclamation_mark		~ '<!'
-
 :lexeme						~ less_than				pause => before		event => less_than
 less_than					~ '<'
 
@@ -1566,9 +1560,6 @@ non_close_parenthesis		~ [^)]
 
 :lexeme						~ non_zero_digit		pause => before		event => non_zero_digit
 non_zero_digit				~ [1-9]
-
-:lexeme						~ open_brace			pause => before		event => open_brace
-open_brace					~ '{'
 
 :lexeme						~ open_bracket			pause => before		event => open_bracket
 open_bracket				~ '['
@@ -1594,12 +1585,23 @@ query_colon					~ '?:'
 :lexeme						~ query_equals			pause => before		event => query_equals		priority => 1
 query_equals				~ '?='
 
-:lexeme						~ query_exclamation_mark	pause => before		event => query_exclamation_mark	priority => 1
+:lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark	priority => 1
 query_exclamation_mark		~ '?='
 
+:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals	priority => 1
+query_less_or_equals		~ '?<='
+
+:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark	priority => 1
+query_less_exclamation_mark	~ '?<='
 
 :lexeme						~ query_hash			pause => before		event => query_hash			priority => 1
 query_hash					~ '?#'
+
+:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace	priority => 1
+query_query_open_brace		~ '?{{'
+
+:lexeme						~ query_open_brace		pause => before		event => query_open_brace	priority => 1
+query_open_brace			~ '?{'
 
 :lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar	priority => 1
 query_vertical_bar			~ '?|'
