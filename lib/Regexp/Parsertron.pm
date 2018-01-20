@@ -1547,9 +1547,6 @@ flag_set					~ [a-z]+
 :lexeme						~ greater_than			pause => before		event => greater_than
 greater_than				~ '>'
 
-:lexeme						~ less_than				pause => before		event => less_than
-less_than					~ '<'
-
 :lexeme						~ minus					pause => before		event => minus
 minus						~ '-'
 
@@ -1617,7 +1614,7 @@ query_P						~ '?P'
 query_query_open_brace		~ '?{{'
 
 :lexeme						~ query_single_quote	pause => before		event => query_single_quote
-query_single_quote			~ "?'"
+query_single_quote			~ '?' [']	# Use another ' for the UltraEdit syntiax hiliter.
 
 :lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar
 query_vertical_bar			~ '?|'
@@ -1629,7 +1626,7 @@ R							~ 'R'
 R_ampersand					~ 'R&'
 
 :lexeme						~ single_quote			pause => before		event => single_quote
-single_quote				~ "'"
+single_quote				~ [']	# Use another ' for the UltraEdit syntiax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'

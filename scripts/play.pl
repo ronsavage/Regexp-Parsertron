@@ -13,11 +13,11 @@ use Try::Tiny;
 my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 my(%input)	=
 (
-	1 => q!(?|(.{2,4}))!,
-	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
-	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
-	4 => q!!,
-	5 => q!(?a:b)!,
+#	1 => q!(?|(.{2,4}))!,
+#	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
+#	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
+#	4 => q!!,
+#	5 => q!(?a:b)!,
 	6 => q!(?:(?<n>foo)|(?<n>bar))|!
 );
 
