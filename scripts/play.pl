@@ -59,7 +59,7 @@ for my $key (sort keys %input)
 		{
 			$found = $parser -> find($target);
 
-			say "uids of nodes whose text matches $target: ", join(', ', @$found);
+			say "uids of nodes whose text matches =>$target<=: ", join(', ', @$found);
 		}
 
 		$result = $parser -> validate;

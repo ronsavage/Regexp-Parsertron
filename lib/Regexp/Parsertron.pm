@@ -621,13 +621,14 @@ sub _validate_event
 		return ($event_name, $span, $pos);
 	}
 
-	my($lexeme)        = substr($$stringref, $start, $span);
-	my($line, $column) = $self -> recce -> line_column($start);
-	my($literal)       = $self -> _next_few_chars($stringref, $start + $span);
-	my($message)       = "Location: ($line, $column). Lexeme: |$lexeme|. Next few chars: |$literal|";
-	$message           = "$message. Events: $event_count. Names: ";
+	my($lexeme)			= substr($$stringref, $start, $span);
+	my($line, $column)	= $self -> recce -> line_column($start);
+	my($literal)		= $self -> _next_few_chars($stringref, $start + $span);
+	my($message)		= "Location: ($line, $column). Lexeme: =>$lexeme<=. Events: $event_count. Names: ";
+	$message			.= join(', ', @event_name);
+	$message			.= ". Next few chars: =>$literal<=";
 
-	say $message, join(', ', @event_name) if ($self -> verbose > 1);
+	say $message if ($self -> verbose > 1);
 
 	return ($event_name, $span, $pos);
 
@@ -1321,8 +1322,8 @@ entire_sequence					::= comment_thingy					#  1.
 									| exclamation_mark_thingy		#  6.
 									| less_or_equals_thingy			#  7.
 									| less_exclamation_mark_thingy	#  8.
-									| named_capture_group_thingy	#  9.
-#									| named_backreference_thingy	# 10.
+#									| named_capture_group_thingy	#  9. See elsewhere.
+#									| named_backreference_thingy	# 10.	Ditto.
 									| single_code_thingy			# 11.
 									| double_code_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
@@ -1330,7 +1331,7 @@ entire_sequence					::= comment_thingy					#  1.
 									| conditional_thingy			# 15.
 									| greater_than_thingy			# 16.
 									| extended_bracketed_thingy		# 17.
-									| pattern_thingy				# 99.
+									| pattern_sequence				# 99.
 
 # 1: (?#text)
 
@@ -1364,7 +1365,8 @@ pattern_item					::= bracket_pattern
 									| slash_pattern
 									| character_sequence
 
-bracket_pattern					::= open_bracket characters_in_set close_bracket
+bracket_pattern					::= named_capture_group_thingy
+									|| open_bracket characters_in_set close_bracket
 
 # Perl accepts /()/.
 # Perl does not accept /[]/.
@@ -1489,10 +1491,6 @@ extended_bracketed_thingy		::= open_parenthesis query_open_bracket character_cla
 
 character_classes				::= [[:print:]]
 
-# 99.
-
-pattern_thingy					::= pattern_set*
-
 # L0 stuff, in alphabetical order.
 #
 # Policy: Event names are always the same as the name of the corresponding lexeme.
@@ -1577,7 +1575,7 @@ query_ampersand				~ '?&'
 :lexeme						~ query_caret			pause => before		event => query_caret
 query_caret					~ '?^'
 
-:lexeme						~ query_colon			pause => before		event => query_colon
+:lexeme						~ query_colon			pause => before		event => query_colon		priority => 1
 query_colon					~ '?:'
 
 :lexeme						~ query_equals			pause => before		event => query_equals
@@ -1598,7 +1596,7 @@ query_less_exclamation_mark	~ '?<='
 :lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals
 query_less_or_equals		~ '?<='
 
-:lexeme						~ query_less_than		pause => before		event => query_less_than
+:lexeme						~ query_less_than		pause => before		event => query_less_than	priority => 1
 query_less_than				~ '?<'
 
 :lexeme						~ query_open_brace		pause => before		event => query_open_brace
