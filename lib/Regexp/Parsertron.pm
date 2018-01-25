@@ -288,6 +288,7 @@ sub parse
 			grammar				=> $self -> grammar,
 			ranking_method		=> 'high_rule_only',
 			semantics_package	=> 'Regexp::Parsertron::Actions',
+			trace_terminals		=> 99,
 		})
 	);
 
@@ -1374,9 +1375,9 @@ pattern_set						::= pattern_item
 									| pattern_item '|'
 
 pattern_item					::= bracket_pattern
-									| named_capture_group_pattern	#action => named_capture_group_pattern
+#									| named_capture_group_pattern	#action => named_capture_group_pattern
 									| parenthesis_pattern			#action => parenthesis_pattern
-									| slash_pattern
+									|| slash_pattern
 									| character_sequence			#action => character_sequence
 
 bracket_pattern					::= open_bracket characters_in_set close_bracket
@@ -1398,7 +1399,18 @@ simple_character_sequence		::= escaped_close_parenthesis
 									| vertical_bar
 									| character_set
 
-parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
+parenthesis_pattern				::= open_parenthesis named_capture_group close_parenthesis
+									|| open_parenthesis pattern_sequence close_parenthesis
+
+# 9: (?<NAME>pattern)
+#  & (?'NAME'pattern)
+
+#named_capture_group_pattern		::= open_parenthesis named_capture_group close_parenthesis
+
+named_capture_group				::= query_single_quote capture_name single_quote	#action => named_capture_group
+									| query_less_than capture_name greater_than		#action => named_capture_group
+
+capture_name					::= word
 
 slash_pattern					::= slash pattern_sequence slash
 
@@ -1423,16 +1435,6 @@ less_or_equals_thingy			::= open_parenthesis query_less_or_equals close_parenthe
 # 8: (?<!pattern)
 
 less_exclamation_mark_thingy	::= open_parenthesis query_less_exclamation_mark close_parenthesis
-
-# 9: (?<NAME>pattern)
-#  & (?'NAME'pattern)
-
-named_capture_group_pattern		::= open_parenthesis named_capture_group close_parenthesis
-
-named_capture_group				::= query_single_quote capture_name single_quote	#action => named_capture_group
-									| query_less_than capture_name greater_than		#action => named_capture_group
-
-capture_name					::= word
 
 # 10: \k<NAME>
 #  & \k'NAME'
@@ -1514,7 +1516,7 @@ character_classes				::= [[:print:]]
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
 
-:lexeme						~ character_set			pause => before		event => character_set
+:lexeme						~ character_set			pause => before		event => character_set						priority => -10
 character_set				~ [^()/]*
 
 :lexeme						~ close_brace			pause => before		event => close_brace
