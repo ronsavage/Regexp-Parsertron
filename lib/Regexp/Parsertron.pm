@@ -284,9 +284,9 @@ sub parse
 	(
 		Marpa::R2::Scanless::R -> new
 		({
-			exhaustion     => 'event',
-			grammar        => $self -> grammar,
-			ranking_method => 'high_rule_only',
+			exhaustion			=> 'event',
+			grammar				=> $self -> grammar,
+			ranking_method		=> 'high_rule_only',
 			semantics_package	=> 'Regexp::Parsertron::Actions',
 		})
 	);
@@ -1325,7 +1325,7 @@ negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_sequence					::= comment_thingy					#  1.
+entire_sequence					::= comment_thingy					#  1. Extended patterns.
 									| flag_thingy					#  2.
 									| colon_thingy					#  3.
 									| vertical_bar_thingy			#  4.
@@ -1342,7 +1342,7 @@ entire_sequence					::= comment_thingy					#  1.
 									| conditional_thingy			# 15.
 									| greater_than_thingy			# 16.
 									| extended_bracketed_thingy		# 17.
-									| pattern_sequence				# Left overs.
+									| pattern_sequence				# 99. Non-extended patterns.
 
 # 1: (?#text)
 
@@ -1365,6 +1365,8 @@ flag_set_2						::= flag_sequence
 #  & (?^aluimnsx:pattern)
 
 colon_thingy					::= open_parenthesis query_colon pattern_sequence close_parenthesis
+
+# 99. Non-extended patterns.
 
 pattern_sequence				::= pattern_set*					#action => pattern_sequence
 
@@ -1641,7 +1643,7 @@ single_quote				~ [']	# Use another ' for the UltraEdit syntiax hiliter.
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
 
-:lexeme						~ vertical_bar			pause => before		event => vertical_bar	priority => 1
+:lexeme						~ vertical_bar			pause => before		event => vertical_bar						priority => 1
 vertical_bar				~ '|'
 
 :lexeme						~ word					pause => before		event => word
