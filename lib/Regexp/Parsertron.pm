@@ -159,8 +159,6 @@ sub _add_daughter
 
 	$node -> meta($attributes);
 
-	say "Adding $event_name to tree. " if ($self -> verbose > 1);
-
 	if ($event_name =~ /^close_(?:bracket|parenthesis)$/)
 	{
 		$self -> current_node($self -> current_node -> parent);
@@ -289,6 +287,7 @@ sub parse
 			exhaustion     => 'event',
 			grammar        => $self -> grammar,
 			ranking_method => 'high_rule_only',
+			semantics_package	=> 'Regexp::Parsertron::Actions',
 		})
 	);
 
@@ -382,6 +381,14 @@ sub _process
 
 	say "'$string_re'. " if ($self -> verbose);
 
+	if ($self -> verbose > 1)
+	{
+		my($format) = '%-10s  %-5s  %-15s  %-6s  %-20s  %s';
+
+		say sprintf($format, '  Location', 'Width', 'Lexeme', 'Events', 'Names', 'Next few chars');
+
+	}
+
 	my($ref_re)		= \"$string_re"; # Use " in comment for UltraEdit.
 	my($length)		= length($string_re);
 
@@ -412,8 +419,6 @@ sub _process
 		$pos	= $self -> recce -> lexeme_read($event_name);
 
 		die "Marpa lexeme_read($event_name) rejected lexeme '$lexeme'\n" if (! defined $pos);
-
-		say "event_name: $event_name. lexeme: $lexeme. " if ($self -> verbose > 1);
 
 		$self -> _add_daughter($event_name, {text => $lexeme});
    }
@@ -624,11 +629,17 @@ sub _validate_event
 	my($lexeme)			= substr($$stringref, $start, $span);
 	my($line, $column)	= $self -> recce -> line_column($start);
 	my($literal)		= $self -> _next_few_chars($stringref, $start + $span);
-	my($message)		= "Location: ($line, $column). Lexeme: =>$lexeme<=. Events: $event_count. Names: ";
-	$message			.= join(', ', @event_name);
-	$message			.= ". Next few chars: =>$literal<=";
+	my($message)		= "Location: ($line, $column). Lexeme: $lexeme. Events: $event_count. Names: ";
+	my($name_list)		= join(', ', @event_name);
+	$message			.= ". Next few chars: $literal";
 
-	say $message if ($self -> verbose > 1);
+	if ($self -> verbose > 1)
+	{
+		my($format) = '%4d, %4d  %5d  %-15s  %6d  %-20s  %s';
+
+		say sprintf($format, $line, $column, length($lexeme), $lexeme, $event_count, $name_list, $literal);
+
+	}
 
 	return ($event_name, $span, $pos);
 
@@ -1331,7 +1342,7 @@ entire_sequence					::= comment_thingy					#  1.
 									| conditional_thingy			# 15.
 									| greater_than_thingy			# 16.
 									| extended_bracketed_thingy		# 17.
-									| pattern_sequence				# 99.
+									| pattern_sequence				# Left overs.
 
 # 1: (?#text)
 
@@ -1355,18 +1366,18 @@ flag_set_2						::= flag_sequence
 
 colon_thingy					::= open_parenthesis query_colon pattern_sequence close_parenthesis
 
-pattern_sequence				::= pattern_set*
+pattern_sequence				::= pattern_set*					#action => pattern_sequence
 
 pattern_set						::= pattern_item
 									| pattern_item '|'
 
 pattern_item					::= bracket_pattern
-									| parenthesis_pattern
+									| named_capture_group_pattern	#action => named_capture_group_pattern
+									| parenthesis_pattern			#action => parenthesis_pattern
 									| slash_pattern
-									| character_sequence
+									| character_sequence			#action => character_sequence
 
-bracket_pattern					::= named_capture_group_thingy
-									|| open_bracket characters_in_set close_bracket
+bracket_pattern					::= open_bracket characters_in_set close_bracket
 
 # Perl accepts /()/.
 # Perl does not accept /[]/.
@@ -1382,6 +1393,7 @@ simple_character_sequence		::= escaped_close_parenthesis
 									| escaped_open_parenthesis
 									| escaped_slash
 									| caret
+									| vertical_bar
 									| character_set
 
 parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
@@ -1413,10 +1425,10 @@ less_exclamation_mark_thingy	::= open_parenthesis query_less_exclamation_mark cl
 # 9: (?<NAME>pattern)
 #  & (?'NAME'pattern)
 
-named_capture_group_thingy		::= open_parenthesis named_capture_group close_parenthesis
+named_capture_group_pattern		::= open_parenthesis named_capture_group close_parenthesis
 
-named_capture_group				::= query_single_quote capture_name single_quote
-									| query_less_than capture_name greater_than
+named_capture_group				::= query_single_quote capture_name single_quote	#action => named_capture_group
+									| query_less_than capture_name greater_than		#action => named_capture_group
 
 capture_name					::= word
 
@@ -1569,52 +1581,52 @@ plus						~ '+'
 :lexeme						~ query					pause => before		event => query
 query						~ '?'
 
-:lexeme						~ query_ampersand		pause => before		event => query_ampersand
+:lexeme						~ query_ampersand		pause => before		event => query_ampersand					priority => 1
 query_ampersand				~ '?&'
 
-:lexeme						~ query_caret			pause => before		event => query_caret
+:lexeme						~ query_caret			pause => before		event => query_caret						priority => 1
 query_caret					~ '?^'
 
-:lexeme						~ query_colon			pause => before		event => query_colon		priority => 1
+:lexeme						~ query_colon			pause => before		event => query_colon						priority => 1
 query_colon					~ '?:'
 
-:lexeme						~ query_equals			pause => before		event => query_equals
+:lexeme						~ query_equals			pause => before		event => query_equals						priority => 1
 query_equals				~ '?='
 
-:lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark
+:lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark				priority => 1
 query_exclamation_mark		~ '?='
 
-:lexeme						~ query_greater_than	pause => before		event => query_greater_than
+:lexeme						~ query_greater_than	pause => before		event => query_greater_than					priority => 1
 query_greater_than			~ '?>'
 
-:lexeme						~ query_hash			pause => before		event => query_hash
+:lexeme						~ query_hash			pause => before		event => query_hash							priority => 1
 query_hash					~ '?#'
 
-:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark
+:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark	priority => 1
 query_less_exclamation_mark	~ '?<='
 
-:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals
+:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals				priority => 1
 query_less_or_equals		~ '?<='
 
-:lexeme						~ query_less_than		pause => before		event => query_less_than	priority => 1
+:lexeme						~ query_less_than		pause => before		event => query_less_than					priority => 1
 query_less_than				~ '?<'
 
-:lexeme						~ query_open_brace		pause => before		event => query_open_brace
+:lexeme						~ query_open_brace		pause => before		event => query_open_brace					priority => 1
 query_open_brace			~ '?{'
 
-:lexeme						~ query_open_bracket	pause => before		event => query_open_bracket
+:lexeme						~ query_open_bracket	pause => before		event => query_open_bracket					priority => 1
 query_open_bracket			~ '?['
 
-:lexeme						~ query_P				pause => before		event => query_P
+:lexeme						~ query_P				pause => before		event => query_P							priority => 1
 query_P						~ '?P'
 
-:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace
+:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace				priority => 1
 query_query_open_brace		~ '?{{'
 
-:lexeme						~ query_single_quote	pause => before		event => query_single_quote
+:lexeme						~ query_single_quote	pause => before		event => query_single_quote					priority => 1
 query_single_quote			~ '?' [']	# Use another ' for the UltraEdit syntiax hiliter.
 
-:lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar
+:lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar					priority => 1
 query_vertical_bar			~ '?|'
 
 :lexeme						~ R						pause => before		event => R
@@ -1628,6 +1640,9 @@ single_quote				~ [']	# Use another ' for the UltraEdit syntiax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
+
+:lexeme						~ vertical_bar			pause => before		event => vertical_bar	priority => 1
+vertical_bar				~ '|'
 
 :lexeme						~ word					pause => before		event => word
 word						~ [\w]+
