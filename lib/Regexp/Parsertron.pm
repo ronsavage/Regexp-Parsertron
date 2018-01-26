@@ -1334,8 +1334,6 @@ entire_sequence					::= comment_thingy					#  1. Extended patterns.
 									| exclamation_mark_thingy		#  6.
 									| less_or_equals_thingy			#  7.
 									| less_exclamation_mark_thingy	#  8.
-#									| named_capture_group_thingy	#  9. See elsewhere.
-#									| named_backreference_thingy	# 10.	Ditto.
 									| single_code_thingy			# 11.
 									| double_code_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
@@ -1375,9 +1373,9 @@ pattern_set						::= pattern_item
 									| pattern_item '|'
 
 pattern_item					::= bracket_pattern
-#									| named_capture_group_pattern	#action => named_capture_group_pattern
+									| named_capture_group_pattern	#action => named_capture_group_pattern
 									| parenthesis_pattern			#action => parenthesis_pattern
-									|| slash_pattern
+									| slash_pattern
 									| character_sequence			#action => character_sequence
 
 bracket_pattern					::= open_bracket characters_in_set close_bracket
@@ -1399,18 +1397,17 @@ simple_character_sequence		::= escaped_close_parenthesis
 									| vertical_bar
 									| character_set
 
-parenthesis_pattern				::= open_parenthesis named_capture_group close_parenthesis
-									|| open_parenthesis pattern_sequence close_parenthesis
+parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
 
 # 9: (?<NAME>pattern)
 #  & (?'NAME'pattern)
 
-#named_capture_group_pattern		::= open_parenthesis named_capture_group close_parenthesis
+named_capture_group_pattern		::= open_parenthesis named_capture_group close_parenthesis
 
-named_capture_group				::= query_single_quote capture_name single_quote	#action => named_capture_group
-									| query_less_than capture_name greater_than		#action => named_capture_group
+named_capture_group				::= query_single_quote capture_name single_quote pattern_sequence	#action => named_capture_group
+									| query_less_than capture_name greater_than pattern_sequence	#action => named_capture_group
 
-capture_name					::= word
+capture_name					::= capture_name_prefix capture_name_suffix
 
 slash_pattern					::= slash pattern_sequence slash
 
@@ -1512,6 +1509,13 @@ character_classes				::= [[:print:]]
 # Policy: Event names are always the same as the name of the corresponding lexeme.
 #
 # Note:   Tokens of the form '_xxx_', if any, are replaced with version-dependent values.
+
+:lexeme						~ capture_name_prefix
+capture_name_prefix			~ [_A-Za-z]
+
+:lexeme						~ capture_name_suffix
+capture_name_suffix			~
+capture_name_suffix			~ [_A-Za-z0-9]
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
@@ -1647,9 +1651,6 @@ slash						~ '/'
 
 :lexeme						~ vertical_bar			pause => before		event => vertical_bar						priority => 1
 vertical_bar				~ '|'
-
-:lexeme						~ word					pause => before		event => word
-word						~ [\w]+
 
 :lexeme						~ zero					pause => before		event => zero
 zero						~ '0'
