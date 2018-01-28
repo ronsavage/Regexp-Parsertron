@@ -286,9 +286,8 @@ sub parse
 		({
 			exhaustion			=> 'event',
 			grammar				=> $self -> grammar,
-			ranking_method		=> 'high_rule_only',
-			semantics_package	=> 'Regexp::Parsertron::Actions',
-			trace_terminals		=> 99,
+#			semantics_package	=> 'Regexp::Parsertron::Actions',
+#			trace_terminals		=> 99,
 		})
 	);
 
@@ -384,7 +383,7 @@ sub _process
 
 	if ($self -> verbose > 1)
 	{
-		my($format) = '%-10s  %-5s  %-15s  %-6s  %-20s  %s';
+		my($format) = '%-10s  %-5s  %-15s  %-6s  %-30s  %s';
 
 		say sprintf($format, '  Location', 'Width', 'Lexeme', 'Events', 'Names', 'Next few chars');
 
@@ -636,7 +635,7 @@ sub _validate_event
 
 	if ($self -> verbose > 1)
 	{
-		my($format) = '%4d, %4d  %5d  %-15s  %6d  %-20s  %s';
+		my($format) = '%4d, %4d  %5d  %-15s  %6d  %-30s  %s';
 
 		say sprintf($format, $line, $column, length($lexeme), $lexeme, $event_count, $name_list, $literal);
 
@@ -1334,8 +1333,8 @@ entire_sequence					::= comment_thingy					#  1. Extended patterns.
 									| exclamation_mark_thingy		#  6.
 									| less_or_equals_thingy			#  7.
 									| less_exclamation_mark_thingy	#  8.
-									| single_code_thingy			# 11.
-									| double_code_thingy			# 12.
+									| single_brace_thingy			# 11.
+									| double_brace_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
 									| recurse_thingy				# 14.
 									| conditional_thingy			# 15.
@@ -1345,7 +1344,7 @@ entire_sequence					::= comment_thingy					#  1. Extended patterns.
 
 # 1: (?#text)
 
-comment_thingy					::= open_parenthesis query_hash comment close_parenthesis
+comment_thingy					::= comment_prefix comment close_parenthesis
 
 comment							::= non_close_parenthesis*
 
@@ -1363,7 +1362,7 @@ flag_set_2						::= flag_sequence
 #  & (?adluimnsx-imnsx:pattern)
 #  & (?^aluimnsx:pattern)
 
-colon_thingy					::= open_parenthesis query_colon pattern_sequence close_parenthesis
+colon_thingy					::= colon_prefix pattern_sequence close_parenthesis
 
 # 99. Non-extended patterns.
 
@@ -1413,27 +1412,27 @@ slash_pattern					::= slash pattern_sequence slash
 
 # 4: (?|pattern)
 
-vertical_bar_thingy				::= open_parenthesis query_vertical_bar pattern_sequence close_parenthesis
+vertical_bar_thingy				::= vertical_bar_prefix pattern_sequence close_parenthesis
 
 # 5: (?=pattern)
 
-equals_thingy					::= open_parenthesis query_equals pattern_sequence close_parenthesis
+equals_thingy					::= equals_prefix pattern_sequence close_parenthesis
 
 # 6: (?!pattern)
 
-exclamation_mark_thingy			::= open_parenthesis query_exclamation_mark pattern_sequence close_parenthesis
+exclamation_mark_thingy			::= exclamation_mark_prefix pattern_sequence close_parenthesis
 
 # 7: (?<=pattern
 #  & \K
 
-less_or_equals_thingy			::= open_parenthesis query_less_or_equals close_parenthesis
+less_or_equals_thingy			::= less_or_equals_prefix close_parenthesis
 									| escaped_K
 
 # 8: (?<!pattern)
 
-less_exclamation_mark_thingy	::= open_parenthesis query_less_exclamation_mark close_parenthesis
+less_exclamation_mark_thingy	::= less_exclamation_mark_prefix close_parenthesis
 
-# 10: \k<NAME>
+# 10: \k<NAME> TODO
 #  & \k'NAME'
 
 #named_backreference_thingy		::= escaped_k less_than capture_name greater_than
@@ -1441,13 +1440,13 @@ less_exclamation_mark_thingy	::= open_parenthesis query_less_exclamation_mark cl
 
 # 11: (?{ code })
 
-single_code_thingy				::= open_parenthesis query_open_brace code close_brace close_parenthesis
+single_brace_thingy				::= single_brace_prefix code close_brace close_parenthesis
 
-code							::= [[:print:]] # TODO: ATM.
+code							::= [[:print:]] # TODO.
 
 # 12: (??{ code })
 
-double_code_thingy				::= open_parenthesis query_query_open_brace code close_brace close_parenthesis
+double_brace_thingy				::= double_brace_prefix code close_brace close_parenthesis
 
 # 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
 
@@ -1465,7 +1464,7 @@ digit_sequence					::= digit_set*
 
 # 14: (?&NAME)
 
-recurse_thingy					::= open_parenthesis query_ampersand capture_name close_parenthesis
+recurse_thingy					::= recurse_prefix capture_name close_parenthesis
 									| open_parenthesis query_P greater_than capture_name close_parenthesis
 
 # 15: (?(condition)yes-pattern|no-pattern)
@@ -1478,7 +1477,7 @@ condition						::= open_parenthesis natural_number close_parenthesis
 									| exclamation_mark_thingy
 									| less_or_equals_thingy # Includes \K.
 									| less_exclamation_mark_thingy
-									| single_code_thingy
+									| single_brace_thingy
 									| an_R_sequence
 									| an_R_name
 									| DEFINE
@@ -1496,11 +1495,11 @@ an_R_name						::= open_parenthesis R_ampersand capture_name close_parenthesis
 
 # 16: (?>pattern)
 
-greater_than_thingy				::= open_parenthesis query_greater_than close_parenthesis
+greater_than_thingy				::= greater_than_prefix close_parenthesis
 
 # 17: (?[ ])
 
-extended_bracketed_thingy		::= open_parenthesis query_open_bracket character_classes close_bracket close_parenthesis
+extended_bracketed_thingy		::= extended_bracketed_prefix character_classes close_bracket close_parenthesis
 
 character_classes				::= [[:print:]]
 
@@ -1520,7 +1519,7 @@ capture_name_suffix			~ [_A-Za-z0-9]
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
 
-:lexeme						~ character_set			pause => before		event => character_set						priority => -10
+:lexeme						~ character_set			pause => before		event => character_set
 character_set				~ [^()/]*
 
 :lexeme						~ close_brace			pause => before		event => close_brace
@@ -1535,11 +1534,23 @@ close_parenthesis			~ ')'
 :lexeme						~ colon					pause => before		event => colon
 colon						~ ':'
 
+:lexeme						~ colon_prefix			pause => before		event => colon_prefix
+colon_prefix				~ '(?:'
+
+:lexeme						~ comment_prefix		pause => before		event => comment_prefix
+comment_prefix				~ '(?#'
+
 :lexeme						~ DEFINE				pause => before		event => DEFINE
 DEFINE						~ 'DEFINE'
 
 :lexeme						~ digit_set				pause => before		event => digit_set
 digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
+
+:lexeme						~ double_brace_prefix	pause => before		event => double_brace_prefix
+double_brace_prefix			~ '(?{{'
+
+:lexeme						~ equals_prefix			pause => before		event => equals_prefix
+equals_prefix				~ '(?='
 
 :lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
 escaped_close_bracket		~ '\\' ']'
@@ -1559,11 +1570,26 @@ escaped_open_parenthesis	~ '\\)'
 :lexeme						~ escaped_slash			pause => before		event => escaped_slash
 escaped_slash				~ '\\\\'
 
+:lexeme						~ exclamation_mark_prefix	pause => before	event => exclamation_mark_prefix
+exclamation_mark_prefix		~ '(?!'
+
+:lexeme						~ extended_bracketed_prefix	pause => before		event => extended_bracketed_prefix
+extended_bracketed_prefix	~ '(?['
+
 :lexeme						~ flag_set				pause => before		event => flag_set
 flag_set					~ [a-z]+
 
 :lexeme						~ greater_than			pause => before		event => greater_than
 greater_than				~ '>'
+
+:lexeme						~ greater_than_prefix	pause => before		event => greater_than_prefix
+greater_than_prefix			~ '(?>'
+
+:lexeme						~ less_or_equals_prefix	pause => before		event => less_or_equals_prefix
+less_or_equals_prefix		~ '(?<='
+
+:lexeme						~ less_exclamation_mark_prefix	pause => before	event => less_exclamation_mark_prefix
+less_exclamation_mark_prefix	~ '(?!'
 
 :lexeme						~ minus					pause => before		event => minus
 minus						~ '-'
@@ -1589,53 +1615,20 @@ plus						~ '+'
 :lexeme						~ query					pause => before		event => query
 query						~ '?'
 
-:lexeme						~ query_ampersand		pause => before		event => query_ampersand					priority => 1
-query_ampersand				~ '?&'
-
-:lexeme						~ query_caret			pause => before		event => query_caret						priority => 1
+:lexeme						~ query_caret			pause => before		event => query_caret
 query_caret					~ '?^'
 
-:lexeme						~ query_colon			pause => before		event => query_colon						priority => 1
-query_colon					~ '?:'
-
-:lexeme						~ query_equals			pause => before		event => query_equals						priority => 1
-query_equals				~ '?='
-
-:lexeme						~ query_exclamation_mark	pause => before	event => query_exclamation_mark				priority => 1
-query_exclamation_mark		~ '?='
-
-:lexeme						~ query_greater_than	pause => before		event => query_greater_than					priority => 1
-query_greater_than			~ '?>'
-
-:lexeme						~ query_hash			pause => before		event => query_hash							priority => 1
-query_hash					~ '?#'
-
-:lexeme						~ query_less_exclamation_mark	pause => before	event => query_less_exclamation_mark	priority => 1
-query_less_exclamation_mark	~ '?<='
-
-:lexeme						~ query_less_or_equals	pause => before		event => query_less_or_equals				priority => 1
-query_less_or_equals		~ '?<='
-
-:lexeme						~ query_less_than		pause => before		event => query_less_than					priority => 1
+:lexeme						~ query_less_than		pause => before		event => query_less_than
 query_less_than				~ '?<'
 
-:lexeme						~ query_open_brace		pause => before		event => query_open_brace					priority => 1
-query_open_brace			~ '?{'
-
-:lexeme						~ query_open_bracket	pause => before		event => query_open_bracket					priority => 1
-query_open_bracket			~ '?['
-
-:lexeme						~ query_P				pause => before		event => query_P							priority => 1
+:lexeme						~ query_P				pause => before		event => query_P
 query_P						~ '?P'
 
-:lexeme						~ query_query_open_brace	pause => before	event => query_query_open_brace				priority => 1
-query_query_open_brace		~ '?{{'
-
-:lexeme						~ query_single_quote	pause => before		event => query_single_quote					priority => 1
+:lexeme						~ query_single_quote	pause => before		event => query_single_quote
 query_single_quote			~ '?' [']	# Use another ' for the UltraEdit syntiax hiliter.
 
-:lexeme						~ query_vertical_bar	pause => before		event => query_vertical_bar					priority => 1
-query_vertical_bar			~ '?|'
+:lexeme						~ vertical_bar_prefix	pause => before		event => vertical_bar_prefix
+vertical_bar_prefix			~ '?|'
 
 :lexeme						~ R						pause => before		event => R
 R							~ 'R'
@@ -1643,13 +1636,19 @@ R							~ 'R'
 :lexeme						~ R_ampersand			pause => before		event => R_ampersand
 R_ampersand					~ 'R&'
 
+:lexeme						~ recurse_prefix		pause => before		event => recurse_prefix
+recurse_prefix				~ '(?&'
+
+:lexeme						~ single_brace_prefix	pause => before		event => single_brace_prefix
+single_brace_prefix			~ '(?{'
+
 :lexeme						~ single_quote			pause => before		event => single_quote
 single_quote				~ [']	# Use another ' for the UltraEdit syntiax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
 
-:lexeme						~ vertical_bar			pause => before		event => vertical_bar						priority => 1
+:lexeme						~ vertical_bar			pause => before		event => vertical_bar
 vertical_bar				~ '|'
 
 :lexeme						~ zero					pause => before		event => zero
