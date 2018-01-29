@@ -134,7 +134,7 @@ for my $test (@test)
 		say "Test $$test{count} failed to return 0 from parse(). ";
 	}
 
-	say '';
+	say '-' x 100;
 
 	# Reset for next test.
 

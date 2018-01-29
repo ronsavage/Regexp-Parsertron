@@ -1398,18 +1398,6 @@ simple_character_sequence		::= escaped_close_parenthesis
 
 parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
 
-# 9: (?<NAME>pattern)
-#  & (?'NAME'pattern)
-
-named_capture_group_pattern		::= open_parenthesis named_capture_group close_parenthesis
-
-named_capture_group				::= query_single_quote capture_name single_quote pattern_sequence	#action => named_capture_group
-									| query_less_than capture_name greater_than pattern_sequence	#action => named_capture_group
-
-capture_name					::= capture_name_prefix capture_name_suffix
-
-slash_pattern					::= slash pattern_sequence slash
-
 # 4: (?|pattern)
 
 vertical_bar_thingy				::= vertical_bar_prefix pattern_sequence close_parenthesis
@@ -1432,6 +1420,17 @@ less_or_equals_thingy			::= less_or_equals_prefix close_parenthesis
 
 less_exclamation_mark_thingy	::= less_exclamation_mark_prefix close_parenthesis
 
+# 9: (?<NAME>pattern)
+#  & (?'NAME'pattern) TODO
+
+named_capture_group_pattern		::= named_capture_group_prefix named_capture_group close_parenthesis
+
+named_capture_group				::= capture_name greater_than pattern_sequence	#action => named_capture_group
+
+capture_name					::= capture_name_prefix capture_name_suffix
+
+slash_pattern					::= slash pattern_sequence slash
+
 # 10: \k<NAME> TODO
 #  & \k'NAME'
 
@@ -1450,17 +1449,12 @@ double_brace_thingy				::= double_brace_prefix code close_brace close_parenthesi
 
 # 13: (?PARNO) || (?-PARNO) || (?+PARNO) || (?R) || (?0)
 
-recursive_subpattern_thingy		::= open_parenthesis query parameter_number close_parenthesis
+recursive_subpattern_thingy		::= recursive_subpattern_prefix close_parenthesis
 
-parameter_number				::= natural_number # 1, 2, ...
-									| minus natural_number
-									| plus natural_number
-									| R
-									| zero
-
-natural_number					::= non_zero_digit digit_sequence
-
-digit_sequence					::= digit_set*
+recursive_subpattern_prefix		::= recursive_subpattern_minus
+									| recursive_subpattern_natural
+									| recursive_subpattern_plus
+									| recursive_subpattern_R # Includes 0.
 
 # 14: (?&NAME)
 
@@ -1470,26 +1464,18 @@ recurse_thingy					::= recurse_prefix capture_name close_parenthesis
 # 15: (?(condition)yes-pattern|no-pattern)
 #  & (?(condition)yes-pattern)
 
-conditional_thingy				::= open_parenthesis query condition close_parenthesis
-condition						::= open_parenthesis natural_number close_parenthesis
+conditional_thingy				::= condition_prefix close_parenthesis
+
+condition_prefix				::= condition_prefix_natural
+									| condition_prefix_R
 									| open_parenthesis named_capture_group close_parenthesis
 									| equals_thingy
 									| exclamation_mark_thingy
 									| less_or_equals_thingy # Includes \K.
 									| less_exclamation_mark_thingy
 									| single_brace_thingy
-									| an_R_sequence
 									| an_R_name
 									| DEFINE
-
-an_R_sequence					::= a_single_R
-									| open_parenthesis R_pattern close_parenthesis
-
-a_single_R						::= open_parenthesis R close_parenthesis
-
-R_pattern						::= R R_suffix
-
-R_suffix						::= natural_number
 
 an_R_name						::= open_parenthesis R_ampersand capture_name close_parenthesis
 
@@ -1540,11 +1526,53 @@ colon_prefix				~ '(?:'
 :lexeme						~ comment_prefix		pause => before		event => comment_prefix
 comment_prefix				~ '(?#'
 
+:lexeme						~ condition_prefix_natural	pause => before	event => condition_prefix_natural
+condition_prefix_natural	~ '(1)'
+condition_prefix_natural	~ '(2)'
+condition_prefix_natural	~ '(3)'
+condition_prefix_natural	~ '(4)'
+condition_prefix_natural	~ '(5)'
+condition_prefix_natural	~ '(6)'
+condition_prefix_natural	~ '(7)'
+condition_prefix_natural	~ '(8)'
+condition_prefix_natural	~ '(9)'
+condition_prefix_natural	~ '(10)'
+condition_prefix_natural	~ '(11)'
+condition_prefix_natural	~ '(12)'
+condition_prefix_natural	~ '(13)'
+condition_prefix_natural	~ '(14)'
+condition_prefix_natural	~ '(15)'
+condition_prefix_natural	~ '(16)'
+condition_prefix_natural	~ '(17)'
+condition_prefix_natural	~ '(18)'
+condition_prefix_natural	~ '(19)'
+condition_prefix_natural	~ '(20)'
+
+:lexeme						~ condition_prefix_R	pause => before		event => condition_prefix_R
+condition_prefix_R			~ '(R)'
+condition_prefix_R			~ '(R1)'
+condition_prefix_R			~ '(R2)'
+condition_prefix_R			~ '(R3)'
+condition_prefix_R			~ '(R4)'
+condition_prefix_R			~ '(R5)'
+condition_prefix_R			~ '(R6)'
+condition_prefix_R			~ '(R7)'
+condition_prefix_R			~ '(R8)'
+condition_prefix_R			~ '(R9)'
+condition_prefix_R			~ '(R10)'
+condition_prefix_R			~ '(R11)'
+condition_prefix_R			~ '(R12)'
+condition_prefix_R			~ '(R13)'
+condition_prefix_R			~ '(R14)'
+condition_prefix_R			~ '(R15)'
+condition_prefix_R			~ '(R16)'
+condition_prefix_R			~ '(R17)'
+condition_prefix_R			~ '(R18)'
+condition_prefix_R			~ '(R19)'
+condition_prefix_R			~ '(R20)'
+
 :lexeme						~ DEFINE				pause => before		event => DEFINE
 DEFINE						~ 'DEFINE'
-
-:lexeme						~ digit_set				pause => before		event => digit_set
-digit_set					~ [0-9] # We avoid \d to avoid Unicode digits.
 
 :lexeme						~ double_brace_prefix	pause => before		event => double_brace_prefix
 double_brace_prefix			~ '(?{{'
@@ -1594,14 +1622,14 @@ less_exclamation_mark_prefix	~ '(?!'
 :lexeme						~ minus					pause => before		event => minus
 minus						~ '-'
 
+:lexeme						~ named_capture_group_prefix	pause => before		event => named_capture_group_prefix
+named_capture_group_prefix	~ '(?<'
+
 :lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
 non_close_bracket			~ [^\]]+
 
 :lexeme						~ non_close_parenthesis	pause => before		event => non_close_parenthesis
 non_close_parenthesis		~ [^)]
-
-:lexeme						~ non_zero_digit		pause => before		event => non_zero_digit
-non_zero_digit				~ [1-9]
 
 :lexeme						~ open_bracket			pause => before		event => open_bracket
 open_bracket				~ '['
@@ -1609,29 +1637,84 @@ open_bracket				~ '['
 :lexeme						~ open_parenthesis		pause => before		event => open_parenthesis
 open_parenthesis			~ '('
 
-:lexeme						~ plus					pause => before		event => plus
-plus						~ '+'
-
 :lexeme						~ query					pause => before		event => query
 query						~ '?'
 
 :lexeme						~ query_caret			pause => before		event => query_caret
 query_caret					~ '?^'
 
-:lexeme						~ query_less_than		pause => before		event => query_less_than
-query_less_than				~ '?<'
-
 :lexeme						~ query_P				pause => before		event => query_P
 query_P						~ '?P'
 
-:lexeme						~ query_single_quote	pause => before		event => query_single_quote
-query_single_quote			~ '?' [']	# Use another ' for the UltraEdit syntiax hiliter.
+:lexeme						~ recursive_subpattern_minus	pause => before	event => recursive_subpattern_minus
+recursive_subpattern_minus	~ '(?-1)'
+recursive_subpattern_minus	~ '(?-2)'
+recursive_subpattern_minus	~ '(?-3)'
+recursive_subpattern_minus	~ '(?-4)'
+recursive_subpattern_minus	~ '(?-5)'
+recursive_subpattern_minus	~ '(?-6)'
+recursive_subpattern_minus	~ '(?-7)'
+recursive_subpattern_minus	~ '(?-8)'
+recursive_subpattern_minus	~ '(?-9)'
+recursive_subpattern_minus	~ '(?-10)'
+recursive_subpattern_minus	~ '(?-11)'
+recursive_subpattern_minus	~ '(?-12)'
+recursive_subpattern_minus	~ '(?-13)'
+recursive_subpattern_minus	~ '(?-14)'
+recursive_subpattern_minus	~ '(?-15)'
+recursive_subpattern_minus	~ '(?-16)'
+recursive_subpattern_minus	~ '(?-17)'
+recursive_subpattern_minus	~ '(?-18)'
+recursive_subpattern_minus	~ '(?-19)'
+recursive_subpattern_minus	~ '(?-20)'
 
-:lexeme						~ vertical_bar_prefix	pause => before		event => vertical_bar_prefix
-vertical_bar_prefix			~ '?|'
+:lexeme							~ recursive_subpattern_natural	pause => before	event => recursive_subpattern_natural
+recursive_subpattern_natural	~ '(?1)'
+recursive_subpattern_natural	~ '(?2)'
+recursive_subpattern_natural	~ '(?3)'
+recursive_subpattern_natural	~ '(?4)'
+recursive_subpattern_natural	~ '(?5)'
+recursive_subpattern_natural	~ '(?6)'
+recursive_subpattern_natural	~ '(?7)'
+recursive_subpattern_natural	~ '(?8)'
+recursive_subpattern_natural	~ '(?9)'
+recursive_subpattern_natural	~ '(?10)'
+recursive_subpattern_natural	~ '(?11)'
+recursive_subpattern_natural	~ '(?12)'
+recursive_subpattern_natural	~ '(?13)'
+recursive_subpattern_natural	~ '(?14)'
+recursive_subpattern_natural	~ '(?15)'
+recursive_subpattern_natural	~ '(?16)'
+recursive_subpattern_natural	~ '(?17)'
+recursive_subpattern_natural	~ '(?18)'
+recursive_subpattern_natural	~ '(?19)'
+recursive_subpattern_natural	~ '(?20)'
 
-:lexeme						~ R						pause => before		event => R
-R							~ 'R'
+:lexeme						~ recursive_subpattern_plus	pause => before	event => recursive_subpattern_plus
+recursive_subpattern_plus	~ '(?+1)'
+recursive_subpattern_plus	~ '(?+2)'
+recursive_subpattern_plus	~ '(?+3)'
+recursive_subpattern_plus	~ '(?+4)'
+recursive_subpattern_plus	~ '(?+5)'
+recursive_subpattern_plus	~ '(?+6)'
+recursive_subpattern_plus	~ '(?+7)'
+recursive_subpattern_plus	~ '(?+8)'
+recursive_subpattern_plus	~ '(?+9)'
+recursive_subpattern_plus	~ '(?+10)'
+recursive_subpattern_plus	~ '(?+11)'
+recursive_subpattern_plus	~ '(?+12)'
+recursive_subpattern_plus	~ '(?+13)'
+recursive_subpattern_plus	~ '(?+14)'
+recursive_subpattern_plus	~ '(?+15)'
+recursive_subpattern_plus	~ '(?+16)'
+recursive_subpattern_plus	~ '(?+17)'
+recursive_subpattern_plus	~ '(?+18)'
+recursive_subpattern_plus	~ '(?+19)'
+recursive_subpattern_plus	~ '(?+20)'
+
+:lexeme						~ recursive_subpattern_R	pause => before	event => recursive_subpattern_R
+recursive_subpattern_R		~ '(?R)'
+recursive_subpattern_R		~ '(?0)'
 
 :lexeme						~ R_ampersand			pause => before		event => R_ampersand
 R_ampersand					~ 'R&'
@@ -1642,14 +1725,11 @@ recurse_prefix				~ '(?&'
 :lexeme						~ single_brace_prefix	pause => before		event => single_brace_prefix
 single_brace_prefix			~ '(?{'
 
-:lexeme						~ single_quote			pause => before		event => single_quote
-single_quote				~ [']	# Use another ' for the UltraEdit syntiax hiliter.
-
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
 
 :lexeme						~ vertical_bar			pause => before		event => vertical_bar
 vertical_bar				~ '|'
 
-:lexeme						~ zero					pause => before		event => zero
-zero						~ '0'
+:lexeme						~ vertical_bar_prefix	pause => before		event => vertical_bar_prefix
+vertical_bar_prefix			~ '?|'
