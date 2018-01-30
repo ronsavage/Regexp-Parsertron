@@ -1321,14 +1321,18 @@ negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_sequence					::= comment_thingy					#  1. Extended patterns.
+entire_sequence				::= extended_thingy
+									| named_backreference_thingy	# 10.
+									| pattern_sequence				# 99.
+
+extended_thingy					::= comment_thingy					#  1. Extended patterns.
 									| flag_thingy					#  2.
 									| colon_thingy					#  3.
 									| vertical_bar_thingy			#  4.
 									| equals_thingy					#  5.
 									| exclamation_mark_thingy		#  6.
 									| less_or_equals_thingy			#  7.
-									| less_exclamation_mark_thingy	#  8.
+									| less_exclamation_mark_thingy	#  8. See elsewhere for 9 and 10.
 									| single_brace_thingy			# 11.
 									| double_brace_thingy			# 12.
 									| recursive_subpattern_thingy	# 13.
@@ -1336,7 +1340,6 @@ entire_sequence					::= comment_thingy					#  1. Extended patterns.
 									| conditional_thingy			# 15.
 									| greater_than_thingy			# 16.
 									| extended_bracketed_thingy		# 17.
-									| pattern_sequence				# 99. Non-extended patterns.
 
 # 1: (?#text)
 
@@ -1368,7 +1371,7 @@ pattern_set						::= pattern_item
 									| pattern_item '|'
 
 pattern_item					::= bracket_pattern
-									| named_capture_group_pattern
+									| named_capture_group_thingy # 9.
 									| parenthesis_pattern
 									| slash_pattern
 									| character_sequence
@@ -1419,19 +1422,19 @@ less_or_equals_thingy			::= less_or_equals_prefix close_parenthesis
 less_exclamation_mark_thingy	::= less_exclamation_mark_prefix close_parenthesis
 
 # 9: (?<NAME>pattern)
-#  & (?'NAME'pattern) TODO
+#  & (?'NAME'pattern)
 
-named_capture_group_pattern		::= named_capture_group_prefix named_capture_group close_parenthesis
+named_capture_group_thingy		::= named_capture_group_prefix named_capture_group close_parenthesis
 
-named_capture_group				::= condition_capture_group_infix pattern_sequence
+named_capture_group				::= capture_group_item pattern_sequence
 
-condition_capture_group_infix	::= capture_name greater_than
+capture_group_item				::= capture_name greater_than
+									| capture_name single_quote
 
-# 10: \k<NAME> TODO
+# 10: \k<NAME>
 #  & \k'NAME'
 
-#named_backreference_thingy		::= escaped_k less_than condition_capture_group_infix
-#									| escaped_k single_quote capture_name single_quote
+named_backreference_thingy		::= named_backreference_prefix capture_group_item
 
 # 11: (?{ code })
 
@@ -1475,7 +1478,7 @@ condition_prefix				::= condition_natural
 
 condition_natural				::= condition_natural_prefix close_parenthesis
 
-condition_capture_group			::= condition_capture_group_prefix condition_capture_group_infix close_parenthesis
+condition_capture_group			::= condition_capture_group_prefix capture_group_item close_parenthesis
 
 condition_predicate_check		::= condition_predicate_prefix capture_name close_parenthesis
 
@@ -1608,9 +1611,6 @@ escaped_close_bracket		~ '\\' ']'
 :lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
 escaped_close_parenthesis	~ '\\)'
 
-#:lexeme						~ escaped_k				pause => before		event => escaped_k
-#escaped_k					~ '\\k'
-
 :lexeme						~ escaped_K				pause => before		event => escaped_K
 escaped_K					~ '\\K'
 
@@ -1644,8 +1644,13 @@ less_exclamation_mark_prefix	~ '(?!'
 :lexeme						~ minus					pause => before		event => minus
 minus						~ '-'
 
+:lexeme						~ named_backreference_prefix	pause => before		event => named_backreference_prefix
+named_backreference_prefix	~ '\\k<'
+named_backreference_prefix	~ '\\k' ['] # Use a ' for the Ultraedit syntax hiliter.
+
 :lexeme						~ named_capture_group_prefix	pause => before		event => named_capture_group_prefix
 named_capture_group_prefix	~ '(?<'
+named_capture_group_prefix	~ '(?' ['] # Use a ' for the Ultraedit syntax hiliter.
 
 :lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
 non_close_bracket			~ [^\]]+
@@ -1743,6 +1748,9 @@ recurse_prefix				~ '(?&'
 
 :lexeme						~ single_brace_prefix	pause => before		event => single_brace_prefix
 single_brace_prefix			~ '(?{'
+
+:lexeme						~ single_quote			pause => before		event => single_quote
+single_quote				~ ['] # Use a ' for the Ultraedit syntax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
