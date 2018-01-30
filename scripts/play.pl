@@ -68,7 +68,7 @@ for my $key (sort keys %input)
 	}
 	catch
 	{
-		say "Marpa error: $error_str";
+		say $_;
 	};
 
 	say '';

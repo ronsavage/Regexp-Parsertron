@@ -1423,7 +1423,9 @@ less_exclamation_mark_thingy	::= less_exclamation_mark_prefix close_parenthesis
 
 named_capture_group_pattern		::= named_capture_group_prefix named_capture_group close_parenthesis
 
-named_capture_group				::= capture_name greater_than pattern_sequence
+named_capture_group				::= condition_capture_group_infix pattern_sequence
+
+condition_capture_group_infix	::= capture_name greater_than
 
 capture_name					::= capture_name_head capture_name_tail
 
@@ -1476,8 +1478,6 @@ condition_prefix				::= condition_natural
 condition_natural				::= condition_natural_prefix close_parenthesis
 
 condition_capture_group			::= condition_capture_group_prefix condition_capture_group_infix close_parenthesis
-
-condition_capture_group_infix	::= capture_name greater_than
 
 condition_predicate_check		::= condition_predicate_prefix capture_name close_parenthesis
 
