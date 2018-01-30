@@ -1427,13 +1427,6 @@ named_capture_group				::= condition_capture_group_infix pattern_sequence
 
 condition_capture_group_infix	::= capture_name greater_than
 
-capture_name					::= capture_name_initial
-									| capture_name_initial capture_name_final
-
-capture_name_initial			::= capture_name_head
-
-capture_name_final				::= capture_name_tail+
-
 # 10: \k<NAME> TODO
 #  & \k'NAME'
 
@@ -1518,11 +1511,12 @@ character_classes				::= [[:print:]]
 ###########################################
 ###########################################
 
-:lexeme						~ capture_name_head		pause => before		event => capture_name_head
+:lexeme						~ capture_name			pause => before		event => capture_name
+capture_name				~ capture_name_head capture_name_tail
+
 capture_name_head			~ [_A-Za-z]
 
-:lexeme						~ capture_name_tail		pause => before		event => capture_name_tail
-capture_name_tail			~ [_A-Za-z0-9]
+capture_name_tail			~ [_A-Za-z0-9]*
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
