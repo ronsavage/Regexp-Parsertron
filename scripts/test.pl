@@ -87,13 +87,13 @@ my(@test)	=
 },
 {
 	count		=> 16,
-	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar)))',
-	re			=> qr/(?:(?<n>foo)|(?<n>bar))/,
+	expected	=> "(?^:(?:(?<n>foo)|(?'n'bar)))",
+	re			=> qr/(?:(?<n>foo)|(?'n'bar))/,
 },
 {
 	count		=> 17,
-	expected	=> '(?^:(?:(?<n2>foo)|(?<n2>bar)))',
-	re			=> qr/(?:(?<n2>foo)|(?<n2>bar))/,
+	expected	=> "(?^:(?:(?'n2'foo)|(?<n2>bar)))",
+	re			=> qr/(?:(?'n2'foo)|(?<n2>bar))/,
 },
 {
 	count		=> 18,

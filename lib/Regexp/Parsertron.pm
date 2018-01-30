@@ -1322,7 +1322,6 @@ negative_flags					::= flag_set
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
 entire_sequence				::= extended_thingy
-									| named_backreference_thingy	# 10.
 									| pattern_sequence				# 99.
 
 extended_thingy					::= comment_thingy					#  1. Extended patterns.
@@ -1424,16 +1423,19 @@ less_exclamation_mark_thingy	::= less_exclamation_mark_prefix close_parenthesis
 # 9: (?<NAME>pattern)
 #  & (?'NAME'pattern)
 
-named_capture_group_thingy		::= named_capture_group_prefix named_capture_group close_parenthesis
+named_capture_group_thingy		::= named_capture_group_prefix named_capture_group_set close_parenthesis named_backreference_thingy
+
+named_capture_group_set			::= named_capture_group
+									| named_capture_group '|' named_capture_group_set
 
 named_capture_group				::= capture_group_item pattern_sequence
 
-capture_group_item				::= capture_name greater_than
-									| capture_name single_quote
+capture_group_item				::= capture_name named_capture_group_suffix
 
 # 10: \k<NAME>
 #  & \k'NAME'
 
+named_backreference_thingy		::=
 named_backreference_thingy		::= named_backreference_prefix capture_group_item
 
 # 11: (?{ code })
@@ -1652,6 +1654,10 @@ named_backreference_prefix	~ '\\k' ['] # Use a ' for the Ultraedit syntax hilite
 named_capture_group_prefix	~ '(?<'
 named_capture_group_prefix	~ '(?' ['] # Use a ' for the Ultraedit syntax hiliter.
 
+:lexeme						~ named_capture_group_suffix	pause => before		event => named_capture_group_suffix
+named_capture_group_suffix	~ '>'
+named_capture_group_suffix	~ ['] # Use a ' for the Ultraedit syntax hiliter.
+
 :lexeme						~ non_close_bracket		pause => before		event => non_close_bracket
 non_close_bracket			~ [^\]]+
 
@@ -1748,9 +1754,6 @@ recurse_prefix				~ '(?&'
 
 :lexeme						~ single_brace_prefix	pause => before		event => single_brace_prefix
 single_brace_prefix			~ '(?{'
-
-:lexeme						~ single_quote			pause => before		event => single_quote
-single_quote				~ ['] # Use a ' for the Ultraedit syntax hiliter.
 
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
