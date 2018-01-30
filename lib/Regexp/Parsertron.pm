@@ -307,7 +307,7 @@ sub parse
 		{
 			$result = 1;
 
-			my($message) = "Error: Marpa parse failed. ";
+			my($message) = 'Error: Marpa parse failed. ';
 
 			say $message if ($self -> verbose);
 
@@ -316,7 +316,7 @@ sub parse
 	}
 	catch
 	{
-		my($message) = "Error: Marpa parse failed. $_";
+		my($message) = $_;
 
 		say $message if ($self -> verbose);
 
@@ -1209,7 +1209,7 @@ xt/author/.
 
 =item o I could traverse the tree and store a pointer to each node in an array
 
-This would mean fast access to nodes in random order.
+This would mean fast access to nodes in random order. Is there any point?
 
 =back
 
