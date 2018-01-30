@@ -316,11 +316,7 @@ sub parse
 	}
 	catch
 	{
-		my($message) = $_;
-
-		say $message if ($self -> verbose);
-
-		die $message;
+		die $_;
 	};
 
 	# Return 0 for success and 1 for failure.
