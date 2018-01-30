@@ -166,7 +166,7 @@ sub _add_daughter
 
 	$self -> current_node -> add_child($node);
 
-	if ($event_name =~ /^open_(?:bracket|parenthesis)$/)
+	if ( ($event_name =~ /^open_(?:bracket|parenthesis)$/) || ($event_name =~ /_prefix$/) )
 	{
 		$self -> current_node($node);
 	}
@@ -1427,7 +1427,9 @@ named_capture_group_pattern		::= named_capture_group_prefix named_capture_group 
 
 named_capture_group				::= capture_name greater_than pattern_sequence	#action => named_capture_group
 
-capture_name					::= capture_name_prefix capture_name_suffix
+# The suffix '_prefix' is reserved for use by _add_daughter()! Hence *_head and *_tail.
+
+capture_name					::= capture_name_head capture_name_tail
 
 slash_pattern					::= slash pattern_sequence slash
 
@@ -1466,19 +1468,26 @@ recurse_thingy					::= recurse_prefix capture_name close_parenthesis
 
 conditional_thingy				::= condition_prefix close_parenthesis
 
-condition_prefix				::= condition_prefix_natural
-									| condition_prefix_R
-									| open_parenthesis named_capture_group close_parenthesis
+condition_prefix				::= condition_natural
+									| condition_capture_group
 									| equals_thingy
 									| exclamation_mark_thingy
 									| less_or_equals_thingy # Includes \K.
 									| less_exclamation_mark_thingy
 									| single_brace_thingy
-									| an_R_name
+									| condition_R
+									| condition_predicate_check
 									| DEFINE
 
-an_R_name						::= open_parenthesis R_ampersand capture_name close_parenthesis
+condition_natural				::= condition_natural_prefix close_parenthesis
 
+condition_capture_group			::= condition_capture_group_prefix condition_capture_group_infix close_parenthesis
+
+condition_capture_group_infix	::= capture_name greater_than
+
+condition_predicate_check		::= condition_predicate_prefix capture_name close_parenthesis
+
+condition_R						::= condition_R_prefix close_parenthesis
 # 16: (?>pattern)
 
 greater_than_thingy				::= greater_than_prefix close_parenthesis
@@ -1494,13 +1503,26 @@ character_classes				::= [[:print:]]
 # Policy: Event names are always the same as the name of the corresponding lexeme.
 #
 # Note:   Tokens of the form '_xxx_', if any, are replaced with version-dependent values.
+#
+###########################################
+###########################################
+###########################################
+###########################################
+# Warning. Double warning. Triple warning.#
+###########################################
+# Lexemes whose names match /_prefix$/    #
+# are special in that they are used by    #
+# add_daughter() to add depth to the tree.#
+###########################################
+###########################################
+###########################################
+###########################################
+:lexeme						~ capture_name_head
+capture_name_head			~ [_A-Za-z]
 
-:lexeme						~ capture_name_prefix
-capture_name_prefix			~ [_A-Za-z]
-
-:lexeme						~ capture_name_suffix
-capture_name_suffix			~
-capture_name_suffix			~ [_A-Za-z0-9]
+:lexeme						~ capture_name_tail
+capture_name_tail			~
+capture_name_tail			~ [_A-Za-z0-9]
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
@@ -1526,50 +1548,56 @@ colon_prefix				~ '(?:'
 :lexeme						~ comment_prefix		pause => before		event => comment_prefix
 comment_prefix				~ '(?#'
 
-:lexeme						~ condition_prefix_natural	pause => before	event => condition_prefix_natural
-condition_prefix_natural	~ '(1)'
-condition_prefix_natural	~ '(2)'
-condition_prefix_natural	~ '(3)'
-condition_prefix_natural	~ '(4)'
-condition_prefix_natural	~ '(5)'
-condition_prefix_natural	~ '(6)'
-condition_prefix_natural	~ '(7)'
-condition_prefix_natural	~ '(8)'
-condition_prefix_natural	~ '(9)'
-condition_prefix_natural	~ '(10)'
-condition_prefix_natural	~ '(11)'
-condition_prefix_natural	~ '(12)'
-condition_prefix_natural	~ '(13)'
-condition_prefix_natural	~ '(14)'
-condition_prefix_natural	~ '(15)'
-condition_prefix_natural	~ '(16)'
-condition_prefix_natural	~ '(17)'
-condition_prefix_natural	~ '(18)'
-condition_prefix_natural	~ '(19)'
-condition_prefix_natural	~ '(20)'
+:lexeme						~ condition_capture_group_prefix	pause => before		event => condition_capture_group_prefix
+condition_capture_group_prefix	~ '(<'
 
-:lexeme						~ condition_prefix_R	pause => before		event => condition_prefix_R
-condition_prefix_R			~ '(R)'
-condition_prefix_R			~ '(R1)'
-condition_prefix_R			~ '(R2)'
-condition_prefix_R			~ '(R3)'
-condition_prefix_R			~ '(R4)'
-condition_prefix_R			~ '(R5)'
-condition_prefix_R			~ '(R6)'
-condition_prefix_R			~ '(R7)'
-condition_prefix_R			~ '(R8)'
-condition_prefix_R			~ '(R9)'
-condition_prefix_R			~ '(R10)'
-condition_prefix_R			~ '(R11)'
-condition_prefix_R			~ '(R12)'
-condition_prefix_R			~ '(R13)'
-condition_prefix_R			~ '(R14)'
-condition_prefix_R			~ '(R15)'
-condition_prefix_R			~ '(R16)'
-condition_prefix_R			~ '(R17)'
-condition_prefix_R			~ '(R18)'
-condition_prefix_R			~ '(R19)'
-condition_prefix_R			~ '(R20)'
+:lexeme						~ condition_natural_prefix	pause => before	event => condition_natural_prefix
+condition_natural_prefix	~ '(1'
+condition_natural_prefix	~ '(2'
+condition_natural_prefix	~ '(3'
+condition_natural_prefix	~ '(4'
+condition_natural_prefix	~ '(5'
+condition_natural_prefix	~ '(6'
+condition_natural_prefix	~ '(7'
+condition_natural_prefix	~ '(8'
+condition_natural_prefix	~ '(9'
+condition_natural_prefix	~ '(10'
+condition_natural_prefix	~ '(11'
+condition_natural_prefix	~ '(12'
+condition_natural_prefix	~ '(13'
+condition_natural_prefix	~ '(14'
+condition_natural_prefix	~ '(15'
+condition_natural_prefix	~ '(16'
+condition_natural_prefix	~ '(17'
+condition_natural_prefix	~ '(18'
+condition_natural_prefix	~ '(19'
+condition_natural_prefix	~ '(20'
+
+:lexeme						~ condition_predicate_prefix	pause => before		event => condition_predicate_prefix
+condition_predicate_prefix	~ '(R&'
+
+:lexeme						~ condition_R_prefix	pause => before		event => condition_R_prefix
+condition_R_prefix			~ '(R'
+condition_R_prefix			~ '(R1'
+condition_R_prefix			~ '(R2'
+condition_R_prefix			~ '(R3'
+condition_R_prefix			~ '(R4'
+condition_R_prefix			~ '(R5'
+condition_R_prefix			~ '(R6'
+condition_R_prefix			~ '(R7'
+condition_R_prefix			~ '(R8'
+condition_R_prefix			~ '(R9'
+condition_R_prefix			~ '(R10'
+condition_R_prefix			~ '(R11'
+condition_R_prefix			~ '(R12'
+condition_R_prefix			~ '(R13'
+condition_R_prefix			~ '(R14'
+condition_R_prefix			~ '(R15'
+condition_R_prefix			~ '(R16'
+condition_R_prefix			~ '(R17'
+condition_R_prefix			~ '(R18'
+condition_R_prefix			~ '(R19'
+condition_R_prefix			~ '(R20'
 
 :lexeme						~ DEFINE				pause => before		event => DEFINE
 DEFINE						~ 'DEFINE'
@@ -1716,9 +1744,6 @@ recursive_subpattern_plus	~ '(?+20)'
 recursive_subpattern_R		~ '(?R)'
 recursive_subpattern_R		~ '(?0)'
 
-:lexeme						~ R_ampersand			pause => before		event => R_ampersand
-R_ampersand					~ 'R&'
-
 :lexeme						~ recurse_prefix		pause => before		event => recurse_prefix
 recurse_prefix				~ '(?&'
 
@@ -1732,4 +1757,4 @@ slash						~ '/'
 vertical_bar				~ '|'
 
 :lexeme						~ vertical_bar_prefix	pause => before		event => vertical_bar_prefix
-vertical_bar_prefix			~ '?|'
+vertical_bar_prefix			~ '(?|'
