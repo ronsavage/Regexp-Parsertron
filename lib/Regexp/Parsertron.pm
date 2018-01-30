@@ -287,7 +287,7 @@ sub parse
 			exhaustion			=> 'event',
 			grammar				=> $self -> grammar,
 #			semantics_package	=> 'Regexp::Parsertron::Actions',
-#			trace_terminals		=> 99,
+			trace_terminals		=> 99,
 		})
 	);
 
@@ -1366,16 +1366,16 @@ colon_thingy					::= colon_prefix pattern_sequence close_parenthesis
 
 # 99. Non-extended patterns.
 
-pattern_sequence				::= pattern_set*					#action => pattern_sequence
+pattern_sequence				::= pattern_set*
 
 pattern_set						::= pattern_item
 									| pattern_item '|'
 
 pattern_item					::= bracket_pattern
-									| named_capture_group_pattern	#action => named_capture_group_pattern
-									| parenthesis_pattern			#action => parenthesis_pattern
+									| named_capture_group_pattern
+									| parenthesis_pattern
 									| slash_pattern
-									| character_sequence			#action => character_sequence
+									| character_sequence
 
 bracket_pattern					::= open_bracket characters_in_set close_bracket
 
@@ -1397,6 +1397,8 @@ simple_character_sequence		::= escaped_close_parenthesis
 									| character_set
 
 parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
+
+slash_pattern					::= slash pattern_sequence slash
 
 # 4: (?|pattern)
 
@@ -1425,13 +1427,9 @@ less_exclamation_mark_thingy	::= less_exclamation_mark_prefix close_parenthesis
 
 named_capture_group_pattern		::= named_capture_group_prefix named_capture_group close_parenthesis
 
-named_capture_group				::= capture_name greater_than pattern_sequence	#action => named_capture_group
-
-# The suffix '_prefix' is reserved for use by _add_daughter()! Hence *_head and *_tail.
+named_capture_group				::= capture_name greater_than pattern_sequence
 
 capture_name					::= capture_name_head capture_name_tail
-
-slash_pattern					::= slash pattern_sequence slash
 
 # 10: \k<NAME> TODO
 #  & \k'NAME'
@@ -1488,6 +1486,7 @@ condition_capture_group_infix	::= capture_name greater_than
 condition_predicate_check		::= condition_predicate_prefix capture_name close_parenthesis
 
 condition_R						::= condition_R_prefix close_parenthesis
+
 # 16: (?>pattern)
 
 greater_than_thingy				::= greater_than_prefix close_parenthesis
@@ -1517,12 +1516,12 @@ character_classes				::= [[:print:]]
 ###########################################
 ###########################################
 ###########################################
+
 :lexeme						~ capture_name_head
 capture_name_head			~ [_A-Za-z]
 
 :lexeme						~ capture_name_tail
-capture_name_tail			~
-capture_name_tail			~ [_A-Za-z0-9]
+capture_name_tail			~ [_A-Za-z0-9]*
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'

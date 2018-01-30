@@ -82,8 +82,8 @@ my(@test)	=
 },
 {
 	count		=> 15,
-#	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar))\k<n>)',
-#	re			=> qr/(?:(?<n>foo)|(?<n>bar))\k<n>/,
+#	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar))\k<n>)',	# Note the \k<n>.
+#	re			=> qr/(?:(?<n>foo)|(?<n>bar))\k<n>/,	# Ditto.
 	expected	=> '(?^:(?:(?<n>foo)|(?<n>bar)))',
 	re			=> qr/(?:(?<n>foo)|(?<n>bar))/,
 },
