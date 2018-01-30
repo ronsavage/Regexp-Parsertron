@@ -287,7 +287,7 @@ sub parse
 			exhaustion			=> 'event',
 			grammar				=> $self -> grammar,
 #			semantics_package	=> 'Regexp::Parsertron::Actions',
-			trace_terminals		=> 99,
+#			trace_terminals		=> 99,
 		})
 	);
 
@@ -432,7 +432,7 @@ sub _process
 		# See https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion
 		# for why this code is exhaustion-loving.
 
-		$message = 'Marpa parse exhausted';
+		$message = 'Marpa parse exhausted' if ($self -> verbose > 1);
 	}
 
 	if ($message)
@@ -1427,12 +1427,17 @@ named_capture_group				::= condition_capture_group_infix pattern_sequence
 
 condition_capture_group_infix	::= capture_name greater_than
 
-capture_name					::= capture_name_head capture_name_tail
+capture_name					::= capture_name_initial
+									| capture_name_initial capture_name_final
+
+capture_name_initial			::= capture_name_head
+
+capture_name_final				::= capture_name_tail+
 
 # 10: \k<NAME> TODO
 #  & \k'NAME'
 
-#named_backreference_thingy		::= escaped_k less_than capture_name greater_than
+#named_backreference_thingy		::= escaped_k less_than condition_capture_group_infix
 #									| escaped_k single_quote capture_name single_quote
 
 # 11: (?{ code })
@@ -1513,11 +1518,11 @@ character_classes				::= [[:print:]]
 ###########################################
 ###########################################
 
-:lexeme						~ capture_name_head
+:lexeme						~ capture_name_head		pause => before		event => capture_name_head
 capture_name_head			~ [_A-Za-z]
 
-:lexeme						~ capture_name_tail
-capture_name_tail			~ [_A-Za-z0-9]*
+:lexeme						~ capture_name_tail		pause => before		event => capture_name_tail
+capture_name_tail			~ [_A-Za-z0-9]
 
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
@@ -1748,7 +1753,7 @@ single_brace_prefix			~ '(?{'
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
 
-:lexeme						~ vertical_bar			pause => before		event => vertical_bar
+:lexeme						~ vertical_bar			pause => before		event => vertical_bar priority => 1
 vertical_bar				~ '|'
 
 :lexeme						~ vertical_bar_prefix	pause => before		event => vertical_bar_prefix

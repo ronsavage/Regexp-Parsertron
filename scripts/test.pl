@@ -89,6 +89,13 @@ my(@test)	=
 },
 {
 	count		=> 16,
+#	expected	=> '(?^:(?:(?<n2>foo)|(?<n2>bar))\k<n2>)',	# Note the \k<n>.
+#	re			=> qr/(?:(?<n2>foo)|(?<n2>bar))\k<n>/,	# Ditto.
+	expected	=> '(?^:(?:(?<n2>foo)|(?<n2>bar)))',
+	re			=> qr/(?:(?<n2>foo)|(?<n2>bar))/,
+},
+{
+	count		=> 17,
 	expected	=> '(?^i:Perl|JavaScript|(?:Flub|BCPL))',
 	re			=> qr/Perl|JavaScript|(?:Flub|BCPL)/i,
 },
