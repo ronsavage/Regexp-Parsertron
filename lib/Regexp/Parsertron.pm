@@ -1326,10 +1326,7 @@ negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_sequence				::= extended_thingy
-									| pattern_sequence				# 99.
-
-extended_thingy					::= comment_thingy					#  1. Extended patterns.
+entire_sequence					::= comment_thingy					#  1. Extended patterns.
 									| flag_thingy					#  2.
 									| colon_thingy					#  3.
 									| vertical_bar_thingy			#  4.
@@ -1344,6 +1341,7 @@ extended_thingy					::= comment_thingy					#  1. Extended patterns.
 									| conditional_thingy			# 15.
 									| greater_than_thingy			# 16.
 									| extended_bracketed_thingy		# 17.
+									| pattern_sequence				# 99.
 
 # 1: (?#text)
 
