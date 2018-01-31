@@ -1225,7 +1225,12 @@ L<http://perldoc.perl.org/perlrequick.html>
 
 L<http://perldoc.perl.org/perlrebackslash.html>
 
-L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>
+L<https://www.endpoint.com/blog/2018/01/23/regular-expression-inconsistencies-with-unicode>
+
+L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>. Regular Expression
+Inconsistencies With Unicode.
+
+L<https://www.joelonsoftware.com/2003/10/08/the-absolute-minimum-every-software-developer-absolutely-positively-must-know-about-unicode-and-character-sets-no-excuses/>
 
 L<https://code.activestate.com/lists/perl5-porters/209610/>
 
