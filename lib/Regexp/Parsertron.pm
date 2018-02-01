@@ -617,10 +617,46 @@ sub validate
 sub _validate_event
 {
 	my($self, $stringref, $start, $span, $pos) = @_;
-	my(@event)       = @{$self -> recce -> events};
-	my($event_count) = scalar @event;
-	my(@event_name)  = sort map{$$_[0]} @event;
-	my($event_name)  = $event_name[0]; # Default.
+	my(@event)			= @{$self -> recce -> events};
+	my($event_count)	= scalar @event;
+	my(@event_names)	= sort map{$$_[0]} @event;
+	my($event_name)		= $event_names[0]; # Default.
+
+	if ($event_count > 1)
+	{
+		my($event_list) = join(', ', @event_names);
+
+		if ($event_list eq 'caret, string')
+		{
+			$event_count	= 1;
+			$event_name		= 'caret';
+			@event_names	= $event_name;
+			$pos			= $start;
+			$span			= 1;
+		}
+		elsif ($event_list eq 'query, string')
+		{
+			$event_count	= 1;
+			$event_name		= 'query';
+			@event_names	= $event_name;
+			$pos			= $start;
+			$span			= 1;
+		}
+		elsif ($event_list eq 'string, vertical_bar')
+		{
+			$event_count	= 1;
+			$event_name		= 'vertical_bar';
+			@event_names	= $event_name;
+			$pos			= $start;
+			$span			= 1;
+		}
+		else
+		{
+			#$self -> print_cooked_tree;
+
+			die "event_count: $event_count. " . $event_list;
+		}
+	}
 
 	# If the input is exhausted, we return immediately so we don't try to use
 	# the values of $start, $span or $pos. They are ignored upon return.
@@ -634,7 +670,7 @@ sub _validate_event
 	my($line, $column)	= $self -> recce -> line_column($start);
 	my($literal)		= $self -> _next_few_chars($stringref, $start + $span);
 	my($message)		= "Location: ($line, $column). Lexeme: $lexeme. Events: $event_count. Names: ";
-	my($name_list)		= join(', ', @event_name);
+	my($name_list)		= join(', ', @event_names);
 	$message			.= ". Next few chars: $literal";
 
 	if ($self -> verbose > 1)
@@ -1079,6 +1115,9 @@ See t/get.set.t for sample code.
 =head2 Can I add a subtree to the tree?
 
 Not yet.
+
+There is a private method, C<_add_daughter()>, which I could make public, if I felt it was safe to
+do so.
 
 =head2 Why does the code not have special handling for the '|' in qr/(Perl|JavaScript)/?
 
