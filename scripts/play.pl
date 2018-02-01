@@ -11,16 +11,16 @@ use Try::Tiny;
 # -----------
 
 my($parser)	= Regexp::Parsertron -> new(verbose => 2);
+my(%stats)	= (success => 0, total => 0);
 my(%input)	=
 (
-#	1 => q!(?|(.{2,4}))!,
-#	2 => q!Perl|JavaScript|(?:Flub|BCPL)!,
-#	3 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
-#	4 => q!!,
-#	5 => q!(?a:b)!,
-#	6 => q!(?:(?<n>foo)|(?<n>bar))!,
-#	7 => q!(?:(?<n2>foo)|(?<n2>bar))\k<n2>!,
-	8 => q#(?(?!a)a|b)#,
+	1 => q!(?|(.{2,4}))!,
+	2 => q!Perl|JavaScript|(?:Flub|BCPL)!,
+	3 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
+	4 => q!(?a:b)!,
+	5 => q!(?:(?<n>foo)|(?<n>bar))!,
+	6 => q!(?:(?<n2>foo)|(?<n2>bar))\k<n2>!,
+	7 => q#(?(?!a)a|b)#,
 );
 
 my($as_string);
@@ -31,6 +31,8 @@ my($s);
 
 for my $key (sort keys %input)
 {
+	$stats{total}++;
+
 	print "Case $key: ";
 
 	$error_str	= '';
@@ -55,6 +57,8 @@ for my $key (sort keys %input)
 		$as_string	= $parser -> as_string;
 		$re{$key}	= $as_string;
 
+		$stats{success}++ if ($result == 0);
+
 		for my $target ('?')
 		{
 			$found = $parser -> find($target);
@@ -76,3 +80,7 @@ for my $key (sort keys %input)
 
 	$parser -> reset;
 }
+
+print "Statistics: ";
+print "$_: $stats{$_}. " for (sort keys %stats);
+say '';

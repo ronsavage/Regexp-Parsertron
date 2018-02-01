@@ -430,6 +430,13 @@ sub _process
 	}
 	elsif ($self -> recce -> exhausted)
 	{
+		# Special case. Sigh. I need to patch the BNF to do this. TODO.
+
+		if ( ($pos + 1 == $length) && (substr($string_re, $pos, 1) eq ')') )
+		{
+			$self -> _add_daughter('close_parenthesis', {text => ')'});
+		}
+
 		# See https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion
 		# for why this code is exhaustion-loving.
 
