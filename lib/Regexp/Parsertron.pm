@@ -1243,7 +1243,7 @@ Exhaustion-loving.
 
 See L<https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion>
 
-=head2 Will this code be modified to run under L<Marpa::R3> when the latter is stable?
+=head2 Will this code be modified to run under Marpa::R3 when the latter is stable?
 
 Yes.
 
@@ -1284,19 +1284,13 @@ xt/author/.
 
 =item o How to best define 'code' in the BNF.
 
-=item o Things to be aware of:
-
-=over 4
-
-=item o Regexps of the form: /.../aa
-
-=item o Pragmas for the form: use re '/aa'; ...
-
-=back
-
 =item o I could traverse the tree and store a pointer to each node in an array
 
-This would mean fast access to nodes in random order. Is there any point?
+This would mean fast access to nodes in random order. But is there any point?
+
+=item o Make private method _add_daughter() public
+
+This would allow users to add nodes and hence subtrees to the tree.
 
 =back
 
