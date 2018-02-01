@@ -1080,6 +1080,19 @@ See t/get.set.t for sample code.
 
 Not yet.
 
+=head2 Why does the code not have special handling for the '|' in qr/(Perl|JavaScript)/?
+
+It could be done by, for example, splitting such a string into three nodes, 'Perl', '|',
+'Javascript'. But does that offer any benefit?
+
+It makes processing by the user more complex because then if they wish to edit the list of
+alternatives, they might have to edit two or three nodes instead of one. Here, editing means perhaps
+replacing any existing string with the empty string.
+
+Further, to extend the list of alternatives, the user will be confused by not being sure if they
+should change 'Javascript' to 'Javascript|C' or if they have to add two nodes, containing '|' and
+'C'. And ATM adding nodes is contraindicated!
+
 =head2 Does this module ever use \Q...\E to quote regexp metacharacters?
 
 No.
