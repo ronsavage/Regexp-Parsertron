@@ -93,7 +93,7 @@ for my $test (@test)
 		$parser -> append(text => '|C++', uid => 5);
 	}
 
-	if ($result == 0)
+	if ($result == 0) # 0 is success.
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
@@ -104,7 +104,7 @@ for my $test (@test)
 	}
 	else
 	{
-		BAIL_OUT("Test $$test{count} failed to return 0 from parse()");
+		BAIL_OUT("Test $$test{count} failed to return 0 (== success) from parse()");
 	}
 
 	# Reset for next test.

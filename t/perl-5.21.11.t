@@ -87,7 +87,7 @@ for my $line (@lines)
 
 		$result = $parser -> parse(re => $re);
 
-		if ($result == 0)
+		if ($result == 0) # Success.
 		{
 			$count++;
 

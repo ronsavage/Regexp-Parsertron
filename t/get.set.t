@@ -17,7 +17,7 @@ my($parser)	= Regexp::Parsertron -> new(re => $re);
 # Return 0 for success and 1 for failure.
 
 my($result)		= $parser -> parse(re => $re);
-my($node_uid)	= 5;
+my($node_uid)	= 5; # Obtained from displaying and inspecting the tree.
 
 $parser -> append(text => '|C++', uid => $node_uid);
 

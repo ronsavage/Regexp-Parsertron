@@ -622,6 +622,8 @@ sub _validate_event
 	my(@event_names)	= sort map{$$_[0]} @event;
 	my($event_name)		= $event_names[0]; # Default.
 
+	# Handle some special cases.
+
 	if ($event_count > 1)
 	{
 		my($event_list) = join(', ', @event_names);
@@ -1119,7 +1121,26 @@ Not yet.
 There is a private method, C<_add_daughter()>, which I could make public, if I felt it was safe to
 do so.
 
-=head2 Why does the code not have special handling for the '|' in qr/(Perl|JavaScript)/?
+=head2 Why does the BNF not accept an empty regexp?
+
+The BNF contains this countable rule to allow patterns to be juxtaposed without '|', say, to
+separate them:
+
+	global_sequence ::= pattern_type+
+
+And in turn (further toward the leaves of the tree of BNF), I then use:
+
+	pattern_sequence ::= pattern_set+
+
+To allow an empty regexp would mean changing this rule to:
+
+	pattern_sequence ::= pattern_set*
+
+But that makes this rule nullable, and Marpa rejects the C<global_sequence> rule on the grounds that
+a countable rule is not allowed to be nullable. ATM I cannot see a way of
+rewriting the rules to avoid this problem. But I'm hopeful such a rewrite is possible.
+
+=head2 Why does the BNF not store '|' - as in qr/(Perl|JavaScript/) - in its own node?
 
 It could be done by, for example, splitting such a string into three nodes, 'Perl', '|',
 'Javascript'. But does that offer any benefit?
@@ -1131,6 +1152,10 @@ replacing any existing string with the empty string.
 Further, to extend the list of alternatives, the user will be confused by not being sure if they
 should change 'Javascript' to 'Javascript|C' or if they have to add two nodes, containing '|' and
 'C'. And ATM adding nodes is contraindicated!
+
+Despite this, when the input stream triggers two events, C<string> and C<vertical_bar>,
+simultaneously, special code in the private method C<_validate_event()> does put '|' in its own
+node. IOW the BNF does not do the work, which is really what I would prefer.
 
 =head2 Does this module ever use \Q...\E to quote regexp metacharacters?
 
@@ -1394,9 +1419,9 @@ negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-global_sequence					::= thingy+
+global_sequence					::= pattern_type+
 
-thingy							::= comment_thingy					#  1. Extended patterns.
+pattern_type					::= comment_thingy					#  1. Extended patterns.
 									| flag_thingy					#  2.
 									| colon_thingy					#  3.
 									| vertical_bar_thingy			#  4.
