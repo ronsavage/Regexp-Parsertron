@@ -1288,9 +1288,7 @@ xt/author/.
 
 This would mean fast access to nodes in random order. But is there any point?
 
-=item o Make private method _add_daughter() public
-
-This would allow users to add nodes and hence subtrees to the tree.
+=item o Allow users to add nodes and hence subtrees to the tree
 
 =back
 
