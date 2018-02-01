@@ -20,66 +20,56 @@ my(@test)	=
 },
 {
 	count		=> 2,
-	expected	=> '(?^:(?))',
-	re			=> qr/(?)/,
-},
-{
-	count		=> 3,
 	expected	=> '(?^:(?a))',
 	re			=> qr/(?a)/,
 },
 {
-	count		=> 4,
+	count		=> 3,
 	expected	=> '(?^:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
-	count		=> 5,
+	count		=> 4,
 	expected	=> '(?^:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
-	count		=> 6,
+	count		=> 5,
 	expected	=> '(?^:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
-	count		=> 7,
+	count		=> 6,
 	expected	=> '(?^:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
 {
-	count		=> 8,
-	expected	=> '(?^:(?:))',
-	re			=> qr/(?:)/,
-},
-{
-	count		=> 9,
+	count		=> 7,
 	expected	=> '(?^:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
-	count		=> 10,
+	count		=> 8,
 	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
 {
-	count		=> 11,
-	expected	=> '(?^i:Perl|JavaScript)',
-	re			=> qr/Perl|JavaScript/i,
-},
-{
-	count		=> 12,
+	count		=> 9,
 	expected	=> '(?^i:Perl|JavaScript|C++)',
 	re			=> qr/Perl|JavaScript/i,
 },
 {
-	count		=> 13,
+	count		=> 10,
+	expected	=> '(?^i:Perl|JavaScript|C++)',
+	re			=> qr/Perl|JavaScript|C++/i,
+},
+{
+	count		=> 11,
 	expected	=> '(?^:/ab+bc/)',
 	re			=> '/ab+bc/',
 },
 {
-	count		=> 14,
+	count		=> 12,
 	expected	=> '(?^:^)',
 	re			=> qr/^/,
 },
@@ -98,7 +88,7 @@ for my $test (@test)
 	$count	= $$test{count}; # Used after the loop.
 	$result = $parser -> parse(re => $$test{re});
 
-	if ($count == 12)
+	if ($count == 9)
 	{
 		$parser -> append(text => '|C++', uid => 5);
 	}

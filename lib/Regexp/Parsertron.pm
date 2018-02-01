@@ -286,6 +286,7 @@ sub parse
 		({
 			exhaustion			=> 'event',
 			grammar				=> $self -> grammar,
+#			ranking_method		=> 'high_rule_only',
 #			semantics_package	=> 'Regexp::Parsertron::Actions',
 #			trace_terminals		=> 99,
 		})
@@ -379,7 +380,7 @@ sub _process
 
 	if ($self -> verbose > 1)
 	{
-		my($format) = '%-10s  %-5s  %-15s  %-6s  %-30s  %s';
+		my($format) = '%-10s  %-5s  %-20s  %-6s  %-30s  %s';
 
 		say sprintf($format, '  Location', 'Width', 'Lexeme', 'Events', 'Names', 'Next few chars');
 
@@ -631,7 +632,7 @@ sub _validate_event
 
 	if ($self -> verbose > 1)
 	{
-		my($format) = '%4d, %4d  %5d  %-15s  %6d  %-30s  %s';
+		my($format) = '%4d, %4d  %5d  %-20s  %6d  %-30s  %s';
 
 		say sprintf($format, $line, $column, length($lexeme), $lexeme, $event_count, $name_list, $literal);
 
@@ -1106,6 +1107,12 @@ See the L</Synopsis> for sample code and a report after parsing a tiny regexp.
 
 No. Always ignore it.
 
+=head2 Why does the BNF never use the lexeme adverb C<priority>?
+
+Because with Marpa::R2 the priority is only used when lexemes are the same length.
+
+L<See FAQ Q 140|https://savage.net.au/Perl-modules/html/marpa.faq/faq.html#q140>.
+
 =head2 Does this module interpret regexps in any way?
 
 No. You have to run your own Perl code to do that. This module just parses them into a data
@@ -1312,7 +1319,9 @@ lexeme default					= latm => 1
 
 # G1 stuff.
 
-regexp							::= open_parenthesis query_caret flag_sequence colon entire_sequence close_parenthesis
+regexp							::= open_parenthesis global_prefix global_sequence close_parenthesis
+
+global_prefix					::= query_caret flag_sequence colon
 
 flag_sequence					::= positive_flags negative_flag_set
 
@@ -1326,7 +1335,9 @@ negative_flags					::= flag_set
 
 # Extended patterns from http://perldoc.perl.org/perlre.html:
 
-entire_sequence					::= comment_thingy					#  1. Extended patterns.
+global_sequence					::= thingy+
+
+thingy							::= comment_thingy					#  1. Extended patterns.
 									| flag_thingy					#  2.
 									| colon_thingy					#  3.
 									| vertical_bar_thingy			#  4.
@@ -1367,13 +1378,13 @@ colon_thingy					::= colon_prefix pattern_sequence close_parenthesis
 
 # 99. Non-extended patterns.
 
-pattern_sequence				::= pattern_set*
+pattern_sequence				::= pattern_set+
 
 pattern_set						::= pattern_item
-									| pattern_item '|'
+									| pattern_item '|' pattern_item
 
 pattern_item					::= bracket_pattern
-									| named_capture_group_thingy # 9.
+									| named_capture_group_thingy	# 9.
 									| parenthesis_pattern
 									| slash_pattern
 									| character_sequence
@@ -1395,7 +1406,7 @@ simple_character_sequence		::= escaped_close_parenthesis
 									| escaped_slash
 									| caret
 									| vertical_bar
-									| character_set
+									| string
 
 parenthesis_pattern				::= open_parenthesis pattern_sequence close_parenthesis
 
@@ -1437,6 +1448,8 @@ capture_group_item				::= capture_name named_capture_group_suffix
 
 # 10: \k<NAME>
 #  & \k'NAME'
+#  & \k{NAME}
+#  & \g{NAME}
 
 named_backreference_thingy		::=
 named_backreference_thingy		::= named_backreference_prefix capture_group_item
@@ -1529,9 +1542,6 @@ capture_name_tail			~ [_A-Za-z0-9]*
 :lexeme						~ caret					pause => before		event => caret
 caret						~ '^'
 
-:lexeme						~ character_set			pause => before		event => character_set
-character_set				~ [^()/]*
-
 :lexeme						~ close_brace			pause => before		event => close_brace
 close_brace					~ '}'
 
@@ -1553,7 +1563,7 @@ comment_prefix				~ '(?#'
 :lexeme						~ condition_capture_group_prefix	pause => before		event => condition_capture_group_prefix
 condition_capture_group_prefix	~ '(<'
 
-:lexeme						~ condition_natural_prefix	pause => before	event => condition_natural_prefix
+:lexeme						~ condition_natural_prefix			pause => before		event => condition_natural_prefix
 condition_natural_prefix	~ '(1'
 condition_natural_prefix	~ '(2'
 condition_natural_prefix	~ '(3'
@@ -1578,7 +1588,7 @@ condition_natural_prefix	~ '(20'
 :lexeme						~ condition_predicate_prefix	pause => before		event => condition_predicate_prefix
 condition_predicate_prefix	~ '(R&'
 
-:lexeme						~ condition_R_prefix	pause => before		event => condition_R_prefix
+:lexeme						~ condition_R_prefix			pause => before		event => condition_R_prefix
 condition_R_prefix			~ '(R'
 condition_R_prefix			~ '(R1'
 condition_R_prefix			~ '(R2'
@@ -1613,14 +1623,14 @@ equals_prefix				~ '(?='
 :lexeme						~ escaped_close_bracket	pause => before		event => escaped_close_bracket
 escaped_close_bracket		~ '\\' ']'
 
-:lexeme						~ escaped_close_parenthesis	pause => before		event => escaped_close_parenthesis
+:lexeme						~ escaped_close_parenthesis	pause => before	event => escaped_close_parenthesis
 escaped_close_parenthesis	~ '\\)'
 
 :lexeme						~ escaped_K				pause => before		event => escaped_K
 escaped_K					~ '\\K'
 
-:lexeme						~ escaped_open_parenthesis	pause => before		event => escaped_open_parenthesis
-escaped_open_parenthesis	~ '\\)'
+:lexeme						~ escaped_open_parenthesis	pause => before	event => escaped_open_parenthesis
+escaped_open_parenthesis	~ '\\('
 
 :lexeme						~ escaped_slash			pause => before		event => escaped_slash
 escaped_slash				~ '\\\\'
@@ -1628,7 +1638,7 @@ escaped_slash				~ '\\\\'
 :lexeme						~ exclamation_mark_prefix	pause => before	event => exclamation_mark_prefix
 exclamation_mark_prefix		~ '(?!'
 
-:lexeme						~ extended_bracketed_prefix	pause => before		event => extended_bracketed_prefix
+:lexeme						~ extended_bracketed_prefix	pause => before	event => extended_bracketed_prefix
 extended_bracketed_prefix	~ '(?['
 
 :lexeme						~ flag_set				pause => before		event => flag_set
@@ -1644,14 +1654,16 @@ greater_than_prefix			~ '(?>'
 less_or_equals_prefix		~ '(?<='
 
 :lexeme						~ less_exclamation_mark_prefix	pause => before	event => less_exclamation_mark_prefix
-less_exclamation_mark_prefix	~ '(?!'
+less_exclamation_mark_prefix	~ '(?<!'
 
 :lexeme						~ minus					pause => before		event => minus
 minus						~ '-'
 
 :lexeme						~ named_backreference_prefix	pause => before		event => named_backreference_prefix
-named_backreference_prefix	~ '\\k<'
 named_backreference_prefix	~ '\\k' ['] # Use a ' for the Ultraedit syntax hiliter.
+named_backreference_prefix	~ '\\k<'
+named_backreference_prefix	~ '\\k{'
+named_backreference_prefix	~ '\\g{'
 
 :lexeme						~ named_capture_group_prefix	pause => before		event => named_capture_group_prefix
 named_capture_group_prefix	~ '(?<'
@@ -1761,7 +1773,10 @@ single_brace_prefix			~ '(?{'
 :lexeme						~ slash					pause => before		event => slash
 slash						~ '/'
 
-:lexeme						~ vertical_bar			pause => before		event => vertical_bar priority => 1
+:lexeme						~ string				pause => before		event => string
+string						~ [^()/]*
+
+:lexeme						~ vertical_bar			pause => before		event => vertical_bar
 vertical_bar				~ '|'
 
 :lexeme						~ vertical_bar_prefix	pause => before		event => vertical_bar_prefix

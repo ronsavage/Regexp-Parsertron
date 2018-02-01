@@ -14,11 +14,13 @@ my($parser)	= Regexp::Parsertron -> new(verbose => 2);
 my(%input)	=
 (
 #	1 => q!(?|(.{2,4}))!,
-#	2 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
-#	3 => q!Perl|JavaScript|(?:Flub|BCPL)!,
+#	2 => q!Perl|JavaScript|(?:Flub|BCPL)!,
+#	3 => q!(?^i:Perl|JavaScript|(?:Flub|BCPL))!,
 #	4 => q!!,
 #	5 => q!(?a:b)!,
-	6 => q!(?:(?<n>foo)|(?<n>bar))!
+#	6 => q!(?:(?<n>foo)|(?<n>bar))!,
+#	7 => q!(?:(?<n2>foo)|(?<n2>bar))\k<n2>!,
+	8 => q#(?(?!a)a|b)#,
 );
 
 my($as_string);
@@ -29,7 +31,7 @@ my($s);
 
 for my $key (sort keys %input)
 {
-	say "Case $key: ";
+	print "Case $key: ";
 
 	$error_str	= '';
 	$s			= $input{$key};
@@ -53,8 +55,6 @@ for my $key (sort keys %input)
 		$as_string	= $parser -> as_string;
 		$re{$key}	= $as_string;
 
-		say "result: $result (0 is success). as_string: $as_string";
-
 		for my $target ('?')
 		{
 			$found = $parser -> find($target);
@@ -65,15 +65,14 @@ for my $key (sort keys %input)
 		$result = $parser -> validate;
 
 		say "Calling validate() on $s: $result (0 is success)";
+		say "Case: $key. as_string: $as_string. result: $result (0 is success)";
 	}
 	catch
 	{
 		say $_;
 	};
 
-	say '';
+	say '-' x 100;
 
 	$parser -> reset;
 }
-
-say '-' x 50;

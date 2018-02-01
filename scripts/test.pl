@@ -15,98 +15,108 @@ my(@test)	=
 	expected	=> '(?^:(?#Comment))',
 	re			=> qr/(?#Comment)/,
 },
+# This is commented out because the BNF now defines
+# pattern_sequence				::= pattern_set+
+# Instead of
+# pattern_sequence				::= pattern_set*
+#
+#{
+#	count		=> 90,
+#	expected	=> '(?^:(?))',
+#	re			=> qr/(?)/,
+#},
 {
 	count		=> 2,
-	expected	=> '(?^:(?))',
-	re			=> qr/(?)/,
-},
-{
-	count		=> 3,
 	expected	=> '(?^:(?a))',
 	re			=> qr/(?a)/,
 },
 {
-	count		=> 4,
+	count		=> 3,
 	expected	=> '(?^:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
-	count		=> 5,
+	count		=> 4,
 	expected	=> '(?^:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
-	count		=> 6,
+	count		=> 5,
 	expected	=> '(?^:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
-	count		=> 7,
+	count		=> 6,
 	expected	=> '(?^:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
+# This is commented out because the BNF now defines
+# pattern_sequence				::= pattern_set+
+# Instead of
+# pattern_sequence				::= pattern_set*
+#
+#{
+#	count		=> 91,
+#	expected	=> '(?^:(?:))',
+#	re			=> qr/(?:)/,
+#},
 {
-	count		=> 8,
-	expected	=> '(?^:(?:))',
-	re			=> qr/(?:)/,
-},
-{
-	count		=> 9,
+	count		=> 7,
 	expected	=> '(?^:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
-	count		=> 10,
+	count		=> 8,
 	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
 {
-	count		=> 11,
+	count		=> 9,
 	expected	=> '(?^i:Perl|JavaScript)',
 	re			=> qr/Perl|JavaScript/i,
 },
 {
-	count		=> 12,
+	count		=> 10,
 	expected	=> '(?^i:Perl|JavaScript|C++)',
 	re			=> qr/Perl|JavaScript/i,
 },
 {
-	count		=> 13,
+	count		=> 11,
 	expected	=> '(?^:/ab+bc/)',
 	re			=> '/ab+bc/',
 },
 {
-	count		=> 14,
+	count		=> 12,
 	expected	=> '(?^:a)',
 	re			=> qr/a/,
 },
 {
-	count		=> 15,
+	count		=> 13,
 	expected	=> '(?^i:Perl|JavaScript|(?:Flub|BCPL))',
 	re			=> qr/Perl|JavaScript|(?:Flub|BCPL)/i,
 },
 {
-	count		=> 16,
+	count		=> 14,
 	expected	=> "(?^:(?:(?<n>foo)|(?'n'bar)))",
 	re			=> qr/(?:(?<n>foo)|(?'n'bar))/,
 },
 {
-	count		=> 17,
+	count		=> 15,
 	expected	=> "(?^:(?:(?'n2'foo)|(?<n2>bar)))",
 	re			=> qr/(?:(?'n2'foo)|(?<n2>bar))/,
 },
 {
-	count		=> 18,
+	count		=> 16,
 	expected	=> "(?^:(?:(?'n'foo)|(?'n'bar)))",
 	re			=> qr/(?:(?'n'foo)|(?'n'bar))/,
 },
 {
-	count		=> 19,
+	count		=> 17,
 	expected	=> "(?^:(?:(?'n2'foo)|(?'n2'bar)))",
 	re			=> qr/(?:(?'n2'foo)|(?'n2'bar))/,
 },
 {
-	count		=> 19,
+	count		=> 18,
 	expected	=> '(?^:(?:(?<n2>foo)|(?<n2>bar))\k<n2>)',
 	re			=> qr/(?:(?<n2>foo)|(?<n2>bar))\k<n2>/,
 },
@@ -132,7 +142,7 @@ for my $test (@test)
 	$result		= $parser -> parse(re => $$test{re});
 	$success	= 1;
 
-	if ($$test{count} == 12)
+	if ($$test{count} == 10)
 	{
 		$parser -> append(text => '|C++', uid => 5);
 	}
@@ -145,7 +155,7 @@ for my $test (@test)
 
 		$stats{success}++ if ($success == 0);
 
-		say "$$test{count}: got: $got. expected: $expected. outcome: $success (0 is success). ";
+		say "Case: $$test{count}. got: $got. expected: $expected. result: $success (0 is success). ";
 	}
 	else
 	{
