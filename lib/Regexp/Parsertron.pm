@@ -509,11 +509,11 @@ sub reset
 
 sub search
 {
-	my($self, $raw_re) = @_;
+	my($self, $target) = @_;
 
-	die "Method search() takes a defined value as the parameter\n" if (! defined $raw_re);
+	die "Method search() takes a defined value as the parameter\n" if (! defined $target);
 
-	my($re) = $self -> _string2re($raw_re);
+	my($re) = $self -> _string2re($target);
 
 	my(@found);
 	my($meta);
@@ -713,56 +713,84 @@ This is scripts/synopsis.pl:
 
 	# ---------------------
 
-	my($re)		= qr/Perl|JavaScript/i;
-	my($parser)	= Regexp::Parsertron -> new(verbose => 1);
+	my($re)     = qr/Perl|JavaScript/i;
+	my($parser) = Regexp::Parsertron -> new(verbose => 1);
 
 	# Return 0 for success and 1 for failure.
 
-	my($result) = $parser -> parse(re => $re);
+	my($result)  = $parser -> parse(re => $re);
+	my($node_id) = 5;
 
-	say "Calling append(text => '|C++', uid => 6)";
+	say "Calling append(text => '|C++', uid => $node_id)";
 
-	$parser -> append(text => '|C++', uid => 6);
+	$parser -> append(text => '|C++', uid => $node_id);
 	$parser -> print_raw_tree;
 	$parser -> print_cooked_tree;
 
 	my($as_string) = $parser -> as_string;
 
-	say "Original:  $re. Result: $result. (0 is success)";
-	say "as_string: $as_string";
-	validate():  Result: 0 (0 is success)
+	say "Original:    $re. Result: $result (0 is success)";
+	say "as_string(): $as_string";
+
+	$result = $parser -> validate;
+
+	say "validate():  Result: $result (0 is success)";
+
+	# Return 0 for success and 1 for failure.
+
+	say 'Add complexity to the regexp';
+
+	$parser -> reset;
+	$parser -> verbose(0);
+
+	$re		= qr/Perl|JavaScript|(?:Flub|BCPL)/i;
+	$result	= $parser -> parse(re => $re);
+
+	$parser -> print_raw_tree;
 
 And its output:
 
 	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- query. Attributes: {text => "?", uid => "2"}
-	    |    |--- caret. Attributes: {text => "^", uid => "3"}
-	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
-	    |    |--- colon. Attributes: {text => ":", uid => "5"}
-	    |    |--- character_set. Attributes: {text => "Perl|JavaScript", uid => "6"}
-	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-	Calling append(text => '|C++', uid => 6)
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript", uid => "5"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
+
+	Calling append(text => '|C++', uid => 5)
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- query. Attributes: {text => "?", uid => "2"}
-	    |    |--- caret. Attributes: {text => "^", uid => "3"}
-	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
-	    |    |--- colon. Attributes: {text => ":", uid => "5"}
-	    |    |--- character_set. Attributes: {text => "Perl|JavaScript|C++", uid => "6"}
-	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
-	Name                  Uid  Text
-	----                  ---  ----
-	open_parenthesis        1  (
-	query           2  ?
-	caret                   3  ^
-	flag_set                4  i
-	colon                   5  :
-	character_set           6  Perl|JavaScript|C++
-	close_parenthesis       7  )
-	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
-	as_string: (?^i:Perl|JavaScript|C++)
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript|C++", uid => "5"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
+
+	Name                            Uid  Text
+	----                            ---  ----
+	open_parenthesis                  1  (
+	query_caret                       2  ?^
+	flag_set                          3  i
+	colon                             4  :
+	string                            5  Perl|JavaScript|C++
+	close_parenthesis                 6  )
+	Original:    (?^i:Perl|JavaScript). Result: 0 (0 is success)
+	as_string(): (?^i:Perl|JavaScript|C++)
+	validate():  Result: 0 (0 is success)
+	Add complexity to the regexp
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript|", uid => "5"}
+	    |    |--- colon_prefix. Attributes: {text => "(?:", uid => "6"}
+	    |    |    |--- string. Attributes: {text => "Flub|BCPL", uid => "7"}
+	    |    |--- close_parenthesis. Attributes: {text => ")", uid => "8"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "9"}
+
 
 Note: The 1st tree is printed due to verbose => 1 in the call to L</new([%opts])>, while the 2nd
 is due to the call to L</print_raw_tree()>. The columnar output is due to the call to
@@ -886,16 +914,16 @@ L</append(%opts)>.
 
 Returns an arrayref of node uids whose text contains the given string.
 
-The code calls C<die()> if $target is undef.
-
 If the arrayref is empty, there were no matches.
 
-This method uses the Perl C<index()> function to test if $string is a substring of the text of each
-node. Regexps are not used by this method.
+The Perl function C<index()> is used here to test for $string being a substring of the text
+associated with each node.
 
-See scripts/play.pl and t/get.set.t for sample usage of C<find()>.
+The code calls C<die()> if $target is undef.
 
-See also L</get($uid)>.
+See t/get.set.t for sample usage of C<find()>.
+
+See L</search($target)> for a regexp-based test. See also L</get($uid)>.
 
 =head2 get($uid)
 
@@ -980,6 +1008,20 @@ Resets various internal things, except test_count.
 
 Used basically for debugging.
 
+=head2 search($target)
+
+Returns an arrayref of node uids whose text contains the given string.
+
+If the arrayref is empty, there were no matches.
+
+$string may be a simple string - 'Perl' - or a regexp - qr/Perl/.
+
+The code calls C<die()> if $target is undef.
+
+See t/search.t for sample usage of C<search()>.
+
+See L</find($target)> for a simple string-based test. See also L</get($uid)>.
+
 =head2 set(%opts)
 
 Set the text of a node to $opt{text}.
@@ -1061,8 +1103,8 @@ This code, scripts/tutorial.pl, is a cut-down version of scripts/synopsis.pl:
 
 	# ---------------------
 
-	my($re)		= qr/Perl|JavaScript/i;
-	my($parser)	= Regexp::Parsertron -> new(verbose => 1);
+	my($re)     = qr/Perl|JavaScript/i;
+	my($parser) = Regexp::Parsertron -> new(verbose => 1);
 
 	# Return 0 for success and 1 for failure.
 
@@ -1075,12 +1117,11 @@ Running it outputs:
 	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- query. Attributes: {text => "?", uid => "2"}
-	    |    |--- caret. Attributes: {text => "^", uid => "3"}
-	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
-	    |    |--- colon. Attributes: {text => ":", uid => "5"}
-	    |    |--- character_set. Attributes: {text => "Perl|JavaScript", uid => "6"}
-	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript", uid => "5"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
 
 	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
 
@@ -1092,19 +1133,20 @@ The nodes are uniquely identified by their uids.
 
 Add these lines to the end of the tutorial code, and re-run:
 
-	$parser -> append(text => '|C++', uid => 6);
+	my($node_id) = 5; # Obtained from displaying and inspecting the tree.
+
+	$parser -> append(text => '|C++', uid => $node_id);
 	$parser -> print_raw_tree;
 
-The extra output, showing node uid == 6, is:
+The extra output, showing the change to node uid == 5, is:
 
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- query. Attributes: {text => "?", uid => "2"}
-	    |    |--- caret. Attributes: {text => "^", uid => "3"}
-	    |    |--- flag_set. Attributes: {text => "i", uid => "4"}
-	    |    |--- colon. Attributes: {text => ":", uid => "5"}
-	    |    |--- character_set. Attributes: {text => "Perl|JavaScript|C++", uid => "6"}
-	    |--- close_parenthesis. Attributes: {text => ")", uid => "7"}
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript|C++", uid => "5"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
 
 =item o Test also with L</prepend(%opts)> and L</set(%opts)>
 
@@ -1122,6 +1164,10 @@ There is a private method, C<_add_daughter()>, which I could make public, if I f
 do so.
 
 =head2 Why does the BNF not accept an empty regexp?
+
+Simple answer: Changing the BNF to handle this creates a massive problem elsewhere in the BNF.
+
+Complex answer (which I wrote and almost understand :-):
 
 The BNF contains this countable rule to allow patterns to be juxtaposed without '|', say, to
 separate them:
