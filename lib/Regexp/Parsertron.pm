@@ -719,7 +719,7 @@ This is scripts/synopsis.pl:
 	# Return 0 for success and 1 for failure.
 
 	my($result)  = $parser -> parse(re => $re);
-	my($node_id) = 5;
+	my($node_id) = 5; # Obtained from displaying and inspecting the tree.
 
 	say "Calling append(text => '|C++', uid => $node_id)";
 
@@ -738,13 +738,13 @@ This is scripts/synopsis.pl:
 
 	# Return 0 for success and 1 for failure.
 
-	say 'Add complexity to the regexp';
-
 	$parser -> reset;
 	$parser -> verbose(0);
 
-	$re		= qr/Perl|JavaScript|(?:Flub|BCPL)/i;
-	$result	= $parser -> parse(re => $re);
+	$re     = qr/Perl|JavaScript|(?:Flub|BCPL)/i;
+	$result = $parser -> parse(re => $re);
+
+	say "\nAdd complexity to the regexp by parsing a new regexp";
 
 	$parser -> print_raw_tree;
 
@@ -779,7 +779,8 @@ And its output:
 	Original:    (?^i:Perl|JavaScript). Result: 0 (0 is success)
 	as_string(): (?^i:Perl|JavaScript|C++)
 	validate():  Result: 0 (0 is success)
-	Add complexity to the regexp
+
+	Adding complexity to the regexp by parsing a new regexp:
 	Root. Attributes: {text => "Root", uid => "0"}
 	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
 	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
