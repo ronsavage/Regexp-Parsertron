@@ -75,8 +75,6 @@ for my $test (@test)
 		ok(1 == 1, "As expected, unable to parse qr/$$test{re}/");
 	};
 
-	say '-' x 100;
-
 	# Reset for next test.
 
 	$parser -> reset;
