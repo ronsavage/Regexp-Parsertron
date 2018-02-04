@@ -1049,7 +1049,7 @@ See also L</append(%opts)> and L</prepend(%opts)>.
 
 Returns an object of type L<Tree>. Ignore the root node.
 
-Each node's C<meta> method returns a hashref of information about the node. See the L</FAQ> for
+Each node's C<meta()> method returns a hashref of information about the node. See the L</FAQ> for
 details.
 
 See also the source code for L</print_cooked_tree()> and L</print_raw_tree()> for ideas on how to
@@ -1201,8 +1201,9 @@ should change 'Javascript' to 'Javascript|C' or if they have to add two nodes, c
 'C'. And ATM adding nodes is contraindicated!
 
 Despite this, when the input stream triggers two events, C<string> and C<vertical_bar>,
-simultaneously, special code in the private method C<_validate_event()> does put '|' in its own
-node. IOW the BNF does not do the work, which is really what I would prefer.
+simultaneously because the '|' is at the start of a string, special code in the private method
+C<_validate_event()> does put '|' in its own node. IOW the BNF does not do the work, which is really
+what I would prefer.
 
 =head2 Does this module ever use \Q...\E to quote regexp metacharacters?
 
@@ -1242,7 +1243,7 @@ No. Always ignore it.
 
 Because with Marpa::R2 the priority is only used when lexemes are the same length.
 
-L<See FAQ Q 140|https://savage.net.au/Perl-modules/html/marpa.faq/faq.html#q140>.
+L<See FAQ #140|https://savage.net.au/Perl-modules/html/marpa.faq/faq.html#q140>.
 
 =head2 Does this module interpret regexps in any way?
 
