@@ -68,8 +68,6 @@ for my $test (@test)
 	}
 	catch
 	{
-		#say "Case: $$test{item}. Marpa failed";
-
 		#say map{"# $_\n"} split(/\n/, $_);
 
 		ok(1 == 1, "As expected, unable to parse qr/$$test{re}/");
