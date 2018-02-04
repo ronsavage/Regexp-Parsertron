@@ -1168,7 +1168,7 @@ do so.
 
 Simple answer: Changing the BNF to handle this creates a massive problem elsewhere in the BNF.
 
-Complex answer (which I wrote and almost understand :-):
+Complex answer:
 
 The BNF contains this countable rule to allow patterns to be juxtaposed without '|', say, to
 separate them:
