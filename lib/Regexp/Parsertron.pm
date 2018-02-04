@@ -1049,8 +1049,8 @@ See also L</append(%opts)> and L</prepend(%opts)>.
 
 Returns an object of type L<Tree>. Ignore the root node.
 
-Each node's C<meta()> method returns a hashref of information about the node. See the L</FAQ> for
-details.
+Each node's C<meta()> method returns a hashref of information about the node. See the
+L</What is the format of the nodes in the tree built by this module?> for details.
 
 See also the source code for L</print_cooked_tree()> and L</print_raw_tree()> for ideas on how to
 use this object.
@@ -1209,7 +1209,7 @@ what I would prefer.
 
 No.
 
-=head2 What is the format of the nodes in the tree build by this module?
+=head2 What is the format of the nodes in the tree built by this module?
 
 Each node's C<name> is the name of the Marpa-style event which was triggered by detection of
 some C<text> within the regexp.
