@@ -908,16 +908,16 @@ See also L</prepend(%opts)>, L</set(%opts)> and t/get.set.t.
 
 =head2 as_string()
 
-Returns the parsed regexp as a string. The string contains all edits applied with methods such as
-L</append(%opts)>.
+Returns the parsed regexp as a string. The string contains all edits applied with
+L</The Edit Methods>.
 
-=head2 find($string)
+=head2 find($target)
 
 Returns an arrayref of node uids whose text contains the given string.
 
 If the arrayref is empty, there were no matches.
 
-The Perl function C<index()> is used here to test for $string being a substring of the text
+The Perl function C<index()> is used here to test for $target being a substring of the text
 associated with each node.
 
 The code calls C<die()> if $target is undef.
@@ -935,7 +935,7 @@ is the highest uid so far assigned to any node.
 
 Returns undef if the given $uid is not found.
 
-See also L</find($string)>.
+See also L</find($target)>.
 
 =head2 new([%opts])
 
@@ -1015,13 +1015,13 @@ Returns an arrayref of node uids whose text contains the given string.
 
 If the arrayref is empty, there were no matches.
 
-$string may be a simple string - 'Perl' - or a regexp - qr/Perl/.
+$target is converted to a regexp if a simple string is passed in.
 
 The code calls C<die()> if $target is undef.
 
 See t/search.t for sample usage of C<search()>.
 
-See L</find($target)> for a simple string-based test. See also L</get($uid)>.
+See L</find($target)> for a non-regexp search. See also L</get($uid)>.
 
 =head2 set(%opts)
 
@@ -1255,7 +1255,7 @@ structure.
 And that really means this module does not match the regexp against anything. If I appear to do that
 while debugging new code, you can't rely on that appearing in production versions of the module.
 
-=head2 Does this module re-write regexps?
+=head2 Does this module rewrite regexps?
 
 No, unless you call one of L</The Edit Methods>.
 
