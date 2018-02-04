@@ -11,7 +11,7 @@ use Regexp::Parsertron;
 my(@test)	=
 (
 {
-	count		=> 1,
+	item		=> 1,
 	expected	=> '(?^:(?#Comment))',
 	re			=> qr/(?#Comment)/,
 },

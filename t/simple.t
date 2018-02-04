@@ -14,68 +14,69 @@ use Test::More;
 my(@test)	=
 (
 {
-	count		=> 1,
+	item		=> 1,
 	expected	=> '(?^:(?#Comment))',
 	re			=> qr/(?#Comment)/,
 },
 {
-	count		=> 2,
+	item		=> 2,
 	expected	=> '(?^:(?a))',
 	re			=> qr/(?a)/,
 },
 {
-	count		=> 3,
+	item		=> 3,
 	expected	=> '(?^:(?a-i))',
 	re			=> qr/(?a-i)/,
 },
 {
-	count		=> 4,
+	item		=> 4,
 	expected	=> '(?^:(?^a))',
 	re			=> qr/(?^a)/,
 },
 {
-	count		=> 5,
+	item		=> 5,
 	expected	=> '(?^:(?a:))',
 	re			=> qr/(?a:)/,
 },
 {
-	count		=> 6,
+	item		=> 6,
 	expected	=> '(?^:(?a:b))',
 	re			=> qr/(?a:b)/,
 },
 {
-	count		=> 7,
+	item		=> 7,
 	expected	=> '(?^:[yY][eE][sS])',
 	re			=> qr/[yY][eE][sS]/,
 },
 {
-	count		=> 8,
+	item		=> 8,
 	expected	=> '(?^:(A|B))',
 	re			=> qr/(A|B)/,
 },
 {
-	count		=> 9,
+	item		=> 9,
 	expected	=> '(?^i:Perl|JavaScript|C++)',
 	re			=> qr/Perl|JavaScript/i,
 },
 {
-	count		=> 10,
+	item		=> 10,
 	expected	=> '(?^i:Perl|JavaScript|C++)',
 	re			=> qr/Perl|JavaScript|C++/i,
 },
 {
-	count		=> 11,
+	item		=> 11,
 	expected	=> '(?^:/ab+bc/)',
 	re			=> '/ab+bc/',
 },
 {
-	count		=> 12,
+	item		=> 12,
 	expected	=> '(?^:^)',
 	re			=> qr/^/,
 },
 );
 
-my($parser)	= Regexp::Parsertron -> new;
+my($parser)		= Regexp::Parsertron -> new;
+my($node_uid)	= 5; # Obtained from displaying and inspecting the tree.
 
 my($count);
 my($expected);
@@ -85,26 +86,26 @@ my($result);
 
 for my $test (@test)
 {
-	$count	= $$test{count}; # Used after the loop.
+	$count	= $$test{item}; # Used after the loop.
 	$result = $parser -> parse(re => $$test{re});
 
 	if ($count == 9)
 	{
-		$parser -> append(text => '|C++', uid => 5);
+		$parser -> append(text => '|C++', uid => $node_uid);
 	}
 
 	if ($result == 0) # 0 is success.
 	{
 		$got		= $parser -> as_string;
 		$expected	= $$test{expected};
-		$message	= "$$test{count}: re: $$test{re}. got: $got";
-		$message	.= ' (After calling append(...) )' if ($$test{count} == 12);
+		$message	= "$$test{item}: re: $$test{re}. got: $got";
+		$message	.= ' (After calling append(...) )' if ($$test{item} == 12);
 
 		is_deeply("$got", $expected, $message);
 	}
 	else
 	{
-		BAIL_OUT("Test $$test{count} failed to return 0 (== success) from parse()");
+		BAIL_OUT("Case $$test{item} failed to return 0 (== success) from parse()");
 	}
 
 	# Reset for next test.

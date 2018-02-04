@@ -1187,7 +1187,7 @@ But that makes this rule nullable, and Marpa rejects the C<global_sequence> rule
 a countable rule is not allowed to be nullable. ATM I cannot see a way of
 rewriting the rules to avoid this problem. But I'm hopeful such a rewrite is possible.
 
-=head2 Why does the BNF not store '|' - as in qr/(Perl|JavaScript/) - in its own node?
+=head2 Why does the code sometimes not store '|' - as in qr/(Perl|JavaScript/) - in its own node?
 
 It could be done by, for example, splitting such a string into three nodes, 'Perl', '|',
 'Javascript'. But does that offer any benefit?
@@ -1227,6 +1227,8 @@ This is the text within the regexp which triggered the event just mentioned.
 This is the unqiue id of the 'current' node.
 
 This C<uid> is often used by you to specify which node to work on.
+
+See t/get.set.t and t/simple.t for sample code.
 
 =back
 
