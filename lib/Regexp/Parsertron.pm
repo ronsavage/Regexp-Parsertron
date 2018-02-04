@@ -99,7 +99,7 @@ has warning_str =>
 	required => 0,
 );
 
-our $VERSION = '0.81';
+our $VERSION = '0.90';
 
 # ------------------------------------------------
 
@@ -1336,7 +1336,9 @@ xt/author/.
 
 =item o I could traverse the tree and store a pointer to each node in an array
 
-This would mean fast access to nodes in random order. But is there any point?
+This would mean fast access to nodes in random order. But is there any point? Yes, it would speed up
+various methods. Specifically, any module which calls C<traverse()> on the tree object would
+benefit.
 
 =item o Allow users to add nodes and hence subtrees to the tree
 
