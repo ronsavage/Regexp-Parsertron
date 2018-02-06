@@ -99,7 +99,7 @@ has warning_str =>
 	required => 0,
 );
 
-our $VERSION = '0.90';
+our $VERSION = '1.00';
 
 # ------------------------------------------------
 
