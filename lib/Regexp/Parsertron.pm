@@ -701,6 +701,8 @@ Warning: Development version. See L</Version Numbers> for details.
 
 =head1 Synopsis
 
+=head2 Sample Code
+
 This is scripts/synopsis.pl:
 
 	#!/usr/bin/env perl
@@ -796,6 +798,77 @@ And its output:
 Note: The 1st tree is printed due to verbose => 1 in the call to L</new([%opts])>, while the 2nd
 is due to the call to L</print_raw_tree()>. The columnar output is due to the call to
 L</print_cooked_tree()>.
+
+=head2 Tutorial
+
+=over 4
+
+=item o Start with a simple program and a simple regexp
+
+This code, scripts/tutorial.pl, is a cut-down version of scripts/synopsis.pl:
+
+	#!/usr/bin/env perl
+
+	use v5.10;
+	use strict;
+	use warnings;
+
+	use Regexp::Parsertron;
+
+	# ---------------------
+
+	my($re)     = qr/Perl|JavaScript/i;
+	my($parser) = Regexp::Parsertron -> new(verbose => 1);
+
+	# Return 0 for success and 1 for failure.
+
+	my($result) = $parser -> parse(re => $re);
+
+	say "Original:  $re. Result: $result. (0 is success)";
+
+Running it outputs:
+
+	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript", uid => "5"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
+
+	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
+
+=item o Examine the tree and determine which nodes you wish to edit
+
+The nodes are uniquely identified by their uids.
+
+=item o Proceed as does scripts/synopsis.pl
+
+Add these lines to the end of the tutorial code, and re-run:
+
+	my($node_id) = 5; # Obtained from displaying and inspecting the tree.
+
+	$parser -> append(text => '|C++', uid => $node_id);
+	$parser -> print_raw_tree;
+
+The extra output, showing the change to node uid == 5, is:
+
+	Root. Attributes: {text => "Root", uid => "0"}
+	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
+	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
+	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
+	    |    |--- colon. Attributes: {text => ":", uid => "4"}
+	    |    |--- string. Attributes: {text => "Perl|JavaScript|C++", uid => "5"}
+	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
+
+=item o Test also with L</prepend(%opts)> and L</set(%opts)>
+
+See t/get.set.t for sample code.
+
+=item o Since everything works, make a cup of tea
+
+=back
 
 =head2 The Edit Methods
 
@@ -1084,79 +1157,6 @@ L<Is this a (Marpa) exhaustion-hating or exhaustion-loving app?|/FAQ>.
 
 =head1 FAQ
 
-=head2 How do I use this module?
-
-Herewith a brief tutorial.
-
-=over 4
-
-=item o Start with a simple program and a simple regexp
-
-This code, scripts/tutorial.pl, is a cut-down version of scripts/synopsis.pl:
-
-	#!/usr/bin/env perl
-
-	use v5.10;
-	use strict;
-	use warnings;
-
-	use Regexp::Parsertron;
-
-	# ---------------------
-
-	my($re)     = qr/Perl|JavaScript/i;
-	my($parser) = Regexp::Parsertron -> new(verbose => 1);
-
-	# Return 0 for success and 1 for failure.
-
-	my($result) = $parser -> parse(re => $re);
-
-	say "Original:  $re. Result: $result. (0 is success)";
-
-Running it outputs:
-
-	Test count: 1. Parsing (in qr/.../ form): '(?^i:Perl|JavaScript)'.
-	Root. Attributes: {text => "Root", uid => "0"}
-	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
-	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
-	    |    |--- colon. Attributes: {text => ":", uid => "4"}
-	    |    |--- string. Attributes: {text => "Perl|JavaScript", uid => "5"}
-	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
-
-	Original:  (?^i:Perl|JavaScript). Result: 0. (0 is success)
-
-=item o Examine the tree and determine which nodes you wish to edit
-
-The nodes are uniquely identified by their uids.
-
-=item o Proceed as does scripts/synopsis.pl
-
-Add these lines to the end of the tutorial code, and re-run:
-
-	my($node_id) = 5; # Obtained from displaying and inspecting the tree.
-
-	$parser -> append(text => '|C++', uid => $node_id);
-	$parser -> print_raw_tree;
-
-The extra output, showing the change to node uid == 5, is:
-
-	Root. Attributes: {text => "Root", uid => "0"}
-	    |--- open_parenthesis. Attributes: {text => "(", uid => "1"}
-	    |    |--- query_caret. Attributes: {text => "?^", uid => "2"}
-	    |    |--- flag_set. Attributes: {text => "i", uid => "3"}
-	    |    |--- colon. Attributes: {text => ":", uid => "4"}
-	    |    |--- string. Attributes: {text => "Perl|JavaScript|C++", uid => "5"}
-	    |--- close_parenthesis. Attributes: {text => ")", uid => "6"}
-
-=item o Test also with L</prepend(%opts)> and L</set(%opts)>
-
-See t/get.set.t for sample code.
-
-=item o Since everything works, make a cup of tea
-
-=back
-
 =head2 Can I add a subtree to the tree?
 
 Not yet.
@@ -1224,11 +1224,13 @@ This is the text within the regexp which triggered the event just mentioned.
 
 =item o uid => $integer
 
-This is the unqiue id of the 'current' node.
+This is the unique id of the 'current' node.
 
 This C<uid> is often used by you to specify which node to work on.
 
 See t/get.set.t and t/simple.t for sample code.
+
+The code never changes the uid of a node.
 
 =back
 
@@ -1279,6 +1281,19 @@ urls in question.
 I'm (2018-01-14) using Perl V 5.20.2 and making the BNF match the Perl regexp docs listed in
 L</References> below.
 
+The program t/perl-5.21.11.t reads the file 'xt/author/re_tests' which I copied from the source code
+of Perl V 5.21.11. This test is the one which currently provides 858 passing tests out of the 1027
+tests which pass for me using prove -lv t.
+
+=head2 Could Perl and this module generate different parses of the same regexp?
+
+Absolutely! There is no escape from this fact simply because the code used in each program bears no
+relationship to the code in the other one.
+
+The real question is: How do we make the code in each program accept and reject exactly the same
+regexps as the code in the other program. I think trial-and-error is all we have available to us for
+dealing with this issue.
+
 =head2 After calling parse(), warning_str() contains the string '... Parse ambiguous ...'
 
 This is almost certainly a error with the BNF, although of course it may be an error will an
@@ -1308,6 +1323,10 @@ Yes.
 =item o To become, I hope, a replacement for the horrendously complex L<Regexp::Assemble>
 
 =back
+
+=head2 Who crafted the BNF?
+
+I did.
 
 =head1 Scripts
 
