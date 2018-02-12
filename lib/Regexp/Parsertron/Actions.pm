@@ -4,7 +4,7 @@ use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
 
-our $VERSION = '1.02';
+our $VERSION = '1.03';
 
 # ------------------------------------------------
 
