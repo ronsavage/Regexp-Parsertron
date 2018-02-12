@@ -1,5 +1,9 @@
 Revision history for Perl extension Regexp::Parserton.
 
+1.03  2018-02-12T16:36:00
+	- Remove 'use 5.10.1;' which reappeared after I did 'get reset --hard'.
+	- Update docs re stringification and versions of Perl supported.
+
 1.02  2018-02-12T13:16:00
 	- Adjust minimum Perl version in Makefile.PL from 5.10.1 to 5.14.0, which is when regexp
 		stringification changed significantly.
