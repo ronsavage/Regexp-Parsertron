@@ -1379,6 +1379,9 @@ L<http://perldoc.perl.org/perlrequick.html>
 
 L<http://perldoc.perl.org/perlrebackslash.html>
 
+L<http://perldoc.perl.org/perl5140delta.html#Regular-Expressions>. This is when stringification
+changed to return (?^...).
+
 L<https://www.endpoint.com/blog/2018/01/23/regular-expression-inconsistencies-with-unicode>
 
 L<http://www.nntp.perl.org/group/perl.perl5.porters/2016/02/msg234642.html>. Regular Expression
