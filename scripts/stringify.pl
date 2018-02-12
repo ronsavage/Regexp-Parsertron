@@ -7,6 +7,6 @@ use warnings;
 
 # ---------------------
 
-my($re) = qr/^/;
+my($re) = qr//;
 
 print "Stringified re: $re \n";

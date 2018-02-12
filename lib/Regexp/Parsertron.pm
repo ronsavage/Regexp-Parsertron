@@ -1,6 +1,5 @@
 package Regexp::Parsertron;
 
-use v5.10.1;
 use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
@@ -1278,6 +1277,9 @@ urls in question.
 
 =head2 So which version of Perl is supported?
 
+The code is expected to work for Perls back to V 5.14.0, which is when stringification of regexps
+changed. See L</References> below for more.
+
 I'm (2018-01-14) using Perl V 5.20.2 and making the BNF match the Perl regexp docs listed in
 L</References> below.
 
@@ -1380,7 +1382,7 @@ L<http://perldoc.perl.org/perlrequick.html>
 L<http://perldoc.perl.org/perlrebackslash.html>
 
 L<http://perldoc.perl.org/perl5140delta.html#Regular-Expressions>. This is when stringification
-changed to return (?^...).
+changed to return (?^...) rather than (?-xism...).
 
 L<https://www.endpoint.com/blog/2018/01/23/regular-expression-inconsistencies-with-unicode>
 

@@ -1,6 +1,5 @@
 package Regexp::Parsertron::Actions;
 
-use v5.10;
 use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
