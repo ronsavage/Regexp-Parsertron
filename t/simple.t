@@ -102,7 +102,7 @@ for my $test (@test)
 		$message	= "$$test{item}: re: $$test{re}. got: $got";
 		$message	.= ' (After calling append(...) )' if ($$test{item} == 12);
 
-		is_deeply("$got", $expected, $message);
+		is_deeply("$got", $expected, $message); $count++;
 	}
 	else
 	{

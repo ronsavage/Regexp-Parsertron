@@ -1520,15 +1520,19 @@ comment							::= non_close_parenthesis*
 flag_thingy						::= open_parenthesis query flag_set_1
 									| open_parenthesis query_caret flag_set_2 close_parenthesis
 
-flag_set_1						::= flag_sequence
+flag_set_1						::= flag_sequence	# adlupimnsx-imnsx
 
-flag_set_2						::= flag_sequence
+flag_set_2						::= flag_sequence	# alupimnsx
 
 # 3: (?:pattern)	Eg: (?:(?<n>foo)|(?<n>bar))\k<n>
 #  & (?adluimnsx-imnsx:pattern)
 #  & (?^aluimnsx:pattern)
 
 colon_thingy					::= colon_prefix pattern_sequence close_parenthesis
+									| open_parenthesis query flag_set_3 colon pattern_sequence close_parenthesis
+									| open_parenthesis query_caret positive_flags colon pattern_sequence close_parenthesis
+
+flag_set_3						::= flag_sequence	# adluimnsx-imnsx
 
 # 99. Non-extended patterns.
 

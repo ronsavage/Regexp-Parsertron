@@ -23,6 +23,11 @@ my(@test)	=
 },
 {
 	item		=> 2,
+	expected	=> '(?^:^)',
+	re			=> qr/^/,
+},
+{
+	item		=> 3,
 	expected	=> '(?^:(?:))',
 	re			=> qr/(?:)/,
 },
@@ -70,7 +75,7 @@ for my $test (@test)
 	{
 		#say map{"# $_\n"} split(/\n/, $_);
 
-		ok(1 == 1, "As expected, unable to parse qr/$$test{re}/");
+		ok(1 == 1, "As expected, unable to parse qr/$$test{re}/"); $count++;
 	};
 
 	# Reset for next test.
