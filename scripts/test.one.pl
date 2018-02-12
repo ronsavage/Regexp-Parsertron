@@ -15,9 +15,9 @@ my($s)		= 'anything';
 
 if ($s =~ $re)
 {
-	say "'$s' matches $re";
+	print "'$s' matches $re \n";
 }
 else
 {
-	say "'$s' does not match $re";
+	print "'$s' does not match $re \n";
 }

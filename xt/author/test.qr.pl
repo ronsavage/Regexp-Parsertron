@@ -27,7 +27,7 @@ for my $s (read_lines($input_file_name) )
 			$re = qr/$s/;
 		};
 
-		say "$re. $count. re: $s. ";
+		print "$re. $count. re: $s. \n";
 	};
 
 }

@@ -283,11 +283,8 @@ sub parse
 	(
 		Marpa::R2::Scanless::R -> new
 		({
-			exhaustion			=> 'event',
-			grammar				=> $self -> grammar,
-#			ranking_method		=> 'high_rule_only',
-#			semantics_package	=> 'Regexp::Parsertron::Actions',
-#			trace_terminals		=> 99,
+			exhaustion	=> 'event',
+			grammar		=> $self -> grammar,
 		})
 	);
 
@@ -309,7 +306,7 @@ sub parse
 
 			my($message) = 'Error: Marpa parse failed. ';
 
-			say $message if ($self -> verbose);
+			print $message, "\n" if ($self -> verbose);
 
 			die $message;
 		}
@@ -370,18 +367,18 @@ sub _process
 
 	if ($string_re eq '')
 	{
-		say '' if ($self -> verbose);
+		print "\n" if ($self -> verbose);
 
 		return undef;
 	}
 
-	say "'$string_re'. " if ($self -> verbose);
+	print "'$string_re'. \n" if ($self -> verbose);
 
 	if ($self -> verbose > 1)
 	{
-		my($format) = '%-10s  %-5s  %-20s  %-6s  %-30s  %s';
+		my($format) = "%-10s  %-5s  %-20s  %-6s  %-30s  %s \n";
 
-		say sprintf($format, '  Location', 'Width', 'Lexeme', 'Events', 'Names', 'Next few chars');
+		print sprintf($format, '  Location', 'Width', 'Lexeme', 'Events', 'Names', 'Next few chars');
 
 	}
 
@@ -446,7 +443,7 @@ sub _process
 	{
 		$self -> warning_str($message);
 
-		say $message if ($self -> verbose);
+		print $message, "\n" if ($self -> verbose);
 	}
 
 	$self -> print_raw_tree if ($self -> verbose);
@@ -462,10 +459,10 @@ sub _process
 sub print_cooked_tree
 {
 	my($self)	= @_;
-	my($format)	= '%-30s  %3s  %s';
+	my($format)	= "%-30s  %3s  %s \n";
 
-	say sprintf($format, 'Name', 'Uid', 'Text');
-	say sprintf($format, '----', '---', '----');
+	print sprintf($format, 'Name', 'Uid', 'Text');
+	print sprintf($format, '----', '---', '----');
 
 	my($meta);
 
@@ -475,7 +472,7 @@ sub print_cooked_tree
 
 		$meta = $node -> meta;
 
-		say sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
+		print sprintf($format, $node -> value, $$meta{uid}, $$meta{text});
 	}
 
 } # End of print_cooked_tree.
@@ -486,7 +483,7 @@ sub print_raw_tree
 {
 	my($self) = @_;
 
-	say map("$_\n", @{$self -> tree -> tree2string});
+	print map("$_\n", @{$self -> tree -> tree2string});
 
 } # End of print_raw_tree.
 
@@ -578,7 +575,7 @@ sub _string2re
 	{
 		my($message) = "Error: Perl cannot convert $raw_re into qr/.../ form";
 
-		say $message if ($self -> verbose);
+		print $message, "\n" if ($self -> verbose);
 
 		die $message;
 	};
@@ -676,9 +673,9 @@ sub _validate_event
 
 	if ($self -> verbose > 1)
 	{
-		my($format) = '%4d, %4d  %5d  %-20s  %6d  %-30s  %s';
+		my($format) = "%4d, %4d  %5d  %-20s  %6d  %-30s  %s \n";
 
-		say sprintf($format, $line, $column, length($lexeme), $lexeme, $event_count, $name_list, $literal);
+		print sprintf($format, $line, $column, length($lexeme), $lexeme, $event_count, $name_list, $literal);
 
 	}
 
@@ -722,7 +719,7 @@ This is scripts/synopsis.pl:
 	my($result)  = $parser -> parse(re => $re);
 	my($node_id) = 5; # Obtained from displaying and inspecting the tree.
 
-	say "Calling append(text => '|C++', uid => $node_id)";
+	print "Calling append(text => '|C++', uid => $node_id) \n";
 
 	$parser -> append(text => '|C++', uid => $node_id);
 	$parser -> print_raw_tree;
@@ -730,12 +727,12 @@ This is scripts/synopsis.pl:
 
 	my($as_string) = $parser -> as_string;
 
-	say "Original:    $re. Result: $result (0 is success)";
-	say "as_string(): $as_string";
+	print "Original:    $re. Result: $result (0 is success) \n";
+	print "as_string(): $as_string \n";
 
 	$result = $parser -> validate;
 
-	say "validate():  Result: $result (0 is success)";
+	print "validate():  Result: $result (0 is success) \n";
 
 	# Return 0 for success and 1 for failure.
 
@@ -745,7 +742,7 @@ This is scripts/synopsis.pl:
 	$re     = qr/Perl|JavaScript|(?:Flub|BCPL)/i;
 	$result = $parser -> parse(re => $re);
 
-	say "\nAdd complexity to the regexp by parsing a new regexp";
+	print "\nAdd complexity to the regexp by parsing a new regexp \n";
 
 	$parser -> print_raw_tree;
 
@@ -823,7 +820,7 @@ This code, scripts/tutorial.pl, is a cut-down version of scripts/synopsis.pl:
 
 	my($result) = $parser -> parse(re => $re);
 
-	say "Original:  $re. Result: $result. (0 is success)";
+	print "Original:  $re. Result: $result. (0 is success) \n";
 
 Running it outputs:
 

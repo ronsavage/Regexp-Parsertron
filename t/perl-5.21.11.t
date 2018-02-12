@@ -97,7 +97,7 @@ for my $line (@lines)
 		}
 		else
 		{
-			#say "Count: $count. " . $parser -> warning_str;
+			#print "Count: $count. ", $parser -> warning_str, "\n";
 		}
 	}
 	catch
