@@ -11,12 +11,12 @@ my($parser)	= Regexp::Parsertron -> new;
 my(@test)	=
 (
 {
-	item		=> 1, # https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251447.html
+	item		=> 1,
 	expected	=> '((.)foo|bar)*',
 	re			=> qr/((.)foo|bar)*/,
 },
 {
-	item		=> 2, # https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251447.html
+	item		=> 2,
 	expected	=> '((.)foo|bar)*',
 	re			=> qr/^((.)foo|bar)*$/,
 },

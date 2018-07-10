@@ -1335,7 +1335,10 @@ dealing with this issue.
 =head2 After calling parse(), warning_str() contains the string '... Parse ambiguous ...'
 
 This is almost certainly an error with the BNF, although of course it may be an error with an
-exceptionally-badly formed regexp. See examples/ambiguous.pl.
+exceptionally-badly formed regexp.
+
+See examples/ambiguous.pl and
+L<this email thread|https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251447.html>.
 
 In such cases the code dies, as of V 1.04.
 
