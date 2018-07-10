@@ -4,6 +4,8 @@ use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
 
+use boolean;
+
 use Data::Section::Simple 'get_data_section';
 
 use Marpa::R2;
@@ -16,7 +18,15 @@ use Tree;
 
 use Try::Tiny;
 
-use Types::Standard qw/Any Int Str/;
+use Types::Standard qw/Any Bool Int Str/;
+
+has ambiguous =>
+(
+	default  => sub{return false}, # 'false' supplied by 'use boolean'.
+	is       => 'rw',
+	isa      => Bool,
+	required => 0,
+);
 
 has bnf =>
 (
@@ -127,6 +137,8 @@ sub append
 
 	for my $param (qw/text uid/)
 	{
+		# The \n stops Perl printing the line number.
+
 		die "Method append() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
 	}
 
@@ -199,6 +211,8 @@ sub find
 {
 	my($self, $target) = @_;
 
+	# The \n stops Perl printing the line number.
+
 	die "Method find() takes a defined value as the parameter\n" if (! defined $target);
 
 	my(@found);
@@ -229,6 +243,8 @@ sub get
 
 	if (! defined($wanted_uid) || ($wanted_uid < 1) || ($wanted_uid > $self -> uid) )
 	{
+		# The \n stops Perl printing the line number.
+
 		die "Method get() takes a uid parameter in the range 1 .. $max_uid\n";
 	}
 
@@ -304,16 +320,23 @@ sub parse
 		{
 			$result = 1;
 
-			my($message) = 'Error: Marpa parse failed. ';
+			if ($self -> ambiguous -> isTrue)
+			{
+				die "\n";
+			}
+			else
+			{
+				# The \n stops Perl printing the line number.
 
-			print $message, "\n" if ($self -> verbose);
-
-			die $message;
+				die "Error: Marpa parse failed.\n";
+			}
 		}
 	}
 	catch
 	{
-		die $_;
+		# The \n stops Perl printing the line number.
+
+		die "$_\n";
 	};
 
 	# Return 0 for success and 1 for failure.
@@ -330,6 +353,8 @@ sub prepend
 
 	for my $param (qw/text uid/)
 	{
+		# The \n stops Perl printing the line number.
+
 		die "Method append() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
 	}
 
@@ -411,6 +436,8 @@ sub _process
 		$lexeme	= $self -> recce -> literal($start, $span);
 		$pos	= $self -> recce -> lexeme_read($event_name);
 
+		# The \n stops Perl printing the line number.
+
 		die "Marpa lexeme_read($event_name) rejected lexeme '$lexeme'\n" if (! defined $pos);
 
 		$self -> _add_daughter($event_name, {text => $lexeme});
@@ -420,9 +447,15 @@ sub _process
 
 	if (my $status = $self -> recce -> ambiguous)
 	{
+		$self -> ambiguous(true); # 'true' supplied by 'use boolean'.
+
 		my($terminals)	= $self -> recce -> terminals_expected;
-		$terminals		= ['(None)'] if ($#$terminals < 0);
-		$message		= "Marpa warning. Parse ambiguous. Status: $status. Terminals expected: " . join(', ', @$terminals);
+		$terminals		= ['(None)'] if ($#$terminals < 0); # Next line deliberately omits '.' after $status, so output lines up.
+		$message		= "Marpa error. Parse ambiguous. Status: ${status}Terminals expected: " . join(', ', @$terminals);
+
+		print "$message\n";
+
+		$message = ''; # To stop it being stored just below, and to stop it being printed again.
 	}
 	elsif ($self -> recce -> exhausted)
 	{
@@ -434,7 +467,7 @@ sub _process
 		}
 
 		# See https://metacpan.org/pod/distribution/Marpa-R2/pod/Exhaustion.pod#Exhaustion
-		# for why this code is exhaustion-loving.
+		# for why this code is exhaustion-loving. This is not an error. See docs for details.
 
 		$message = 'Marpa parse exhausted' if ($self -> verbose > 1);
 	}
@@ -443,14 +476,15 @@ sub _process
 	{
 		$self -> warning_str($message);
 
-		print $message, "\n" if ($self -> verbose);
+		print "$message\n" if ($self -> verbose);
 	}
 
 	$self -> print_raw_tree if ($self -> verbose);
 
 	# Return a defined value for success and undef for failure.
+	# Note: value() can return undef.
 
-	return $self -> recce -> value;
+	return $self -> ambiguous -> isTrue ? undef : $self -> recce -> value;
 
 } # End of _process.
 
@@ -493,6 +527,7 @@ sub reset
 {
 	my($self) = @_;
 
+	$self -> ambiguous(false);
 	$self -> tree(Tree -> new('Root') );
 	$self -> tree -> meta({text => 'Root', uid => 0});
 	$self -> current_node($self -> tree);
@@ -506,6 +541,8 @@ sub reset
 sub search
 {
 	my($self, $target) = @_;
+
+	# The \n stops Perl printing the line number.
 
 	die "Method search() takes a defined value as the parameter\n" if (! defined $target);
 
@@ -538,6 +575,8 @@ sub set
 
 	for my $param (qw/text uid/)
 	{
+		# The \n stops Perl printing the line number.
+
 		die "Method set() takes a hash with these keys: text, uid\n" if (! defined($opts{$param}) );
 	}
 
@@ -573,11 +612,9 @@ sub _string2re
 	}
 	catch
 	{
-		my($message) = "Error: Perl cannot convert $raw_re into qr/.../ form";
+		# The \n stops Perl printing the line number with 'die'.
 
-		print $message, "\n" if ($self -> verbose);
-
-		die $message;
+		die "Error: Perl cannot convert $raw_re into qr/.../ form\n";
 	};
 
 	return $re;
@@ -652,7 +689,9 @@ sub _validate_event
 		{
 			#$self -> print_cooked_tree;
 
-			die "event_count: $event_count. " . $event_list;
+			# The \n stops Perl printing the line number.
+
+			die "event_count: $event_count. " . $event_list . "\n";
 		}
 	}
 
@@ -1295,11 +1334,13 @@ dealing with this issue.
 
 =head2 After calling parse(), warning_str() contains the string '... Parse ambiguous ...'
 
-This is almost certainly a error with the BNF, although of course it may be an error will an
-exceptionally-badly formed regexp.
+This is almost certainly an error with the BNF, although of course it may be an error with an
+exceptionally-badly formed regexp. See examples/ambiguous.pl.
 
-Report it via L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Parsertron>, and please
- include the regexp in the report. Thanx!
+In such cases the code dies, as of V 1.04.
+
+Please report it via L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Parsertron>, and
+include the regexp in the report. Thanx!
 
 =head2 Is this a (Marpa) exhaustion-hating or exhaustion-loving app?
 

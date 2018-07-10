@@ -36,6 +36,7 @@ my(%params) =
 	PL_FILES 			=> {},
 	PREREQ_PM			=>
 	{
+		'boolean'				=> 0.46,
 		'Capture::Tiny'			=> 0.46,
 		'Data::Section::Simple'	=> 0.07,
 		'File::Slurper'			=> 0.011,

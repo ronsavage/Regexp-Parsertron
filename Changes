@@ -1,5 +1,18 @@
 Revision history for Perl extension Regexp::Parserton.
 
+1.04  2018-07-11T07:43:00
+	- The code had a bug whereby if the parse was ambiguous, the message printed started with
+		'Marpa warning. Parse ambiguous. Status: ...', but then the code went on to call Marpa's
+		value() method, which died with its own message.
+		In this case, the code now returns undef from _process(), and the message printed is
+		'Marpa error. Parse ambiguous. Status: ...'. Then, in parse(), the code dies.
+	- Start using 'use boolean'.
+	- Add examples/ambiguous.pl.
+	- In a couple of places, when the code died with a message, and verbose > 1 was active, the
+		message was printed just before the die, meaning it appeared twice. These print statements
+		have been removed.
+	- Change usage of \n for some error messages while cleaning up same.
+
 1.03  2018-02-12T16:36:00
 	- Remove 'use 5.10.1;' which reappeared after I did 'get reset --hard'.
 	- Update docs re stringification and versions of Perl supported.
