@@ -1340,6 +1340,9 @@ exceptionally-badly formed regexp.
 See examples/ambiguous.pl and
 L<this email thread|https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251447.html>.
 
+See examples/commit.pl and
+L<this email thread|https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251463.html>.
+
 In such cases the code dies, as of V 1.04.
 
 Please report it via L<https://rt.cpan.org/Public/Dist/Display.html?Name=Regexp-Parsertron>, and

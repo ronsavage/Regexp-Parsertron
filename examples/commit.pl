@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# See docs and https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251447.html.
+# See https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251463.html.
 
 use strict;
 use warnings;
@@ -14,13 +14,13 @@ my(@test)	=
 (
 {
 	item		=> 1,
-	expected	=> '((.)foo|bar)*', # This is a placeholder since I don't know the answer.
-	re			=> qr/((.)foo|bar)*/,
+	expected	=> '', # This is a placeholder since I don't know the answer.
+	re			=> qr/(A(*COMMIT)|B)(A|B)D/,
 },
 {
 	item		=> 2,
-	expected	=> '^((.)foo|bar)*$', # This is a placeholder since I don't know the answer.
-	re			=> qr/^((.)foo|bar)*$/,
+	expected	=> '', # This is a placeholder since I don't know the answer.
+	re			=> qr/(A|B)(A(*COMMIT)|B)D/,
 },
 );
 
