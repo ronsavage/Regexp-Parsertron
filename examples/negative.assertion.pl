@@ -14,17 +14,17 @@ my(@test)	=
 (
 {
 	item		=> 1,
-	expected	=> '(?^:(?!(a)b)..)', # This is a placeholder since I don't know the answer.
+	expected	=> '(?^:(?!(a)b)..)',
 	re			=> qr/(?!(a)b)../,
 },
 {
 	item		=> 2,
-	expected	=> '(?^:(?!(a)b|ac)..)', # This is a placeholder since I don't know the answer.
+	expected	=> '(?^:(?!(a)b|ac)..)',
 	re			=> qr/(?!(a)b|ac)../,
 },
 {
 	item		=> 3,
-	expected	=> '(?^:(?!ac|(a)b)..)', # This is a placeholder since I don't know the answer.
+	expected	=> '(?^:(?!ac|(a)b)..)',
 	re			=> qr/(?!ac|(a)b)../,
 },
 );
