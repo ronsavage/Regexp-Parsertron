@@ -1,6 +1,7 @@
 #!/usr/bin/env perl
 #
-# See https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251463.html.
+# See https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251463.html
+# and https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251492.html.
 
 use strict;
 use warnings;
@@ -21,6 +22,16 @@ my(@test)	=
 	item		=> 2,
 	expected	=> '', # This is a placeholder since I don't know the answer.
 	re			=> qr/(A|B)(A(*COMMIT)|B)D/,
+},
+{
+	item		=> 3,
+	expected	=> '', # This is a placeholder since I don't know the answer.
+	re			=> qr/(a(*COMMIT)b){0}a(?1)|aac/,
+},
+{
+	item		=> 4,
+	expected	=> '', # This is a placeholder since I don't know the answer.
+	re			=> qr/(??{""})(a(*COMMIT)b){0}a(?1)|aac/,
 },
 );
 

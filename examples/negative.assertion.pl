@@ -1,6 +1,6 @@
 #!/usr/bin/env perl
 #
-# See https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251490.html
+# See https://www.nntp.perl.org/group/perl.perl5.porters/2018/07/msg251490.html.
 
 use strict;
 use warnings;
