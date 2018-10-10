@@ -1411,6 +1411,8 @@ benefit.
 
 =head1 References
 
+L<https://www.rexegg.com/regex-lookarounds.html>. Mastering Lookahead and Lookbehind.
+
 L<http://www.pcre.org/>. PCRE - Perl Compatible Regular Expressions.
 
 L<http://perldoc.perl.org/perlre.html>. This is the definitive document.
