@@ -106,7 +106,7 @@ has warning_str =>
 	required => 0,
 );
 
-our $VERSION = '1.04';
+our $VERSION = '1.05';
 
 # ------------------------------------------------
 
