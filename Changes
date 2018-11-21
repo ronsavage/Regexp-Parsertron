@@ -1,7 +1,7 @@
 Revision history for Perl extension Regexp::Parserton.
 
 1.05  2018-11-21T14:05:00
-	- Stop using 'use boolean'. It started to cause 5 tests to fail on line 23 of Parsertron.pm.
+	- Abandon 'use boolean'. It started to cause 5 tests to fail on line 23 of Parsertron.pm.
 
 1.04  2018-07-11T07:43:00
 	- The code had a bug whereby if the parse was ambiguous, the message printed started with
@@ -17,7 +17,7 @@ Revision history for Perl extension Regexp::Parserton.
 	- Change usage of \n for some error messages while cleaning up same.
 
 1.03  2018-02-12T16:36:00
-	- Remove 'use 5.10.1;' which reappeared after I did 'get reset --hard'.
+	- Remove 'use 5.10.1;' which reappeared after I did 'git reset --hard'.
 	- Update docs re stringification and versions of Perl supported.
 	- Replace say with print since I am switching between Perls.
 	- Remove the Actions module. It was only meant for debugging.
