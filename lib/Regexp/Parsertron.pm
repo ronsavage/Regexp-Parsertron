@@ -4,8 +4,6 @@ use strict;
 use warnings;
 #use warnings qw(FATAL utf8); # Fatalize encoding glitches.
 
-use boolean;
-
 use Data::Section::Simple 'get_data_section';
 
 use Marpa::R2;
@@ -18,13 +16,13 @@ use Tree;
 
 use Try::Tiny;
 
-use Types::Standard qw/Any Bool Int Str/;
+use Types::Standard qw/Any Int Str/;
 
 has ambiguous =>
 (
-	default  => sub{return false}, # 'false' supplied by 'use boolean'.
+	default  => sub{return 0},
 	is       => 'rw',
-	isa      => Bool,
+	isa      => Int,
 	required => 0,
 );
 
@@ -320,7 +318,7 @@ sub parse
 		{
 			$result = 1;
 
-			if ($self -> ambiguous -> isTrue)
+			if ($self -> ambiguous)
 			{
 				die "\n";
 			}
@@ -447,7 +445,7 @@ sub _process
 
 	if (my $status = $self -> recce -> ambiguous)
 	{
-		$self -> ambiguous(true); # 'true' supplied by 'use boolean'.
+		$self -> ambiguous(1);
 
 		my($terminals)	= $self -> recce -> terminals_expected;
 		$terminals		= ['(None)'] if ($#$terminals < 0); # Next line deliberately omits '.' after $status, so output lines up.
@@ -484,7 +482,7 @@ sub _process
 	# Return a defined value for success and undef for failure.
 	# Note: value() can return undef.
 
-	return $self -> ambiguous -> isTrue ? undef : $self -> recce -> value;
+	return $self -> ambiguous ? undef : $self -> recce -> value;
 
 } # End of _process.
 
@@ -527,7 +525,7 @@ sub reset
 {
 	my($self) = @_;
 
-	$self -> ambiguous(false);
+	$self -> ambiguous(0);
 	$self -> tree(Tree -> new('Root') );
 	$self -> tree -> meta({text => 'Root', uid => 0});
 	$self -> current_node($self -> tree);

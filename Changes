@@ -1,5 +1,8 @@
 Revision history for Perl extension Regexp::Parserton.
 
+1.05  2018-11-21T14:05:00
+	- Stop using 'use boolean'. It started to cause 5 tests to fail on line 23 of Parsertron.pm.
+
 1.04  2018-07-11T07:43:00
 	- The code had a bug whereby if the parse was ambiguous, the message printed started with
 		'Marpa warning. Parse ambiguous. Status: ...', but then the code went on to call Marpa's
