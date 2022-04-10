@@ -1459,6 +1459,8 @@ L<Regexp::Optimizer>
 
 L<Regexp::Parser>
 
+L<PPIx::Regexp>
+
 L<Regexp::SAR>. This is vaguely a version of L<Set::FA::Element>.
 
 L<Regexp::Stringify>
