@@ -11,7 +11,7 @@ use Try::Tiny;
 
 my($count)				= 0;
 my($prefix)				= 'xt/author/';
-my($input_file_name)	= "$prefix/perl-5.21.11.tests";
+my($input_file_name)	= "$prefix/re_tests";
 
 my(@result, $re);
 my($stdout, $stderr);
