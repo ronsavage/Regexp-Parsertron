@@ -1443,6 +1443,8 @@ L<https://stackoverflow.com/questions/46200305/a-strict-regular-expression-for-m
 
 L<Graph::Regexp>
 
+L<Perl::Tokenizer>
+
 L<Regexp::Assemble>
 
 L<Regexp::Debugger>
